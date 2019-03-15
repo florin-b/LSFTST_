@@ -37,6 +37,7 @@ public class BeanComandaCreata {
 	private boolean clientRaft;
 	private String tipComanda;
 	private boolean isCmdInstPublica;
+	private double bazaSalariala;
 
 	public BeanComandaCreata() {
 
@@ -322,6 +323,16 @@ public class BeanComandaCreata {
 		this.isCmdInstPublica = isCmdInstPublica;
 	}	
 	
+	
+	
+	public double getBazaSalariala() {
+		return bazaSalariala;
+	}
+
+	public void setBazaSalariala(double bazaSalariala) {
+		this.bazaSalariala = bazaSalariala;
+	}
+
 	@Override
 	public String toString() {
 		return "BeanComandaCreata [id=" + id + ", numeClient=" + numeClient + ", codClient=" + codClient + ", data=" + data + ", suma=" + suma + ", moneda="

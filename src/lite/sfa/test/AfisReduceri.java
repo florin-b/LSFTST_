@@ -182,7 +182,7 @@ public class AfisReduceri extends ListActivity implements AsyncTaskListener, Cus
 		if (!result.equals("-1")) {
 			Toast.makeText(getApplicationContext(), "Sablonul a fost sters!", Toast.LENGTH_LONG).show();
 			performGetSabloane();
-			slidingDrawerRed.animateClose();
+			//slidingDrawerRed.animateClose();
 		} else {
 			Toast.makeText(getApplicationContext(), "Sablonul NU a fost sters!", Toast.LENGTH_LONG).show();
 		}
@@ -308,7 +308,7 @@ public class AfisReduceri extends ListActivity implements AsyncTaskListener, Cus
 
 			setListAdapter(adapter);
 
-			slidingDrawerRed.setVisibility(View.VISIBLE);
+			//slidingDrawerRed.setVisibility(View.VISIBLE);
 
 		}
 

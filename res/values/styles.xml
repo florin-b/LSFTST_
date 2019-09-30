@@ -51,6 +51,7 @@
     </style>
 
     <color name="totalColor1">#4682b4</color>
+    <color name="salarizareHeaderTotal">#57789e</color>
     <color name="spinnerOptions1">#CE1620</color>
 
     <style name="ShadowText">

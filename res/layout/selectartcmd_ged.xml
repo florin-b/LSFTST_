@@ -5,6 +5,50 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/articoleAmobHeaderLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/articolAmobLabel"
+            android:layout_width="0dip"
+            android:layout_height="45dip"
+            android:layout_gravity="left"
+            android:layout_weight="0.3"
+            android:gravity="left"
+            android:text="Articole comanda Amob"
+            android:textColor="@color/foreColorObiective1"
+            android:textSize="17sp"
+            android:typeface="sans" />
+        
+        
+        <Button
+            android:id="@+id/importAmob"
+            style="@style/ok_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:layout_weight="0.25"
+            android:background="@drawable/ok_button_style"
+            android:text="Importa toate articolele" />
+
+        <TextView
+            android:id="@+id/articolAmobDetalii"
+            android:layout_width="0dip"
+            android:layout_height="45dip"
+            android:layout_gravity="right"
+            android:layout_weight="0.3"
+            android:gravity="right"
+            android:textColor="@color/foreColorObiective1"
+            android:textSize="17sp"
+            android:typeface="sans" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cautareArticoleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
@@ -510,7 +554,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="left"
-                                android:layout_weight="0.15"
+                                android:layout_weight="0.18"
                                 android:text="Pret GED cu tva: "
                                 android:textColor="@color/marjaColor1"
                                 android:textSize="18sp"

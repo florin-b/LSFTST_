@@ -26,8 +26,8 @@ public class UtilsUser {
 
 	public static boolean isUserSK() {
 		return UserInfo.getInstance().getTipUser().equals("SK");
-	}		
-	
+	}
+
 	public static boolean isCV() {
 		return UserInfo.getInstance().getTipUser().equals("CV") || UserInfo.getInstance().getTipUser().equals("SM")
 				|| UserInfo.getInstance().getTipUser().equals("CVR") || UserInfo.getInstance().getTipUser().equals("SMR");
@@ -65,8 +65,8 @@ public class UtilsUser {
 	}
 
 	public static boolean isAgentOrSD() {
-		return UserInfo.getInstance().getTipUserSap().toUpperCase().contains("AV")
-				|| UserInfo.getInstance().getTipUserSap().toUpperCase().equals("SD") || UserInfo.getInstance().getTipUserSap().toUpperCase().equals("ASDL");
+		return UserInfo.getInstance().getTipUserSap().toUpperCase().contains("AV") || UserInfo.getInstance().getTipUserSap().toUpperCase().equals("SD")
+				|| UserInfo.getInstance().getTipUserSap().toUpperCase().equals("ASDL");
 
 	}
 
@@ -75,7 +75,11 @@ public class UtilsUser {
 				|| UserInfo.getInstance().getTipUser().equals("KA");
 
 	}
-	
+
+	public static boolean isUserSDKA() {
+		return UserInfo.getInstance().getTipUserSap().equals("SDKA");
+	}
+
 	public static boolean isSD() {
 		return UserInfo.getInstance().getTipUserSap().toUpperCase().equals("SD");
 	}
@@ -93,7 +97,7 @@ public class UtilsUser {
 	public static boolean isSuperAv() {
 		return !UserInfo.getInstance().getCodSuperUser().isEmpty();
 	}
-	
+
 	public static boolean isInfoUser() {
 		return UserInfo.getInstance().getTipUserSap().equals(Constants.tipInfoAv);
 	}
@@ -116,7 +120,11 @@ public class UtilsUser {
 
 	public static boolean isOIVPD() {
 		return UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("OIVPD");
-	}	
+	}
+
+	public static boolean isASDL() {
+		return UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("ASDL");
+	}
 	
 	public static String getTipSMNou() {
 		String tipUser;
@@ -175,8 +183,7 @@ public class UtilsUser {
 
 		String filialeExceptie = "AG, BH, CJ, CT, DJ, GL";
 
-		if (UserInfo.getInstance().getTipUserSap().equals("CONS-GED")
-				&& filialeExceptie.contains(UserInfo.getInstance().getUnitLog().substring(0, 2)))
+		if (UserInfo.getInstance().getTipUserSap().equals("CONS-GED") && filialeExceptie.contains(UserInfo.getInstance().getUnitLog().substring(0, 2)))
 			return true;
 
 		return false;
@@ -184,9 +191,10 @@ public class UtilsUser {
 
 	public static boolean isUserExceptieBV90Ged() {
 
-		// pentru ag si sd de la 02 si 05 se ofera accesul la BV90
+		// pentru ag si sd de la 01, 02 si 05 se ofera accesul la BV90
 		if (UserInfo.getInstance().getTipAcces().equals("9") || UserInfo.getInstance().getTipAcces().equals("10")) {
-			if (UserInfo.getInstance().getCodDepart().equals("02") || UserInfo.getInstance().getCodDepart().equals("05"))
+			if (UserInfo.getInstance().getCodDepart().equals("02") || UserInfo.getInstance().getCodDepart().equals("05")
+					|| UserInfo.getInstance().getCodDepart().equals("01"))
 				return true;
 		}
 

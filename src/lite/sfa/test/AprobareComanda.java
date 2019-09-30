@@ -19,7 +19,6 @@ import model.ArticolComanda;
 import model.ComenziDAO;
 import model.SerializeConditiiComanda;
 import model.UserInfo;
-import lite.sfa.test.R;
 import patterns.ComandaAprobareComparator;
 import utils.UtilsGeneral;
 import utils.UtilsUser;
@@ -47,6 +46,7 @@ import android.widget.SimpleAdapter;
 import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -364,6 +364,9 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 						respingeCmd.setVisibility(View.GONE);
 						slidingDrawerAprob.setVisibility(View.INVISIBLE);
 
+						textValMarjaT1.setVisibility(View.INVISIBLE);
+						textProcMarjaT1.setVisibility(View.INVISIBLE);
+
 						if (!textAdrLivrNoua.getText().equals("")) {
 							textAdrLivrNoua.setVisibility(View.INVISIBLE);
 							labelAdresa.setVisibility(View.INVISIBLE);
@@ -417,7 +420,7 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 			if (tipReducere == EnumTipReducere.FACT_RED_SEP)
 				nrFact = 3;
 		}
-		
+
 		conditiiComandaHeader.setId(Integer.valueOf(selectedCmd));
 		conditiiComandaHeader.setConditiiCalit(Double.valueOf(condCal.replace(',', '.')));
 		conditiiComandaHeader.setNrFact(nrFact);
@@ -831,9 +834,41 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 			textComandaBV90.setVisibility(View.INVISIBLE);
 
 		if (dateLivrare.getMarjaT1() > 0) {
+
+			textValMarjaT1.setVisibility(View.VISIBLE);
+			textProcMarjaT1.setVisibility(View.VISIBLE);
+
 			textValMarjaT1.setText("Marja T1 comanda: " + String.format("%.02f", dateLivrare.getMarjaT1()) + " RON");
-			double procMarjaT1 = dateLivrare.getMarjaT1() / Double.valueOf(comandaCurenta.getSuma());
-			textProcMarjaT1.setText("Marja T1 : " + String.format("%.02f", (procMarjaT1 * 100)) + "%");
+			textProcMarjaT1.setText("Marja T1 : " + String.format("%.02f", (dateLivrare.getProcentT1() * 100)) + "%");
+		} else {
+			textValMarjaT1.setVisibility(View.INVISIBLE);
+			textProcMarjaT1.setVisibility(View.INVISIBLE);
+
+		}
+
+		if (UserInfo.getInstance().getCodDepart().equals("01") && UtilsUser.isDV()) {
+			textPondereArtB.setVisibility(View.GONE);
+			textPondereB_30.setVisibility(View.GONE);
+
+			((TableLayout) findViewById(R.id.tablePalCant)).setVisibility(View.VISIBLE);
+
+			((TextView) findViewById(R.id.textMCantCmd)).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.textMCantCmd)).setText("Metri cant / foaie comanda: " + String.valueOf(dateLivrare.getmCantCmd()) + " m");
+
+			((TextView) findViewById(R.id.textMCant30)).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.textMCant30)).setText("Metri cant / foaie 30 zile: " + String.valueOf(dateLivrare.getmCant30()) + " m");
+
+			((TextView) findViewById(R.id.textMarjaPalVal)).setText(String.valueOf(dateLivrare.getMarjaBrutaPalVal()));
+			((TextView) findViewById(R.id.textMarjaCantVal)).setText(String.valueOf(dateLivrare.getMarjaBrutaCantVal()));
+
+			((TextView) findViewById(R.id.textMarjaPalProc)).setText(String.valueOf(dateLivrare.getMarjaBrutaPalProc()));
+			((TextView) findViewById(R.id.textMarjaCantProc)).setText(String.valueOf(dateLivrare.getMarjaBrutaCantProc()));
+
+			((TextView) findViewById(R.id.textMarjaTotalVal)).setText(String.format("%.02f",
+					dateLivrare.getMarjaBrutaPalVal() + dateLivrare.getMarjaBrutaCantVal()));
+			((TextView) findViewById(R.id.textMarjaTotalProc)).setText(String.format("%.02f",
+					dateLivrare.getMarjaBrutaPalProc() + dateLivrare.getMarjaBrutaCantProc()));
+
 		}
 
 		setupContextLayout(comandaCurenta);
@@ -939,6 +974,8 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 			btnConditii.setVisibility(View.GONE);
 			spinnerComenzi.setVisibility(View.INVISIBLE);
 			listViewArticoleComanda.setVisibility(View.INVISIBLE);
+			textValMarjaT1.setVisibility(View.INVISIBLE);
+			textProcMarjaT1.setVisibility(View.INVISIBLE);
 		}
 
 	}

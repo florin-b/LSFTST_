@@ -8,11 +8,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
+import listeners.CodPinDialogListener;
 import listeners.HelperSiteListener;
+import listeners.OperatiiMeniuListener;
 import model.HelperUserSite;
 import model.InfoStrings;
+import model.OperatiiMeniu;
 import model.UserInfo;
-import lite.sfa.test.R;
 import utils.UtilsUser;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -24,12 +26,19 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
+import dialogs.PinSalarizareDialog;
 import enums.EnumFiliale;
+import enums.EnumOperatiiMeniu;
 
-public class User extends Activity implements HelperSiteListener {
+public class User extends Activity implements HelperSiteListener, CodPinDialogListener, OperatiiMeniuListener {
 
 	Button buttonUpdate, buttonInstall;
 	String filiala = "", nume = "", cod = "";
@@ -43,6 +52,7 @@ public class User extends Activity implements HelperSiteListener {
 	public SimpleAdapter adapterFiliala, adapterDepart;
 
 	private HelperUserSite helperSite;
+	private RadioButton radioSalPermis, radioSalBlocat;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +89,20 @@ public class User extends Activity implements HelperSiteListener {
 
 		labelFiliala = (TextView) findViewById(R.id.labelFiliala);
 		labelFiliala.setVisibility(View.GONE);
+
+		if (UtilsUser.isAgentOrSD() || UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserSK()) {
+			((LinearLayout) findViewById(R.id.layoutSalarizare)).setVisibility(View.VISIBLE);
+
+			radioSalPermis = (RadioButton) findViewById(R.id.radioSalPermis);
+			radioSalBlocat = (RadioButton) findViewById(R.id.radioSalBlocat);
+
+			if (UserInfo.getInstance().getIsMeniuBlocat())
+				radioSalBlocat.setChecked(true);
+			else
+				radioSalPermis.setChecked(true);
+
+			setListenerRadioSal();
+		}
 
 		// exceptie pentru agenti si sd din BUC
 		if (UserInfo.getInstance().getTipAcces().equals("9") || UserInfo.getInstance().getTipAcces().equals("10")) {
@@ -117,12 +141,11 @@ public class User extends Activity implements HelperSiteListener {
 		}
 
 		// user site
-		if (UserInfo.getInstance().getUserSite().equals("X")) {
+		if (UserInfo.getInstance().getUserSite().equals("X") || UserInfo.getInstance().getTipUserSap().equals("SDIP")) {
 
 			// afisare filiale BUC
 			listFiliala = new ArrayList<HashMap<String, String>>();
-			adapterFiliala = new SimpleAdapter(this, listFiliala, R.layout.simplerowlayout_1, new String[] { "rowText" },
-					new int[] { R.id.textRowName });
+			adapterFiliala = new SimpleAdapter(this, listFiliala, R.layout.simplerowlayout_1, new String[] { "rowText" }, new int[] { R.id.textRowName });
 
 			HashMap<String, String> temp;
 
@@ -143,18 +166,17 @@ public class User extends Activity implements HelperSiteListener {
 		if ((UserInfo.getInstance().getTipAcces().equals("27") || UserInfo.getInstance().getTipAcces().equals("32")
 				|| UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("18") || UserInfo.getInstance()
 				.getTipAcces().equals("39"))
-				&& !UserInfo.getInstance().getUserSite().equals("X"))// KA,
+				&& !UserInfo.getInstance().getUserSite().equals("X") && !UserInfo.getInstance().getTipUserSap().equals("SDIP"))// KA,
 		// cons
 		// sau
-		// sm
+		// sm, sdip
 		{
 
 			// pentru cei din BUC posibilitate selectie filiale BUC
 			if (UserInfo.getInstance().getUnitLog().contains("BU")) {
 				// afisare filiale BUC
 				listFiliala = new ArrayList<HashMap<String, String>>();
-				adapterFiliala = new SimpleAdapter(this, listFiliala, R.layout.simplerowlayout_1, new String[] { "rowText" },
-						new int[] { R.id.textRowName });
+				adapterFiliala = new SimpleAdapter(this, listFiliala, R.layout.simplerowlayout_1, new String[] { "rowText" }, new int[] { R.id.textRowName });
 
 				HashMap<String, String> temp;
 				temp = new HashMap<String, String>();
@@ -215,8 +237,8 @@ public class User extends Activity implements HelperSiteListener {
 		}
 
 		listDepart = new ArrayList<HashMap<String, String>>();
-		adapterDepart = new SimpleAdapter(this, listDepart, R.layout.simplerowlayout_2, new String[] { "rowText", "rowDesc" }, new int[] {
-				R.id.textRowName, R.id.textRowId });
+		adapterDepart = new SimpleAdapter(this, listDepart, R.layout.simplerowlayout_2, new String[] { "rowText", "rowDesc" }, new int[] { R.id.textRowName,
+				R.id.textRowId });
 
 		HashMap<String, String> temp;
 		temp = new HashMap<String, String>();
@@ -440,7 +462,7 @@ public class User extends Activity implements HelperSiteListener {
 		else if (codAcc.equals("45")) {
 			retVal = "Sef magazin wood";
 		}
-		
+
 		else if (codAcc.equals("51")) {
 			retVal = "Sef supraveghere case";
 		}
@@ -451,7 +473,7 @@ public class User extends Activity implements HelperSiteListener {
 
 		else if (codAcc.equals("62")) {
 			retVal = "Operator facturare";
-		}		
+		}
 
 		return retVal;
 	}
@@ -533,6 +555,42 @@ public class User extends Activity implements HelperSiteListener {
 		spinnerFiliala.setSelection(selectedItem);
 	}
 
+	private void setListenerRadioSal() {
+
+		radioSalPermis.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				PinSalarizareDialog pinSalarizare = new PinSalarizareDialog(User.this);
+				pinSalarizare.setPinDialogListener(User.this);
+				pinSalarizare.showDialog();
+
+			}
+		});
+
+		radioSalBlocat.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				blocheazaMeniuSalarizare();
+
+			}
+
+		});
+
+	}
+
+	public void blocheazaMeniuSalarizare() {
+
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("codAgent", UserInfo.getInstance().getCod());
+
+		OperatiiMeniu opMeniu = new OperatiiMeniu(User.this);
+		opMeniu.setOperatiiMeniuListener(User.this);
+		opMeniu.blocheazaMeniu(params);
+
+	}
+
 	public void onResume() {
 
 		super.onResume();
@@ -556,6 +614,27 @@ public class User extends Activity implements HelperSiteListener {
 
 		if (helperSite != null)
 			helperSite.setDepoziteUl((String) result);
+
+	}
+
+	@Override
+	public void codPinComplete(boolean isSuccess) {
+
+	}
+
+	@Override
+	public void pinCompleted(EnumOperatiiMeniu numeOp, boolean isSuccess) {
+		switch (numeOp) {
+		case BLOCHEAZA_MENIU:
+			if (isSuccess) {
+				UserInfo.getInstance().setIsMeniuBlocat(true);
+
+			}
+			break;
+		default:
+			break;
+
+		}
 
 	}
 

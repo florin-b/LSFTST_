@@ -2,7 +2,9 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import listeners.AsyncTaskListener;
 import listeners.OperatiiVenitListener;
@@ -13,9 +15,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.widget.Toast;
 import beans.VenitAG;
 import beans.VenitTCF;
 import beans.VenitTPR;
+import beans.VenituriNTCF;
 import enums.EnumOperatiiVenit;
 
 public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
@@ -29,11 +33,18 @@ public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
 		this.context = context;
 	}
 
-	
 	public void getVenitTPR_TCF(HashMap<String, String> params) {
 		numeComanda = EnumOperatiiVenit.GET_VENIT_AG;
 		this.params = params;
 		performOperation();
+	}
+
+	@Override
+	public void getVenitNTCF(HashMap<String, String> params) {
+		numeComanda = EnumOperatiiVenit.GET_VENIT_NTCF;
+		this.params = params;
+		performOperation();
+
 	}
 
 	private void performOperation() {
@@ -45,13 +56,11 @@ public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
 		this.listener = listener;
 	}
 
-	
 	public void onTaskComplete(String methodName, Object result) {
 		if (listener != null)
 			listener.operatiiVenitComplete(numeComanda, result);
 	}
 
-	
 	public VenitAG getVenit(Object venitData) {
 
 		VenitAG venitAG = new VenitAG();
@@ -62,11 +71,10 @@ public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
 			JSONArray arrayTcf = new JSONArray(jsonObject.getString("venitTcf"));
 
 			List<VenitTCF> listTCF = new ArrayList<VenitTCF>();
-			
 
 			for (int i = 0; i < arrayTcf.length(); i++) {
 				JSONObject object = arrayTcf.getJSONObject(i);
-				
+
 				VenitTCF venitTCF = new VenitTCF();
 				venitTCF.setVenitGrInc(object.getString("venitGrInc"));
 				venitTCF.setTargetPropus(object.getString("targetPropus"));
@@ -79,7 +87,6 @@ public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
 			JSONArray arrayTpr = new JSONArray(jsonObject.getString("venitTpr"));
 
 			List<VenitTPR> listTPR = new ArrayList<VenitTPR>();
-			
 
 			for (int i = 0; i < arrayTpr.length(); i++) {
 				JSONObject object = arrayTpr.getJSONObject(i);
@@ -100,8 +107,7 @@ public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
 				listTPR.add(venitTPR);
 
 			}
-			
-			
+
 			venitAG.setVenitTcf(listTCF);
 			venitAG.setVenitTpr(listTPR);
 
@@ -110,6 +116,74 @@ public class CalculVenitImpl implements CalculVenit, AsyncTaskListener {
 		}
 
 		return venitAG;
+	}
+
+	public VenituriNTCF deserializeDateNTCF(Object dateNTCF) {
+
+		VenituriNTCF venituriNTCF = new VenituriNTCF();
+
+		try {
+
+			JSONObject jsonObject = new JSONObject((String) dateNTCF);
+
+			JSONObject clientFactAnAnteriorObject = jsonObject.getJSONObject("clientFactAnAnterior");
+			HashMap<String, Object> clientFactAnAnterior = (HashMap<String, Object>) toMap(clientFactAnAnteriorObject);
+			venituriNTCF.setClientFactAnAnterior(clientFactAnAnterior);
+
+			JSONObject targetAnCurentObject = jsonObject.getJSONObject("targetAnCurent");
+			HashMap<String, Object> targetAnCurent = (HashMap<String, Object>) toMap(targetAnCurentObject);
+			venituriNTCF.setTargetAnCurent(targetAnCurent);
+
+			JSONObject clientFactAnCurentObject = jsonObject.getJSONObject("clientFactAnCurent");
+			HashMap<String, Object> clientFactAnCurent = (HashMap<String, Object>) toMap(clientFactAnCurentObject);
+			venituriNTCF.setClientFactAnCurent(clientFactAnCurent);
+
+			JSONObject coefAfectareObject = jsonObject.getJSONObject("coefAfectare");
+			HashMap<String, Object> coefAfectare = (HashMap<String, Object>) toMap(coefAfectareObject);
+			venituriNTCF.setCoefAfectare(coefAfectare);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return venituriNTCF;
+
+	}
+
+	public static Map<String, Object> toMap(JSONObject object) throws JSONException {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		Iterator<String> keysItr = object.keys();
+		while (keysItr.hasNext()) {
+			String key = keysItr.next();
+			Object value = object.get(key);
+
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			}
+
+			else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			map.put(key, value);
+		}
+		return map;
+	}
+
+	public static List<Object> toList(JSONArray array) throws JSONException {
+		List<Object> list = new ArrayList<Object>();
+		for (int i = 0; i < array.length(); i++) {
+			Object value = array.get(i);
+			if (value instanceof JSONArray) {
+				value = toList((JSONArray) value);
+			}
+
+			else if (value instanceof JSONObject) {
+				value = toMap((JSONObject) value);
+			}
+			list.add(value);
+		}
+		return list;
 	}
 
 }

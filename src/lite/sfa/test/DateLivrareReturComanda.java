@@ -10,7 +10,6 @@ import java.util.Locale;
 
 import listeners.MapListener;
 import model.ClientReturListener;
-import lite.sfa.test.R;
 import utils.MapUtils;
 import utils.UtilsGeneral;
 import android.app.Activity;
@@ -21,6 +20,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,10 +28,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
+
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -56,21 +58,22 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 	private EditText textOras, textStrada, textPersoana, textTelefon, textObservatii;
 	public static String dataRetur, tipTransport, motivRetur, adresaCodJudet = "", adresaOras = "", adresaStrada = "", numePersContact = "",
 			telPersContact = "", adresaCodAdresa = "", observatii = "";
-	public static boolean transBack;
+	public static boolean transBack = true;
 	private String[] arrayPersoane, arrayTelefoane;
 	private LinearLayout layoutTranspBack;
-	private CheckBox checkTranspBack;
 
-	String[] judete = { "ALBA", "ARAD", "ARGES", "BACAU", "BIHOR", "BISTRITA-NASAUD", "BOTOSANI", "BRAILA", "BRASOV", "BUCURESTI", "BUZAU", "CALARASI",
-			"CARAS-SEVERIN", "CLUJ", "CONSTANTA", "COVASNA", "DAMBOVITA", "DOLJ", "GALATI", "GIURGIU", "GORJ", "HARGHITA", "HUNEDOARA", "IALOMITA", "IASI",
-			"ILFOV", "MARAMURES", "MEHEDINTI", "MURES", "NEAMT", "OLT", "PRAHOVA", "SALAJ", "SATU-MARE", "SIBIU", "SUCEAVA", "TELEORMAN", "TIMIS", "TULCEA",
-			"VALCEA", "VASLUI", "VRANCEA" };
+	String[] judete = { "ALBA", "ARAD", "ARGES", "BACAU", "BIHOR", "BISTRITA-NASAUD", "BOTOSANI", "BRAILA", "BRASOV", "BUCURESTI", "BUZAU",
+			"CALARASI", "CARAS-SEVERIN", "CLUJ", "CONSTANTA", "COVASNA", "DAMBOVITA", "DOLJ", "GALATI", "GIURGIU", "GORJ", "HARGHITA", "HUNEDOARA",
+			"IALOMITA", "IASI", "ILFOV", "MARAMURES", "MEHEDINTI", "MURES", "NEAMT", "OLT", "PRAHOVA", "SALAJ", "SATU-MARE", "SIBIU", "SUCEAVA",
+			"TELEORMAN", "TIMIS", "TULCEA", "VALCEA", "VASLUI", "VRANCEA" };
 
-	String[] codJudete = { "01", "02", "03", "04", "05", "06", "07", "09", "08", "40", "10", "51", "11", "12", "13", "14", "15", "16", "17", "52", "18", "19",
-			"20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "31", "30", "32", "33", "34", "35", "36", "38", "37", "39" };
+	String[] codJudete = { "01", "02", "03", "04", "05", "06", "07", "09", "08", "40", "10", "51", "11", "12", "13", "14", "15", "16", "17", "52",
+			"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "31", "30", "32", "33", "34", "35", "36", "38", "37", "39" };
 
 	public static boolean isAltaAdresa = false;
 	private Button btnPozitieAdresa;
+
+	private RadioGroup radioGroupTranspRetur;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -82,6 +85,7 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 
 		spinnerTransport = (Spinner) v.findViewById(R.id.spinnerTranspRetur);
 		populateSpinnerTransport();
+		spinnerTransport.setSelection(1);
 		setListenerSpinnerTransport();
 
 		spinnerMotivRetur = (Spinner) v.findViewById(R.id.spinnerMotivRetur);
@@ -95,9 +99,6 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 
 		layoutTranspBack = (LinearLayout) v.findViewById(R.id.layoutTranspBack);
 		layoutTranspBack.setVisibility(View.GONE);
-
-		checkTranspBack = (CheckBox) v.findViewById(R.id.checkTranspBack);
-		setListenerCheckBack();
 
 		spinnerJudet = (Spinner) v.findViewById(R.id.spinnerJudet);
 		setSpinnerJudetListener();
@@ -121,7 +122,35 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 		btnPozitieAdresa = (Button) v.findViewById(R.id.btnPozitieAdresa);
 		setListnerBtnPozitieAdresa();
 
+		radioGroupTranspRetur = (RadioGroup) v.findViewById(R.id.radioTranspRetur);
+		setListenerRadioTransp();
+
 		return v;
+
+	}
+
+	private void setListenerRadioTransp() {
+
+		radioGroupTranspRetur.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				switch (checkedId) {
+
+				case R.id.radioPropriu:
+					transBack = true;
+					break;
+				case R.id.radioAlta:
+					transBack = false;
+					break;
+
+				default:
+					break;
+
+				}
+
+			}
+		});
 
 	}
 
@@ -138,7 +167,6 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 					tipTransport = UtilsGeneral.getTipTransport(spinnerTransport.getSelectedItem().toString());
 					if (tipTransport.contains("TRAP")) {
 						layoutTranspBack.setVisibility(View.VISIBLE);
-						checkTranspBack.setChecked(false);
 					} else
 						layoutTranspBack.setVisibility(View.GONE);
 				} else {
@@ -148,17 +176,6 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 			}
 
 			public void onNothingSelected(AdapterView<?> arg0) {
-
-			}
-		});
-	}
-
-	private void setListenerCheckBack() {
-		checkTranspBack.setOnClickListener(new View.OnClickListener() {
-
-			
-			public void onClick(View v) {
-				transBack = checkTranspBack.isChecked();
 
 			}
 		});
@@ -299,8 +316,8 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 	private void fillSpinnerJudete() {
 
 		ArrayList<HashMap<String, String>> listJudete = new ArrayList<HashMap<String, String>>();
-		SimpleAdapter adapterJudete = new SimpleAdapter(getActivity(), listJudete, R.layout.rowlayoutjudete, new String[] { "numeJudet", "codJudet" },
-				new int[] { R.id.textNumeJudet, R.id.textCodJudet });
+		SimpleAdapter adapterJudete = new SimpleAdapter(getActivity(), listJudete, R.layout.rowlayoutjudete,
+				new String[] { "numeJudet", "codJudet" }, new int[] { R.id.textNumeJudet, R.id.textCodJudet });
 
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("numeJudet", "Selectat judetul");
@@ -506,7 +523,6 @@ public class DateLivrareReturComanda extends Fragment implements OnItemClickList
 		return false;
 	}
 
-	
 	public void addressSelected(LatLng coord, android.location.Address address) {
 		setAdresaLivrare(MapUtils.getAddress(address));
 

@@ -311,6 +311,12 @@ public class UtilsGeneral {
 		return newDate;
 	}
 
+	public static String[] getStareMeniu(String stareMeniu)
+	{
+		return stareMeniu.replace("[", "").replace("]", "").split(",");
+	}
+	
+	
 	public static String getTipTransport(String tipTransport) {
 		String transportRet = "";
 

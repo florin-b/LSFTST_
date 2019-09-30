@@ -143,7 +143,8 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 		// sd, directori
 		{
 			// se ofera acces la unit.log. BV90
-			if (UserInfo.getInstance().getCodDepart().equals("02") || UserInfo.getInstance().getCodDepart().equals("05")) {
+			if (UserInfo.getInstance().getCodDepart().equals("02") || UserInfo.getInstance().getCodDepart().equals("05")
+					|| UserInfo.getInstance().getCodDepart().equals("01")) {
 				populateFilialeAgenti();
 				spinnerFiliale.setVisibility(View.VISIBLE);
 

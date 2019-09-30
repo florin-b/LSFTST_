@@ -34,6 +34,8 @@ public class UserInfo {
 	private String ftpIP = "";
 	private String initDivizie = "";
 	private String codSuperUser = "";
+	private boolean isMeniuBlocat = false;
+	private String codPinMeniu = "";
 
 	private static UserInfo instance = new UserInfo();
 
@@ -246,13 +248,29 @@ public class UserInfo {
 		this.codSuperUser = codSuperUser;
 	}
 
+	public boolean getIsMeniuBlocat() {
+		return isMeniuBlocat;
+	}
+
+	public void setIsMeniuBlocat(boolean isMeniuBlocat) {
+		this.isMeniuBlocat = isMeniuBlocat;
+	}
+
+	public String getCodPinMeniu() {
+		return codPinMeniu;
+	}
+
+	public void setCodPinMeniu(String codPinMeniu) {
+		this.codPinMeniu = codPinMeniu;
+	}
+
 	@Override
 	public String toString() {
-		return "UserInfo [nume=" + nume + ", filiala=" + filiala + ", cod=" + cod + ", numeDepart=" + numeDepart + ", codDepart=" + codDepart
-				+ ", unitLog=" + unitLog + ", initUnitLog=" + initUnitLog + ", tipAcces=" + tipAcces + ", parentScreen=" + parentScreen
-				+ ", filialeDV=" + filialeDV + ", altaFiliala=" + altaFiliala + ", tipUser=" + tipUser + ", departExtra=" + departExtra
-				+ ", tipUserSap=" + tipUserSap + ", extraFiliale=" + extraFiliale + ", comisionCV=" + comisionCV + ", coefCorectie=" + coefCorectie
-				+ ", userSite=" + userSite + ", userWood=" + userWood + ", filHome=" + filHome + "]";
+		return "UserInfo [nume=" + nume + ", filiala=" + filiala + ", cod=" + cod + ", numeDepart=" + numeDepart + ", codDepart=" + codDepart + ", unitLog="
+				+ unitLog + ", initUnitLog=" + initUnitLog + ", tipAcces=" + tipAcces + ", parentScreen=" + parentScreen + ", filialeDV=" + filialeDV
+				+ ", altaFiliala=" + altaFiliala + ", tipUser=" + tipUser + ", departExtra=" + departExtra + ", tipUserSap=" + tipUserSap + ", extraFiliale="
+				+ extraFiliale + ", comisionCV=" + comisionCV + ", coefCorectie=" + coefCorectie + ", userSite=" + userSite + ", userWood=" + userWood
+				+ ", filHome=" + filHome + "]";
 	}
 
 }

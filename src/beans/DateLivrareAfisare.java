@@ -51,6 +51,16 @@ public class DateLivrareAfisare {
 	private String programLivrare = "0";
 	private String livrareSambata = "";
 	private String blocScara = "";
+	private String codFilialaCLP = "";
+	private Delegat delegat;
+	private double marjaT1 = 0;
+	private double procentT1 = 0;
+	private double mCantCmd = 0;
+	private double mCant30 = 0;
+	private double marjaBrutaPalVal = 0;
+	private double marjaBrutaCantVal = 0;
+	private double marjaBrutaPalProc = 0;
+	private double marjaBrutaCantProc = 0;
 
 	public DateLivrareAfisare() {
 
@@ -323,11 +333,10 @@ public class DateLivrareAfisare {
 	public String toString() {
 		return "DateLivrareAfisare [codJudet=" + codJudet + ", numeJudet=" + numeJudet + ", Oras=" + Oras + ", Strada=" + Strada + ", persContact="
 				+ persContact + ", nrTel=" + nrTel + ", redSeparat=" + redSeparat + ", Cantar=" + Cantar + ", tipPlata=" + tipPlata + ", Transport="
-				+ Transport + ", dateLivrare=" + dateLivrare + ", termenPlata=" + termenPlata + ", obsLivrare=" + obsLivrare + ", dataLivrare="
-				+ dataLivrare + ", adrLivrNoua=" + adrLivrNoua + ", tipDocInsotitor=" + tipDocInsotitor + ", obsPlata=" + obsPlata + ", addrNumber="
-				+ addrNumber + ", valoareIncasare=" + valoareIncasare + ", isValIncModif=" + isValIncModif + ", mail=" + mail + ", totalComanda="
-				+ totalComanda + ", unitLog=" + unitLog + ", codAgent=" + codAgent + ", factRed=" + factRed + ", tipPersClient=" + tipPersClient
-				+ "]";
+				+ Transport + ", dateLivrare=" + dateLivrare + ", termenPlata=" + termenPlata + ", obsLivrare=" + obsLivrare + ", dataLivrare=" + dataLivrare
+				+ ", adrLivrNoua=" + adrLivrNoua + ", tipDocInsotitor=" + tipDocInsotitor + ", obsPlata=" + obsPlata + ", addrNumber=" + addrNumber
+				+ ", valoareIncasare=" + valoareIncasare + ", isValIncModif=" + isValIncModif + ", mail=" + mail + ", totalComanda=" + totalComanda
+				+ ", unitLog=" + unitLog + ", codAgent=" + codAgent + ", factRed=" + factRed + ", tipPersClient=" + tipPersClient + "]";
 	}
 
 	public String getIdObiectiv() {
@@ -441,6 +450,85 @@ public class DateLivrareAfisare {
 	public void setBlocScara(String blocScara) {
 		this.blocScara = blocScara;
 	}
-		
-	
+
+	public String getCodFilialaCLP() {
+		return codFilialaCLP;
+	}
+
+	public void setCodFilialaCLP(String codFilialaCLP) {
+		this.codFilialaCLP = codFilialaCLP;
+	}
+
+	public Delegat getDelegat() {
+		return delegat;
+	}
+
+	public void setDelegat(Delegat delegat) {
+		this.delegat = delegat;
+	}
+
+	public double getMarjaT1() {
+		return marjaT1;
+	}
+
+	public void setMarjaT1(double marjaT1) {
+		this.marjaT1 = marjaT1;
+	}
+
+	public double getProcentT1() {
+		return procentT1;
+	}
+
+	public void setProcentT1(double procentT1) {
+		this.procentT1 = procentT1;
+	}
+
+	public double getmCantCmd() {
+		return mCantCmd;
+	}
+
+	public void setmCantCmd(double mCantCmd) {
+		this.mCantCmd = mCantCmd;
+	}
+
+	public double getmCant30() {
+		return mCant30;
+	}
+
+	public void setmCant30(double mCant30) {
+		this.mCant30 = mCant30;
+	}
+
+	public double getMarjaBrutaPalVal() {
+		return marjaBrutaPalVal;
+	}
+
+	public void setMarjaBrutaPalVal(double marjaBrutaPalVal) {
+		this.marjaBrutaPalVal = marjaBrutaPalVal;
+	}
+
+	public double getMarjaBrutaCantVal() {
+		return marjaBrutaCantVal;
+	}
+
+	public void setMarjaBrutaCantVal(double marjaBrutaCantVal) {
+		this.marjaBrutaCantVal = marjaBrutaCantVal;
+	}
+
+	public double getMarjaBrutaPalProc() {
+		return marjaBrutaPalProc;
+	}
+
+	public void setMarjaBrutaPalProc(double marjaBrutaPalProc) {
+		this.marjaBrutaPalProc = marjaBrutaPalProc;
+	}
+
+	public double getMarjaBrutaCantProc() {
+		return marjaBrutaCantProc;
+	}
+
+	public void setMarjaBrutaCantProc(double marjaBrutaCantProc) {
+		this.marjaBrutaCantProc = marjaBrutaCantProc;
+	}
+
 }

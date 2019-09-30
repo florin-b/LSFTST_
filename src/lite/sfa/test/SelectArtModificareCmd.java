@@ -15,11 +15,11 @@ import java.util.Locale;
 import listeners.OperatiiArticolListener;
 import model.ArticolComandaGed;
 import model.Constants;
+import model.DateLivrare;
 import model.ListaArticoleModificareComanda;
 import model.OperatiiArticol;
 import model.OperatiiArticolFactory;
 import model.UserInfo;
-import lite.sfa.test.R;
 import utils.DepartamentAgent;
 import utils.UtilsFormatting;
 import utils.UtilsGeneral;
@@ -296,11 +296,16 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 		// pentru ag si sd de la 02 si 05 se ofera accesul la BV90
 		if (UserInfo.getInstance().getTipAcces().equals("9") || UserInfo.getInstance().getTipAcces().equals("10")) {
 			if (UserInfo.getInstance().getCodDepart().equals("02") || UserInfo.getInstance().getCodDepart().equals("05")) {
-				MenuItem mnu1 = menu.add(0, 0, 0, "Filiala");
-				{
 
-					mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+				if (DateLivrare.getInstance().getCodFilialaCLP().length() == 4)
+					return;
+				else {
+					MenuItem mnu1 = menu.add(0, 0, 0, "Filiala");
+					{
 
+						mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+					}
 				}
 			}
 		}
@@ -939,8 +944,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 						if (ModificareComanda.isComandaDistrib) {
 							if ((finalPrice / valMultiplu) < cmpArt) {
 
-								Toast.makeText(getApplicationContext(), "Procentul de reducere este mai mare decat cel acceptat.", Toast.LENGTH_LONG)
-										.show();
+								Toast.makeText(getApplicationContext(), "Procentul de reducere este mai mare decat cel acceptat.", Toast.LENGTH_LONG).show();
 
 								subCmp = "1";
 								return;
@@ -1002,14 +1006,14 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 																								// e
 																								// adaugat
 																								// deja
-								ModificareComanda.articoleComanda += numeArticol + "#" + codArticol + "#" + cantArticol + "#"
-										+ String.valueOf(finalPrice) + "#" + localUnitMas + "#" + globalDepozSel + "#" + nf.format(procRedFin) + "#"
-										+ tipAlert + "#" + codPromo + "#" + nf.format(procRedFact) + "#" + nf.format(procDiscClient) + "#"
-										+ nf.format(procentAprob) + "#" + valMultiplu + "#" + String.valueOf(valArticol) + "#" + infoArticol + "#"
-										+ Umb + "#" + cantUmb + "#" + alteValori + "#" + globalCodDepartSelectetItem + "#" + tipArticol + "@@";
+								ModificareComanda.articoleComanda += numeArticol + "#" + codArticol + "#" + cantArticol + "#" + String.valueOf(finalPrice)
+										+ "#" + localUnitMas + "#" + globalDepozSel + "#" + nf.format(procRedFin) + "#" + tipAlert + "#" + codPromo + "#"
+										+ nf.format(procRedFact) + "#" + nf.format(procDiscClient) + "#" + nf.format(procentAprob) + "#" + valMultiplu + "#"
+										+ String.valueOf(valArticol) + "#" + infoArticol + "#" + Umb + "#" + cantUmb + "#" + alteValori + "#"
+										+ globalCodDepartSelectetItem + "#" + tipArticol + "@@";
 						} else {
-							Toast.makeText(getApplicationContext(), "Comanda contine depozite diferite, articolul nu a fost adaugat! ",
-									Toast.LENGTH_LONG).show();
+							Toast.makeText(getApplicationContext(), "Comanda contine depozite diferite, articolul nu a fost adaugat! ", Toast.LENGTH_LONG)
+									.show();
 						}
 
 						textNumeArticol.setText("");
@@ -1317,9 +1321,6 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 
 							}
 
-							// artPromoText = getArtName(tokenPret[4]) + " " +
-							// tokenPret[5];
-
 							textPromo.setText("Articol cu promotie");
 
 						}
@@ -1370,8 +1371,8 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 				String[] arrayPret = arrayIstoric[0].split("@");
 
 				TextView textIstoric1 = (TextView) findViewById(R.id.txtIstoricPret1);
-				textIstoric1.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " / "
-						+ arrayPret[1] + " " + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
+				textIstoric1.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " / " + arrayPret[1] + " "
+						+ arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
 
 			}
 
@@ -1382,8 +1383,8 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 				String[] arrayPret = arrayIstoric[1].split("@");
 
 				TextView textIstoric2 = (TextView) findViewById(R.id.txtIstoricPret2);
-				textIstoric2.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " / "
-						+ arrayPret[1] + " " + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
+				textIstoric2.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " / " + arrayPret[1] + " "
+						+ arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
 
 			}
 
@@ -1394,8 +1395,8 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 				String[] arrayPret = arrayIstoric[2].split("@");
 
 				TextView textIstoric3 = (TextView) findViewById(R.id.txtIstoricPret3);
-				textIstoric3.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " / "
-						+ arrayPret[1] + " " + arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
+				textIstoric3.setText(df.format(Double.valueOf(arrayPret[0])) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " / " + arrayPret[1] + " "
+						+ arrayPret[2] + " - " + UtilsFormatting.getMonthNameFromDate(arrayPret[3], 2));
 
 			}
 
@@ -1407,8 +1408,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 
 		if (artPromo.toUpperCase(Locale.getDefault()).equals("X"))
 			return true;
-		else if (!ModificareComanda.isComandaDistrib
-				&& !(ModificareComanda.filialaAlternativaM.toUpperCase().contains("BV9") && globalDepozSel.equals("MAV1")))
+		else if (!ModificareComanda.isComandaDistrib && !(ModificareComanda.filialaAlternativaM.toUpperCase().contains("BV9") && globalDepozSel.equals("MAV1")))
 			return true;
 
 		return false;
@@ -1502,10 +1502,14 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 
 		String localFiliala = "";
 
-		if (ModificareComanda.filialaAlternativaM.equals("BV90") && globalDepozSel.equals("MAV1"))
-			localFiliala = "BV92";
-		else
-			localFiliala = ModificareComanda.filialaAlternativaM;
+		if (DateLivrare.getInstance().getCodFilialaCLP().length() == 4)
+			localFiliala = DateLivrare.getInstance().getCodFilialaCLP();
+		else {
+			if (ModificareComanda.filialaAlternativaM.equals("BV90") && globalDepozSel.equals("MAV1"))
+				localFiliala = "BV92";
+			else
+				localFiliala = ModificareComanda.filialaAlternativaM;
+		}
 
 		HashMap<String, String> params = new HashMap<String, String>();
 

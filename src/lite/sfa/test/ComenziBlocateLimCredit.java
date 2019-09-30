@@ -177,16 +177,19 @@ public class ComenziBlocateLimCredit extends Activity implements ComenziDAOListe
 			if (UserInfo.getInstance().getTipAcces().equals("9"))
 				tipUser = "AV";
 
-			if (UserInfo.getInstance().getTipAcces().equals("10"))
+			else if (UserInfo.getInstance().getTipAcces().equals("10"))
 				tipUser = "SD";
 
-			if (UserInfo.getInstance().getTipAcces().equals("12") || UserInfo.getInstance().getTipAcces().equals("14"))
+			else if (UserInfo.getInstance().getTipAcces().equals("12") || UserInfo.getInstance().getTipAcces().equals("14"))
 				tipUser = "DV";
 
-			if (UserInfo.getInstance().getTipAcces().equals("27"))
+			else if (UserInfo.getInstance().getTipAcces().equals("27"))
 				tipUser = "KA";
 
-			if (UserInfo.getInstance().getTipAcces().equals("35"))
+			else if (UserInfo.getInstance().getTipAcces().equals("32") || UserInfo.getInstance().getTipUserSap().equals("SDKA"))
+				tipUser = "SK";			
+			
+			else if (UserInfo.getInstance().getTipAcces().equals("35"))
 				tipUser = "DK";
 
 			HashMap<String, String> params = new HashMap<String, String>();

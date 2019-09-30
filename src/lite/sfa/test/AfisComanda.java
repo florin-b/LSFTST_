@@ -182,8 +182,8 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 		spinnerListener.setListener(this);
 
-		adapterAgenti = new SimpleAdapter(this, listAgenti, R.layout.rowlayoutagenti, new String[] { "numeAgent", "codAgent" }, new int[] {
-				R.id.textNumeAgent, R.id.textCodAgent });
+		adapterAgenti = new SimpleAdapter(this, listAgenti, R.layout.rowlayoutagenti, new String[] { "numeAgent", "codAgent" }, new int[] { R.id.textNumeAgent,
+				R.id.textCodAgent });
 
 		listViewArticole = (ListView) findViewById(R.id.listArt);
 
@@ -245,7 +245,7 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 		}
 
-		if (isAgent()  || UtilsUser.isCGED() || UtilsUser.isOIVPD()) {
+		if (isAgent() || UtilsUser.isCGED() || UtilsUser.isOIVPD()) {
 			selectedAgent = UserInfo.getInstance().getCod();
 			performGetComenzi();
 
@@ -380,8 +380,15 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 		// SDCVA
 		if (UserInfo.getInstance().getTipAcces().equals("39")) {
+
 			selectedCodDepart = "11";
-			tipAgent = "SDCVA";
+
+			if (UserInfo.getInstance().getTipUserSap().equals("SDIP")) {
+				tipAgent = "SDIP";
+			} else {
+
+				tipAgent = "SDCVA";
+			}
 		}
 
 		agent.getListaAgenti(selectedFiliala, selectedCodDepart, this, true, tipAgent);
@@ -405,8 +412,8 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 		spinnerTipUser.setVisibility(View.VISIBLE);
 		ArrayList<HashMap<String, String>> listTipUsers = new ArrayList<HashMap<String, String>>();
 
-		SimpleAdapter adapterTypes = new SimpleAdapter(this, listTipUsers, R.layout.generic_rowlayout, new String[] { "stringName", "stringId" },
-				new int[] { R.id.textName, R.id.textId });
+		SimpleAdapter adapterTypes = new SimpleAdapter(this, listTipUsers, R.layout.generic_rowlayout, new String[] { "stringName", "stringId" }, new int[] {
+				R.id.textName, R.id.textId });
 
 		HashMap<String, String> temp;
 
@@ -507,8 +514,8 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 		spinnerAgentiAfisCmd.setVisibility(View.VISIBLE);
 
-		adapterAgenti = new SimpleAdapter(this, listAgenti, R.layout.rowlayoutagenti, new String[] { "numeAgent", "codAgent" }, new int[] {
-				R.id.textNumeAgent, R.id.textCodAgent });
+		adapterAgenti = new SimpleAdapter(this, listAgenti, R.layout.rowlayoutagenti, new String[] { "numeAgent", "codAgent" }, new int[] { R.id.textNumeAgent,
+				R.id.textCodAgent });
 		spinnerAgentiAfisCmd.setAdapter(adapterAgenti);
 
 		if (listAgenti.size() > 0) {
@@ -630,14 +637,13 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 	}
 
-	private void performArtCmdCustodie()
-	{
+	private void performArtCmdCustodie() {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("nrCmd", selectedCmd);
 
 		comenzi.getArticoleCustodie(params);
-	}	
-	
+	}
+
 	boolean isCVorSM() {
 		return UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("18");
 	}

@@ -5,7 +5,9 @@
 package model;
 
 import beans.DateLivrareAfisare;
+import beans.Delegat;
 import beans.FurnizorComanda;
+import beans.ObiectivConsilier;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -68,7 +70,7 @@ public class DateLivrare {
 	private EnumZona zonaBucuresti;
 	private String codMeserias = "";
 	private boolean isClientFurnizor;
-	
+
 	private boolean isFactPaletSeparat = false;
 	private FurnizorComanda furnizorComanda;
 	private TipCmdDistrib tipComandaDistrib = TipCmdDistrib.COMANDA_VANZARE;
@@ -77,6 +79,9 @@ public class DateLivrare {
 	private String programLivrare = "0";
 	private String livrareSambata = "";
 	private String blocScara = "";
+	private String codFilialaCLP = "";
+	private Delegat delegat;
+	private ObiectivConsilier obiectivConsilier;
 
 	private DateLivrareAfisare dateLivrareAfisare;
 
@@ -134,6 +139,8 @@ public class DateLivrare {
 		this.programLivrare = dateLivrareAfisare.getProgramLivrare();
 		this.livrareSambata = dateLivrareAfisare.getLivrareSambata();
 		this.blocScara = dateLivrareAfisare.getBlocScara();
+		this.codFilialaCLP = dateLivrareAfisare.getCodFilialaCLP();
+		this.delegat = dateLivrareAfisare.getDelegat();
 	}
 
 	public boolean isClientRaft() {
@@ -508,7 +515,7 @@ public class DateLivrare {
 	public void setClientFurnizor(boolean isClientFurnizor) {
 		this.isClientFurnizor = isClientFurnizor;
 	}
-	
+
 	public boolean isFactPaletSeparat() {
 		return isFactPaletSeparat;
 	}
@@ -540,7 +547,7 @@ public class DateLivrare {
 	public void setCamionDescoperit(boolean isCamionDescoperit) {
 		this.isCamionDescoperit = isCamionDescoperit;
 	}
-	
+
 	public String getDiviziiClient() {
 		return diviziiClient;
 	}
@@ -548,23 +555,23 @@ public class DateLivrare {
 	public void setDiviziiClient(String diviziiClient) {
 		this.diviziiClient = diviziiClient;
 	}
-	
+
 	public String getProgramLivrare() {
 		return programLivrare;
 	}
 
 	public void setProgramLivrare(String programLivrare) {
 		this.programLivrare = programLivrare;
-	}	
-	
+	}
+
 	public String getLivrareSambata() {
 		return livrareSambata;
 	}
 
 	public void setLivrareSambata(String livrareSambata) {
 		this.livrareSambata = livrareSambata;
-	}	
-	
+	}
+
 	public String getBlocScara() {
 		return blocScara;
 	}
@@ -572,8 +579,31 @@ public class DateLivrare {
 	public void setBlocScara(String blocScara) {
 		this.blocScara = blocScara;
 	}
-	
-	
+
+	public String getCodFilialaCLP() {
+		return codFilialaCLP;
+	}
+
+	public void setCodFilialaCLP(String codFilialaCLP) {
+		this.codFilialaCLP = codFilialaCLP;
+	}
+
+	public Delegat getDelegat() {
+		return delegat;
+	}
+
+	public void setDelegat(Delegat delegat) {
+		this.delegat = delegat;
+	}
+
+	public ObiectivConsilier getObiectivConsilier() {
+		return obiectivConsilier;
+	}
+
+	public void setObiectivConsilier(ObiectivConsilier obiectivConsilier) {
+		this.obiectivConsilier = obiectivConsilier;
+	}
+
 	public void resetAll() {
 		codJudet = "";
 		numeJudet = "";
@@ -622,6 +652,9 @@ public class DateLivrare {
 		programLivrare = "0";
 		livrareSambata = "";
 		blocScara = "";
+		codFilialaCLP = "";
+		delegat = new Delegat();
+		obiectivConsilier = null;
 
 	}
 

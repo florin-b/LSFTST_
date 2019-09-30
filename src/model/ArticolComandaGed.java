@@ -109,8 +109,6 @@ public class ArticolComandaGed extends ArticolComanda implements Comparable<Arti
 		this.pretUnitarGed = pretUnitarGed;
 	}
 
-	
-
 	public int compareTo(ArticolComanda compareArtCom) {
 
 		String comparaDepart = (compareArtCom).getDepart();

@@ -29,6 +29,7 @@ import listeners.ComenziDAOListener;
 import listeners.CostMacaraListener;
 import listeners.OperatiiArticolListener;
 import listeners.PaletAlertListener;
+import listeners.TipCmdGedListener;
 import listeners.ValoareNegociataDialogListener;
 import model.AlgoritmComandaGed;
 import model.ArticolComanda;
@@ -40,7 +41,6 @@ import model.ListaArticoleComandaGed;
 import model.OperatiiArticol;
 import model.OperatiiArticolFactory;
 import model.UserInfo;
-import lite.sfa.test.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +52,6 @@ import utils.UtilsComenziGed;
 import utils.UtilsUser;
 import adapters.ArticoleGedAdapter;
 import adapters.ArticolePretTransport;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -83,6 +82,7 @@ import android.widget.SlidingDrawer.OnDrawerCloseListener;
 import android.widget.SlidingDrawer.OnDrawerOpenListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import beans.ArticolAmob;
 import beans.ArticolCalculDesc;
 import beans.BeanParametruPretGed;
 import beans.CostDescarcare;
@@ -90,13 +90,16 @@ import beans.PretArticolGed;
 import dialogs.ArtComplDialog;
 import dialogs.CostMacaraDialog;
 import dialogs.PaletAlertDialog;
+import dialogs.TipComandaGedDialog;
 import dialogs.ValoareNegociataDialog;
 import enums.EnumArticoleDAO;
 import enums.EnumComenziDAO;
 import enums.EnumDaNuOpt;
+import enums.TipCmdDistrib;
+import enums.TipCmdGed;
 
 public class CreareComandaGed extends Activity implements AsyncTaskListener, ArtComplDialogListener, Observer, OperatiiArticolListener,
-		ValoareNegociataDialogListener, PaletAlertListener, ComenziDAOListener, CostMacaraListener {
+		ValoareNegociataDialogListener, PaletAlertListener, ComenziDAOListener, CostMacaraListener, TipCmdGedListener {
 
 	Button stocBtn, clientBtn, articoleBtn, livrareBtn, saveCmdBtn, slideButtonCmd, valTranspBtn, debugBtn;
 	String filiala = "", nume = "", cod = "";
@@ -144,6 +147,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	public static double valTransportSAP = 0;
 	public static String codJ = "";
 	public static String adresaLivrare = "";
+	public static List<String> listTermenPlata = new ArrayList<String>();
 
 	private boolean alertSD = false, alertDV = false;
 
@@ -185,6 +189,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	private OperatiiArticol opArticol;
 	private ComenziDAO comandaDAO;
 	private CostDescarcare costDescarcare;
+	public static TipCmdGed tipComandaGed = TipCmdGed.COMANDA_NOUA;
+
+	public static List<ArticolAmob> listArticoleAMOB;
+	private static String idCmdAmob = "-1";
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -299,21 +307,32 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	}
 
+	private void showTipComandaDialog() {
+		TipComandaGedDialog tipCmdDialog = new TipComandaGedDialog(this);
+		tipCmdDialog.setTipCmdGedListener(this);
+		tipCmdDialog.showDialog();
+	}
+
 	private void CreateMenu(Menu menu) {
-		MenuItem mnu1 = menu.add(0, 0, 0, "Client");
+
+		if (UserInfo.getInstance().getTipUserSap().equals("WOOD")) {
+			MenuItem mnu0 = menu.add(0, 0, 0, "Tip");
+			mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		}
+		MenuItem mnu1 = menu.add(0, 1, 1, "Client");
 
 		mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-		MenuItem mnu2 = menu.add(0, 1, 1, "Articole");
+		MenuItem mnu2 = menu.add(0, 2, 2, "Articole");
 
 		mnu2.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-		MenuItem mnu3 = menu.add(0, 2, 2, "Livrare");
+		MenuItem mnu3 = menu.add(0, 3, 3, "Livrare");
 
 		mnu3.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-		if (UtilsUser.isAgentOrSD()) {
-			MenuItem mnu4 = menu.add(0, 3, 3, "Valoare negociata");
+		if (UtilsUser.isAgentOrSD() || UtilsUser.isUserGed() || UtilsUser.isConsWood()) {
+			MenuItem mnu4 = menu.add(0, 4, 4, "Valoare negociata");
 			mnu4.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 		}
 
@@ -332,6 +351,14 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		case 0:
 			if (listArticole == null || listArticole.size() == 0) {
+				showTipComandaDialog();
+			} else {
+				Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele!", Toast.LENGTH_SHORT).show();
+			}
+			return true;
+
+		case 1:
+			if (listArticole == null || listArticole.size() == 0) {
 
 				Intent nextScreen = new Intent(getApplicationContext(), SelectClientCmdGed.class);
 				startActivity(nextScreen);
@@ -339,7 +366,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 				Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele!", Toast.LENGTH_SHORT).show();
 			}
 			break;
-		case 1:
+		case 2:
 
 			if (numeClientVar.length() > 0) {
 
@@ -359,7 +386,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 					}
 
 				Intent nextScreen = new Intent(getApplicationContext(), SelectArtCmdGed.class);
-				nextScreen.putExtra("totalNegociat", isTotalNegociat);
+				nextScreen.putExtra("totalNegociat", String.valueOf(isTotalNegociat));
 				nextScreen.putExtra("codClientVar", codClientVar);
 				nextScreen.putExtra("depozitUnic", depozitUnic);
 				nextScreen.putExtra("tipComanda", tipComanda);
@@ -374,7 +401,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			}
 
 			break;
-		case 2:
+		case 3:
 
 			if (numeClientVar.length() > 0) {
 				Intent nextScreen = new Intent(getApplicationContext(), SelectAdrLivrCmdGed.class);
@@ -388,7 +415,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 			break;
 
-		case 3:
+		case 4:
 			showValNegociatDialogBox();
 			break;
 
@@ -449,20 +476,19 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		} else {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-			builder.setMessage("Datele se vor pierde. Continuati?").setCancelable(false)
-					.setPositiveButton("Da", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
+			builder.setMessage("Datele se vor pierde. Continuati?").setCancelable(false).setPositiveButton("Da", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
 
-							resetAllVars();
-							UserInfo.getInstance().setParentScreen("");
+					resetAllVars();
+					UserInfo.getInstance().setParentScreen("");
 
-							backToMainMenu();
-						}
-					}).setNegativeButton("Nu", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int id) {
-							dialog.cancel();
-						}
-					}).setTitle("Atentie!").setIcon(R.drawable.warning96);
+					backToMainMenu();
+				}
+			}).setNegativeButton("Nu", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int id) {
+					dialog.cancel();
+				}
+			}).setTitle("Atentie!").setIcon(R.drawable.warning96);
 
 			AlertDialog alert = builder.create();
 			alert.show();
@@ -681,6 +707,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 				}
 
+				if (isTotalNegociat) {
+					calculProcentReducere();
+				}
+
 			}
 
 		}
@@ -722,7 +752,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 				menu.add(Menu.NONE, 0, 0, "Sterge");
 				if (!UserInfo.getInstance().getTipAcces().equals("9") && !UserInfo.getInstance().getTipAcces().equals("10")
 						&& !UserInfo.getInstance().getTipUserSap().equals("CONS-GED")) {
-					menu.add(Menu.NONE, 1, 1, "Schimba pret");
+					if (!isTotalNegociat)
+						menu.add(Menu.NONE, 1, 1, "Schimba pret");
 				}
 
 				menu.add(Menu.NONE, 2, 2, "Schimba cantitate");
@@ -737,7 +768,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	public void calculProcente() {
 
-		if (UtilsUser.isAgentOrSD() || UtilsUser.isConsWood() || UtilsComenzi.isComandaInstPublica())
+		if (UtilsUser.isAgentOrSD() || UtilsUser.isConsWood() || UtilsComenzi.isComandaInstPublica() || isTotalNegociat)
 			return;
 
 		adapter.notifyDataSetChanged();
@@ -1099,8 +1130,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 						DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
 						if (dateLivrareInstance.getTipPlata().equals("E") && totalComanda > 5000 && CreareComandaGed.tipClient.equals("PJ")) {
-							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT)
-									.show();
+							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
 							return;
 						}
 
@@ -1170,8 +1200,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		if (DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
-			List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(ListaArticoleComandaGed.getInstance()
-					.getListArticoleComanda());
+			List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(ListaArticoleComandaGed.getInstance().getListArticoleComanda());
 
 			String listArtSer = comandaDAO.serializeArtCalcMacara(artCalcul);
 
@@ -1326,6 +1355,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			params.put("alertSD", String.valueOf(alertSD));
 			params.put("alertDV", String.valueOf(alertDV));
 			params.put("cmdAngajament", String.valueOf(cmdAngajament));
+			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
+			params.put("idCmdAmob", idCmdAmob);
 
 			AsyncTaskWSCall call = new AsyncTaskWSCall(this, "saveNewCmdAndroid", params);
 			call.getCallResults();
@@ -1418,10 +1449,12 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 				myArray.put(obj);
 
-				if ((listArticole.get(i).getNumeArticol() != null && listArticole.get(i).getPonderare() == 1) || UtilsComenzi.isComandaInstPublica()) {
+				if ((listArticole.get(i).getNumeArticol() != null && listArticole.get(i).getPonderare() == 1) || UtilsComenzi.isComandaInstPublica()
+						|| (isTotalNegociat && !UtilsUser.isAgentOrSD() && !UtilsUser.isConsWood())) {
 
 					if (listArticole.get(i).getProcent() > 0) {
 						alertDV = true;
+
 						if (!comandaFinala.getComandaBlocata().equals("21"))
 							comandaFinala.setComandaBlocata("1");
 
@@ -1537,6 +1570,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			obj.put("codAgent", DateLivrare.getInstance().getCodAgent());
 			obj.put("factRed", DateLivrare.getInstance().getFactRed());
 			obj.put("macara", DateLivrare.getInstance().isMasinaMacara() ? "X" : " ");
+			obj.put("idObiectiv", DateLivrare.getInstance().getIdObiectiv());
+			obj.put("isAdresaObiectiv", DateLivrare.getInstance().isAdresaObiectiv());
 			obj.put("coordonateGps", getCoordAdresa());
 			obj.put("tonaj", DateLivrare.getInstance().getTonaj());
 			obj.put("prelucrare", DateLivrare.getInstance().getPrelucrare());
@@ -1548,6 +1583,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			obj.put("isCamionDescoperit", DateLivrare.getInstance().isCamionDescoperit());
 			obj.put("programLivrare", DateLivrare.getInstance().getProgramLivrare());
 			obj.put("livrareSambata", DateLivrare.getInstance().getLivrareSambata());
+			obj.put("filialaCLP", DateLivrare.getInstance().getCodFilialaCLP());
 
 		} catch (Exception ex) {
 			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
@@ -1692,6 +1728,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		listViewArticoleComanda.setEnabled(true);
 
+		tipComandaGed = TipCmdGed.COMANDA_NOUA;
+		listArticoleAMOB = null;
+
 		// reset variabile
 		resetAllVars();
 
@@ -1725,6 +1764,11 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		codJ = "";
 		adresaLivrare = "";
 		valNegociat = 0;
+
+		isTotalNegociat = false;
+		idCmdAmob = "-1";
+		listTermenPlata = new ArrayList<String>();
+		tipComandaGed = TipCmdGed.COMANDA_NOUA;
 
 		DateLivrare.getInstance().resetAll();
 
@@ -1869,8 +1913,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 						valTransport = Double.parseDouble(textValTransp.getText().toString().trim());
 
 						if (valTransport < valTransportSAP) {
-							Toast.makeText(getApplicationContext(), "Valoarea transportului nu poate fi mai mica decat cea din SAP!",
-									Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(), "Valoarea transportului nu poate fi mai mica decat cea din SAP!", Toast.LENGTH_SHORT)
+									.show();
 							valTransport = valTransportSAP;
 							textValTransp.setText(nf3.format(valTransport));
 						} else {
@@ -2033,6 +2077,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		selectedCodArticol = "";
 
+		if (isTotalNegociat) {
+			calculProcentReducere();
+		}
+
 		recalculTotal();
 		calculProcente();
 
@@ -2153,6 +2201,13 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	}
 
+	private void getArticoleAmob(String idComanda) {
+
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("idComanda", idComanda);
+		comandaDAO.getArticoleAmob(params);
+	}
+
 	private void addListenerDebugBtn() {
 		debugBtn.setOnClickListener(new OnClickListener() {
 
@@ -2201,6 +2256,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	public void update(Observable observable, Object data) {
 		if (observable instanceof ListaArticoleComandaGed) {
 			displayArticoleComanda();
+
+			if (isTotalNegociat) {
+				calculProcentReducere();
+			}
 		}
 
 	}
@@ -2233,6 +2292,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		case GET_COST_MACARA:
 			afiseazaPretMacaraDialog((String) result);
 			break;
+		case GET_ARTICOLE_AMOB:
+			listArticoleAMOB = comandaDAO.deserializeArticoleAmob((String) result);
+			break;
 		default:
 			break;
 
@@ -2243,6 +2305,24 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	@Override
 	public void acceptaCostMacara(boolean acceptaCost, double valoareCost) {
 		trateazaPretMacara(acceptaCost, valoareCost);
+
+	}
+
+	@Override
+	public void tipComandaSelected(TipCmdGed tipSelected, String idComanda) {
+
+		tipComandaGed = tipSelected;
+		ActionBar actionBar = getActionBar();
+
+		if (tipSelected.equals(TipCmdGed.COMANDA_AMOB)) {
+			actionBar.setTitle("Comanda GED - preluare comanda Amob");
+			idCmdAmob = idComanda;
+			getArticoleAmob(idComanda);
+
+		} else
+			actionBar.setTitle("Comanda GED");
+
+		invalidateOptionsMenu();
 
 	}
 

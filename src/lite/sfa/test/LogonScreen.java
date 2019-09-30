@@ -87,10 +87,9 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		setContentView(R.layout.main);
 
 		if (isDebugMode(this)) {
-			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog()
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
+			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().penaltyDeath()
 					.build());
-			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog()
-					.penaltyDeath().build());
 		}
 
 		slideToUnLock = (MySwitch) findViewById(R.id.switchLogon);
@@ -117,9 +116,59 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
 		globalMyIP = getIPConnection();
 
-		etUsername.setText("androsd");
-		etPassword.setText("112");
+		//etUsername.setText("androag");
+		//etPassword.setText("112");
+
+		/*
+		 * etUsername.setText("DLUP"); etPassword.setText("4tYhFQ");
+		 */
+
+		 etUsername.setText("SIONITA");
+		 etPassword.setText("mzYMVB");
+
+		//etUsername.setText("ABEJINARIU"); // cons wood
+		//etPassword.setText("FbcgCv");
+
+		//etUsername.setText("CCAMARUTA"); //cvr
+		//etPassword.setText("wD8BdG");
+
+		// etUsername.setText("BTUDORAN"); //dv01
+		// etPassword.setText("B7hxtj");
 		
+		
+		// etUsername.setText("FROTARU"); // KA Gl
+		// etPassword.setText("89mLcn");		
+
+		// etUsername.setText("VURSACHE1"); // SDIP IS
+		// etPassword.setText("46DrX3");
+		 
+
+		// etUsername.setText("SSTEFAN3"); // AMOB
+		// etPassword.setText("G6CNTy");	
+		 
+		//etUsername.setText("TIMPUSCATU"); //
+		//etPassword.setText("5Pkz53");		 
+		
+		//etUsername.setText("FENE"); //
+		//etPassword.setText("uq94fC");		
+		 
+		//etUsername.setText("PADURARU"); //
+		//etPassword.setText("L9HTLM");		 		
+		
+		//etUsername.setText("VURSACHE1"); //SDIP
+		//etPassword.setText("46DrX3");		
+		
+		
+		//etUsername.setText("GCIOFOAIA"); //ASDL
+		//etPassword.setText("Zq7gKR");	
+		
+		//etUsername.setText("CGRIGORAS1"); //OIVPD
+		//etPassword.setText("267Jvj");			
+		
+		etUsername.setText("DAGAPE"); //INFO - CGED
+		etPassword.setText("ynP6kH");		 
+		 
+		 
 		checkBundleExtra();
 
 	}
@@ -504,6 +553,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 					uInfo.setFilHome(Boolean.valueOf(token[12]));
 					uInfo.setFtpIP(token[13]);
 					uInfo.setInitDivizie(token[14]);
+					uInfo.setIsMeniuBlocat(Boolean.parseBoolean(UtilsGeneral.getStareMeniu(token[15])[0]));
+					uInfo.setCodPinMeniu(UtilsGeneral.getStareMeniu(token[15])[1]);
 					uInfo.setCodDepart(UtilsGeneral.getDepart(token[1]));
 
 					if (uInfo.getTipUserSap().equals(Constants.tipSuperAv) || uInfo.getTipUserSap().equals(Constants.tipInfoAv) || UtilsUser.isSMR()

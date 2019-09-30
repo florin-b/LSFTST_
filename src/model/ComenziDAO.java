@@ -16,6 +16,7 @@ import org.json.JSONTokener;
 import utils.UtilsGeneral;
 import android.content.Context;
 import android.widget.Toast;
+import beans.ArticolAmob;
 import beans.ArticolCalculDesc;
 import beans.ArticolSimulat;
 import beans.BeanArticoleAfisare;
@@ -25,7 +26,9 @@ import beans.BeanComandaDeschisa;
 import beans.BeanConditii;
 import beans.BeanConditiiArticole;
 import beans.BeanConditiiHeader;
+import beans.ComandaAmobAfis;
 import beans.DateLivrareAfisare;
+import beans.Delegat;
 import beans.FurnizorComanda;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -128,8 +131,6 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
 	}
 
-
-	
 	public void salveazaLivrareCustodie(HashMap<String, String> params) {
 		numeComanda = EnumComenziDAO.SALVEAZA_LIVRARE_CUSTODIE;
 		performOperation(params);
@@ -162,9 +163,20 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 		numeComanda = EnumComenziDAO.STERGE_LIVRARE_CUSTODIE;
 		performOperation(params);
 
-	}	
-	
-	
+	}
+
+	public void getComenziAmob(HashMap<String, String> params) {
+		numeComanda = EnumComenziDAO.GET_COMENZI_AMOB_AFIS;
+		performOperation(params);
+
+	}
+
+	public void getArticoleAmob(HashMap<String, String> params) {
+		numeComanda = EnumComenziDAO.GET_ARTICOLE_AMOB;
+		performOperation(params);
+
+	}
+
 	private void performOperation(HashMap<String, String> params) {
 		AsyncTaskListener contextListener = (AsyncTaskListener) ComenziDAO.this;
 		AsyncTaskWSCall call = new AsyncTaskWSCall(context, contextListener, numeComanda.getComanda(), params);
@@ -337,7 +349,32 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 				dateLivrare.setProgramLivrare(jsonLivrare.getString("programLivrare"));
 				dateLivrare.setLivrareSambata(jsonLivrare.getString("livrareSambata"));
 				dateLivrare.setBlocScara(jsonLivrare.getString("blocScara"));
+				dateLivrare.setCodFilialaCLP(jsonLivrare.getString("filialaCLP"));
 
+				Delegat delegat = new Delegat();
+				delegat.setNume(jsonLivrare.getString("numeDelegat"));
+				delegat.setSerieNumarCI(jsonLivrare.getString("ciDelegat"));
+				delegat.setNrAuto(jsonLivrare.getString("autoDelegat"));
+				dateLivrare.setDelegat(delegat);
+
+				if (jsonLivrare.has("marjaT1"))
+					dateLivrare.setMarjaT1(Double.valueOf(jsonLivrare.getString("marjaT1")));
+
+				if (jsonLivrare.has("procentT1"))
+					dateLivrare.setProcentT1(Double.valueOf(jsonLivrare.getString("procentT1")));
+
+				if (jsonLivrare.has("mCantCmd"))
+					dateLivrare.setmCantCmd(Double.valueOf(jsonLivrare.getString("mCantCmd")));
+
+				if (jsonLivrare.has("mCant30"))
+					dateLivrare.setmCant30(Double.valueOf(jsonLivrare.getString("mCant30")));
+
+				dateLivrare.setMarjaBrutaPalVal(Double.valueOf(jsonLivrare.getString("marjaBrutaPalVal")));
+				dateLivrare.setMarjaBrutaCantVal(Double.valueOf(jsonLivrare.getString("marjaBrutaCantVal")));
+				dateLivrare.setMarjaBrutaPalProc(Double.valueOf(jsonLivrare.getString("marjaBrutaPalProc")));
+				dateLivrare.setMarjaBrutaCantProc(Double.valueOf(jsonLivrare.getString("marjaBrutaCantProc")));
+				
+				
 				JSONArray jsonArticole = jsonObject.getJSONArray("articoleComanda");
 				String tipAlert, subCmp;
 				for (int i = 0; i < jsonArticole.length(); i++) {
@@ -400,6 +437,12 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 					articol.setMoneda(articolObject.getString("moneda"));
 					articol.setValTransport(Double.valueOf(articolObject.getString("valTransport")));
 					articol.setProcTransport(0);
+
+					if (articolObject.has("valT1"))
+						articol.setValT1(Double.valueOf(articolObject.getString("valT1")));
+					if (articolObject.has("procT1"))
+						articol.setProcT1(Double.valueOf(articolObject.getString("procT1")));
+
 					listArticole.add(articol);
 
 				}
@@ -508,13 +551,16 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
 					if (comandaObject.has("telAgent"))
 						comanda.setTelAgent(comandaObject.getString("telAgent"));
-					
+
 					if (comandaObject.has("tipComanda"))
 						comanda.setTipComanda(comandaObject.getString("tipComanda"));
 
 					if (comandaObject.has("isCmdInstPublica"))
 						comanda.setCmdInstPublica(Boolean.valueOf(comandaObject.getString("isCmdInstPublica")));
-					
+
+					if (comandaObject.has("bazaSalariala"))
+						comanda.setBazaSalariala(Double.valueOf(comandaObject.getString("bazaSalariala")));
+
 					listComenzi.add(comanda);
 
 				}
@@ -596,6 +642,78 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 		}
 
 		return listClienti;
+	}
+
+	public List<ComandaAmobAfis> deserializeComenziAmobAfis(String result) {
+
+		List<ComandaAmobAfis> listComenzi = new ArrayList<ComandaAmobAfis>();
+		ComandaAmobAfis comanda = null;
+
+		try {
+			Object json = new JSONTokener(result).nextValue();
+
+			if (json instanceof JSONArray) {
+				JSONArray jsonObject = new JSONArray(result);
+
+				for (int i = 0; i < jsonObject.length(); i++) {
+					JSONObject comandaObject = jsonObject.getJSONObject(i);
+
+					comanda = new ComandaAmobAfis();
+					comanda.setId(comandaObject.getString("idComanda"));
+					comanda.setIdAmob(comandaObject.getString("idAmob"));
+					comanda.setDataCreare(comandaObject.getString("dataCreare"));
+					comanda.setValoare(comandaObject.getString("valoare"));
+					comanda.setNumeClient(comandaObject.getString("numeClient"));
+					comanda.setMoneda("RON");
+
+					listComenzi.add(comanda);
+				}
+
+			}
+
+		} catch (JSONException e) {
+
+		}
+
+		return listComenzi;
+	}
+
+	public List<ArticolAmob> deserializeArticoleAmob(String result) {
+
+		List<ArticolAmob> listArticole = new ArrayList<ArticolAmob>();
+		ArticolAmob articol = null;
+
+		try {
+			Object json = new JSONTokener(result).nextValue();
+
+			if (json instanceof JSONArray) {
+				JSONArray jsonObject = new JSONArray(result);
+
+				for (int i = 0; i < jsonObject.length(); i++) {
+					JSONObject articolObject = jsonObject.getJSONObject(i);
+
+					articol = new ArticolAmob();
+					articol.setCodArticol(articolObject.getString("codArticol"));
+					articol.setDepozit(articolObject.getString("depozit"));
+					articol.setCantitate(Double.valueOf(articolObject.getString("cantitate")));
+					articol.setUm(articolObject.getString("um"));
+					articol.setPretUnitar(Double.valueOf(articolObject.getString("pretUnitar")));
+					articol.setProcentReducere(Double.valueOf(articolObject.getString("procentReducere")));
+					articol.setNumeArticol(articolObject.getString("numeArticol"));
+					articol.setUmVanz(articolObject.getString("umVanz"));
+					articol.setDepart(articolObject.getString("depart"));
+					articol.setTipAB(articolObject.getString("tipAB"));
+					listArticole.add(articol);
+
+				}
+
+			}
+
+		} catch (JSONException e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+		}
+
+		return listArticole;
 	}
 
 	public String serializeArtCalcMacara(List<ArticolCalculDesc> artCalcul) {

@@ -8,7 +8,6 @@ import model.Agent;
 import model.CalculVenit;
 import model.CalculVenitImpl;
 import model.UserInfo;
-import lite.sfa.test.R;
 import utils.UtilsDates;
 import utils.UtilsUser;
 import adapters.AdapterVenitTCF;

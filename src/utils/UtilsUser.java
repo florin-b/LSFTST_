@@ -125,7 +125,11 @@ public class UtilsUser {
 	public static boolean isASDL() {
 		return UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("ASDL");
 	}
-	
+
+	public static boolean isSDIP() {
+		return UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("SDIP");
+	}
+
 	public static String getTipSMNou() {
 		String tipUser;
 

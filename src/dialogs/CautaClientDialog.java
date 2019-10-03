@@ -121,6 +121,7 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 		params.put("depart", "00");
 		params.put("departAg", UserInfo.getInstance().getCodDepart());
 		params.put("unitLog", localUnitLog);
+		params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
 
 		opClient.getListClienti(params);
 	}
@@ -141,6 +142,7 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 		HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
 		params.put("numeClient", numeClient);
 		params.put("unitLog", UserInfo.getInstance().getUnitLog());
+		params.put("tipUser", UserInfo.getInstance().getTipUserSap());
 
 		opClient.getClientiInstitPub(params);
 	}

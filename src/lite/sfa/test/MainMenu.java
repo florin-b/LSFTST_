@@ -92,9 +92,10 @@ public class MainMenu extends Activity {
 			R.drawable.clienti_inactivi, R.drawable.clients, R.drawable.location_icon, R.drawable.line_chart_icon, R.drawable.blank, R.drawable.despre_icon,
 			R.drawable.exit_icon, R.drawable.blank };
 
-	public String[] btnNamesSDIP = { "Utilizator", "Creare cmd GED", "Modificare comanda", "Afisare comanda", "Iesire" };
+	public String[] btnNamesSDIP = { "Utilizator", "Creare cmd GED", "Modificare comanda", "Afisare comanda", "Stocuri", "Preturi", "Iesire" };
 
-	public int[] btnImageSDIP = new int[] { R.drawable.id_icon, R.drawable.blue_basket_icon, R.drawable.modif_icon, R.drawable.preview_icon, R.drawable.blank };
+	public int[] btnImageSDIP = new int[] { R.drawable.id_icon, R.drawable.blue_basket_icon, R.drawable.modif_icon, R.drawable.preview_icon,
+			R.drawable.stoc_icon, R.drawable.dollar_icon, R.drawable.blank };
 
 	public String[] btnNamesDV = { "Utilizator", "Aprobare comanda", "Comenzi conditionate", "Afisare comanda", "Aprobare CLP", "Afisare CLP",
 			"Cmz.blocate limita credit", "Obiective", "Vanzari", "Neincasate", "Stocuri", "Preturi", "Preturi concurenta", "Articole avarie", "Afisare sablon",
@@ -165,9 +166,9 @@ public class MainMenu extends Activity {
 	public int[] btnImageWOOD = new int[] { R.drawable.id_icon, R.drawable.blue_basket_icon, R.drawable.modif_icon, R.drawable.preview_icon,
 			R.drawable.stoc_icon, R.drawable.dollar_icon, R.drawable.colosseum, R.drawable.despre_icon, R.drawable.exit_icon };
 
-	public String[] btnNamesINFO = { "Utilizator", "Creare comanda", "Creare cmd GED", "Afisare comanda", "Stocuri", "Preturi", "Despre", "Iesire" };
+	public String[] btnNamesINFO = { "Utilizator",  "Creare cmd GED", "Afisare comanda", "Stocuri", "Preturi", "Despre", "Iesire" };
 
-	public int[] btnImageINFO = new int[] { R.drawable.id_icon, R.drawable.new_icon, R.drawable.blue_basket_icon, R.drawable.preview_icon,
+	public int[] btnImageINFO = new int[] { R.drawable.id_icon, R.drawable.blue_basket_icon, R.drawable.preview_icon,
 			R.drawable.stoc_icon, R.drawable.dollar_icon, R.drawable.despre_icon, R.drawable.exit_icon };
 
 	public String[] btnNamesCVR = { "Utilizator", "Creare comanda", "Creare cmd GED", "Modificare comanda", "Afisare comanda", "Comenzi simulate",
@@ -886,9 +887,16 @@ public class MainMenu extends Activity {
 			File fVer = new File(Environment.getExternalStorageDirectory() + "/download/LiteReportsVer.txt");
 			FileInputStream fileIS = new FileInputStream(fVer);
 			BufferedReader buf = new BufferedReader(new InputStreamReader(fileIS));
+
 			String readString = buf.readLine();
-			String[] tokenVer = readString.split("#");
 			fileIS.close();
+
+			if (readString == null) {
+				check = null;
+				return;
+			}
+
+			String[] tokenVer = readString.split("#");
 
 			if (!tokenVer[2].equals("0")) // 1 - fisierul este gata pentru
 											// update, 0 - inca nu

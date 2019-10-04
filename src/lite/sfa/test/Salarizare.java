@@ -101,7 +101,7 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
 	private void checkAccess() {
 
-		if ((UtilsUser.isAgentOrSD() || UtilsUser.isUserKA() || UtilsUser.isUserSDKA()  || UtilsUser.isUserSK()) && UserInfo.getInstance().getIsMeniuBlocat()) {
+		if ((UtilsUser.isAgentOrSD() || UtilsUser.isUserKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserSK()) && UserInfo.getInstance().getIsMeniuBlocat()) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage("Acces blocat. Folositi modulul Utilizator pentru deblocare.").setCancelable(false)
 					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -142,7 +142,7 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 		MenuItem mnu1 = menu.add(0, 0, 0, "Luna");
 		mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 
-		if (UserInfo.getInstance().getTipUserSap().equals("SD") || UserInfo.getInstance().getTipUserSap().equals("SDKA")  || UtilsUser.isUserSK()) {
+		if (UserInfo.getInstance().getTipUserSap().equals("SD") || UserInfo.getInstance().getTipUserSap().equals("SDKA") || UtilsUser.isUserSK()) {
 			MenuItem mnu2 = menu.add(0, 1, 1, "Salarizare");
 			mnu2.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		}
@@ -506,6 +506,8 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
 		((TextView) findViewById(R.id.textTotalVenitBaza)).setText(nf.format(getTotalDetaliiBaza(salarizare)));
 
+		((TextView) findViewById(R.id.textTotalVenitT1)).setText(nf.format(getTotalDetaliiT1(salarizare)));
+
 		((TextView) findViewById(R.id.venitBazaTCF)).setText(nf.format(salarizare.getDetaliiTCF().getVenitBaza()));
 		((TextView) findViewById(R.id.clientiAnterior)).setText(nf.format(Double.valueOf(salarizare.getDetaliiTCF().getClientiAnterior())));
 		((TextView) findViewById(R.id.targetTCF)).setText(nf.format(Double.valueOf(salarizare.getDetaliiTCF().getTarget())));
@@ -650,6 +652,16 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 		return totalBaza;
 	}
 
+	private double getTotalDetaliiT1(BeanSalarizareAgent salarizare) {
+		double totalT1 = 0;
+
+		for (SalarizareDetaliiBaza detaliiBaza : salarizare.getDetaliiBaza()) {
+			totalT1 += detaliiBaza.getT1();
+		}
+
+		return totalT1;
+	}
+
 	private double getTotalInc08(BeanSalarizareAgent salarizare) {
 		double totalInc = 0;
 
@@ -708,7 +720,7 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 		SalarizareDepartAdapter departAdapter = new SalarizareDepartAdapter(listAgenti, getApplicationContext());
 		departAdapter.setSalarizareDepartListener(this);
 		listViewAgenti.setAdapter(departAdapter);
-		
+
 		listViewAgenti.setOnTouchListener(new OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {

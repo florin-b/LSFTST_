@@ -67,6 +67,7 @@ import beans.Address;
 import beans.BeanAdresaLivrare;
 import beans.BeanAdreseJudet;
 import beans.BeanClient;
+import beans.BeanDateLivrareClient;
 import beans.GeocodeAddress;
 import beans.ObiectivConsilier;
 import beans.StatusIntervalLivrare;
@@ -140,6 +141,7 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 	private TextView textObiectivSelectat;
 	private ObiectivConsilier obiectivSelectat;
 	private ImageButton btnStergeObiectiv;
+	private BeanDateLivrareClient dateLivrareClient;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -412,9 +414,20 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 				}
 			}
 
+			if (UtilsUser.isCGED()) {
+				getDateLivrareClient();
+			}
+
 		} catch (Exception ex) {
 			Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT).show();
 		}
+
+	}
+
+	private void getDateLivrareClient() {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("codClient", CreareComandaGed.codClientVar);
+		operatiiAdresa.getDateLivrareClient(params);
 
 	}
 
@@ -1833,14 +1846,71 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 	}
 
+	private void loadDateLivrareClient(BeanDateLivrareClient dateLivrareClient) {
+
+		this.dateLivrareClient = dateLivrareClient;
+
+		int nrJudete = spinnerJudet.getAdapter().getCount();
+
+		for (int i = 0; i < nrJudete; i++) {
+
+			@SuppressWarnings("unchecked")
+			HashMap<String, String> artMap = (HashMap<String, String>) spinnerJudet.getAdapter().getItem(i);
+
+			if (artMap.get("codJudet").equals(dateLivrareClient.getCodJudet())) {
+				spinnerJudet.setSelection(i);
+				break;
+			}
+
+		}
+
+	}
+
+	private void setDateLivrareClient() {
+
+		if (UtilsUser.isCGED() && dateLivrareClient != null) {
+			textLocalitate.setText(dateLivrareClient.getLocalitate());
+
+			if (!dateLivrareClient.getStrada().isEmpty() && !dateLivrareClient.getStrada().equals("null")) {
+				textStrada.setText(dateLivrareClient.getStrada());
+			}
+
+			if (!dateLivrareClient.getNrStrada().isEmpty() && !dateLivrareClient.getNrStrada().equals("null")) {
+				textNrStr.setText(dateLivrareClient.getNrStrada());
+			}
+
+			if (!dateLivrareClient.getNumePersContact().isEmpty() && !dateLivrareClient.getNumePersContact().equals("null")) {
+				txtPers.setText(dateLivrareClient.getNumePersContact());
+			}
+
+			if (!dateLivrareClient.getTelPersContact().isEmpty() && !dateLivrareClient.getTelPersContact().equals("null")) {
+				txtTel.setText(dateLivrareClient.getTelPersContact());
+			}
+
+			if (dateLivrareClient.getTermenPlata().trim().length() > 0) {
+				String[] tokTermen = dateLivrareClient.getTermenPlata().split(";");
+				for (int nrLivr = 0; nrLivr < tokTermen.length; nrLivr++) {
+					if (!tokTermen[nrLivr].equals("C000") && !tokTermen[nrLivr].equals("null"))
+						adapterTermenPlata.add(tokTermen[nrLivr]);
+				}
+
+			}
+
+		}
+
+	}
+
 	public void operatiiAdresaComplete(EnumOperatiiAdresa numeComanda, Object result, EnumLocalitate tipLocalitate) {
 
 		if (numeComanda == EnumOperatiiAdresa.IS_ADRESA_VALIDA) {
 			valideazaAdresaResponse((String) result);
+		} else if (numeComanda == EnumOperatiiAdresa.GET_DATE_LIVRARE_CLIENT) {
+			loadDateLivrareClient(operatiiAdresa.deserializeDateLivrareClient((String) result));
 		} else {
 			switch (tipLocalitate) {
 			case LOCALITATE_SEDIU:
 				populateListLocSediu(operatiiAdresa.deserializeListAdrese(result));
+				setDateLivrareClient();
 				break;
 			case LOCALITATE_LIVRARE:
 				populateListLocLivrare(operatiiAdresa.deserializeListAdrese(result));

@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 import beans.BeanClient;
 import enums.EnumClienti;
 
@@ -34,6 +35,7 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 	private boolean isMeserias;
 	private boolean isClientObiectivKA;
 	private boolean isInstitPublica;
+	private String numeClient;
 
 	public CautaClientDialog(Context context) {
 		super(context);
@@ -187,6 +189,25 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 
 	public void setInstitPublica(boolean isInstitPublica) {
 		this.isInstitPublica = isInstitPublica;
+	}
+
+	public String getNumeClient() {
+		return numeClient;
+	}
+
+	public void setNumeClient(String numeClient) {
+		this.numeClient = numeClient;
+	}
+
+	@Override
+	public void show() {
+
+		super.show();
+
+		if (numeClient != null && !numeClient.isEmpty()) {
+			textNumeClient.setText(numeClient);
+			cautaClient();
+		}
 	}
 
 }

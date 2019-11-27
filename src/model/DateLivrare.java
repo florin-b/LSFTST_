@@ -82,6 +82,7 @@ public class DateLivrare {
 	private String codFilialaCLP = "";
 	private Delegat delegat;
 	private ObiectivConsilier obiectivConsilier;
+	private String refClient;
 
 	private DateLivrareAfisare dateLivrareAfisare;
 
@@ -141,6 +142,7 @@ public class DateLivrare {
 		this.blocScara = dateLivrareAfisare.getBlocScara();
 		this.codFilialaCLP = dateLivrareAfisare.getCodFilialaCLP();
 		this.delegat = dateLivrareAfisare.getDelegat();
+		this.refClient = dateLivrareAfisare.getRefClient();
 	}
 
 	public boolean isClientRaft() {
@@ -604,6 +606,14 @@ public class DateLivrare {
 		this.obiectivConsilier = obiectivConsilier;
 	}
 
+	public String getRefClient() {
+		return refClient;
+	}
+
+	public void setRefClient(String refClient) {
+		this.refClient = refClient;
+	}
+
 	public void resetAll() {
 		codJudet = "";
 		numeJudet = "";
@@ -655,6 +665,7 @@ public class DateLivrare {
 		codFilialaCLP = "";
 		delegat = new Delegat();
 		obiectivConsilier = null;
+		refClient = "";
 
 	}
 

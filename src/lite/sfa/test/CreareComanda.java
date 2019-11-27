@@ -794,9 +794,10 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 										Toast.makeText(getApplicationContext(), "Limita de credit a fost depasita!", Toast.LENGTH_SHORT).show();
 
+										//test
 										if (UserInfo.getInstance().getTipUserSap().equals(Constants.tipInfoAv) || UtilsUser.isSMR() || UtilsUser.isCVR()
 												|| UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD())
-											goSaveCmd = false;
+											goSaveCmd = true;
 										else
 											goSaveCmd = true;
 
@@ -1474,6 +1475,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 			obj.put("numeDelegat", DateLivrare.getInstance().getDelegat().getNume());
 			obj.put("ciDelegat", DateLivrare.getInstance().getDelegat().getSerieNumarCI());
 			obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
+			obj.put("refClient", DateLivrare.getInstance().getRefClient());
 
 		} catch (JSONException ex) {
 			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();

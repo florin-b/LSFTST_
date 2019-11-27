@@ -329,6 +329,16 @@
                 android:typeface="serif" />
 
             <TextView
+                android:id="@+id/textMetodaPlata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:textColor="@color/detColor7"
+                android:textSize="16sp"
+                android:typeface="serif"
+                android:visibility="invisible" />
+
+            <TextView
                 android:id="@+id/textComandaBV90"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

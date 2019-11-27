@@ -4,8 +4,6 @@
  */
 package connectors;
 
-import android.os.Environment;
-
 public class ConnectionStrings {
 
 	private static ConnectionStrings instance = new ConnectionStrings();

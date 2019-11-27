@@ -177,6 +177,12 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 
 	}
 
+	public void setCmdVanzDataLivrare(HashMap<String, String> params) {
+		numeComanda = EnumComenziDAO.SET_CMD_VANZ_DATA_LIVRARE;
+		performOperation(params);
+
+	}
+
 	private void performOperation(HashMap<String, String> params) {
 		AsyncTaskListener contextListener = (AsyncTaskListener) ComenziDAO.this;
 		AsyncTaskWSCall call = new AsyncTaskWSCall(context, contextListener, numeComanda.getComanda(), params);
@@ -329,6 +335,7 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 				dateLivrare.setCnpClient(jsonLivrare.getString("cnpClient"));
 				dateLivrare.setIdObiectiv(jsonLivrare.getString("idObiectiv"));
 				dateLivrare.setAdresaObiectiv(Boolean.valueOf(jsonLivrare.getString("isAdresaObiectiv")));
+				dateLivrare.setTipDocInsotitor(jsonLivrare.getString("tipDocInsotitor"));
 
 				String[] coords = jsonLivrare.getString("coordonateGps").split(",");
 				dateLivrare.setCoordonateAdresa(new LatLng(Double.valueOf(coords[0]), Double.valueOf(coords[1])));
@@ -373,8 +380,8 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 				dateLivrare.setMarjaBrutaCantVal(Double.valueOf(jsonLivrare.getString("marjaBrutaCantVal")));
 				dateLivrare.setMarjaBrutaPalProc(Double.valueOf(jsonLivrare.getString("marjaBrutaPalProc")));
 				dateLivrare.setMarjaBrutaCantProc(Double.valueOf(jsonLivrare.getString("marjaBrutaCantProc")));
-				
-				
+				dateLivrare.setRefClient(jsonLivrare.getString("refClient"));
+
 				JSONArray jsonArticole = jsonObject.getJSONArray("articoleComanda");
 				String tipAlert, subCmp;
 				for (int i = 0; i < jsonArticole.length(); i++) {
@@ -442,6 +449,9 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 						articol.setValT1(Double.valueOf(articolObject.getString("valT1")));
 					if (articolObject.has("procT1"))
 						articol.setProcT1(Double.valueOf(articolObject.getString("procT1")));
+
+					if (articolObject.has("filialaSite"))
+						articol.setFilialaSite(articolObject.getString("filialaSite"));
 
 					listArticole.add(articol);
 

@@ -1,25 +1,20 @@
 package adapters;
 
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import enums.EnumOperatiiSalarizare;
-
 import listeners.OperatiiSalarizareListener;
 import lite.sfa.test.R;
-import lite.sfa.test.Salarizare;
-import model.OperatiiSalarizare;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+
 import android.widget.TextView;
-import android.widget.Toast;
-import beans.BeanSalarizareAgentAfis;
+
 import beans.SalarizareDetaliiCVS;
 
 public class SalarizareCvsAdapter extends BaseAdapter {

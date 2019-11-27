@@ -1080,8 +1080,11 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 							return true;
 						}
 
-						if (!isTotalComandaCorect()) {
-							return true;
+						if (isComandaDifValorica()) {
+						} else {
+							if (!isTotalComandaCorect()) {
+								return true;
+							}
 						}
 
 						if (existaArticole() && !textAdrLivr.getText().toString().equals("")) {
@@ -1129,7 +1132,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 						DateLivrare dateLivrareInstance = DateLivrare.getInstance();
 
-						if (dateLivrareInstance.getTipPlata().equals("E") && totalComanda > 5000 && CreareComandaGed.tipClient.equals("PJ")) {
+						if ((dateLivrareInstance.getTipPlata().equals("E") || dateLivrareInstance.getTipPlata().equals("E1")) && totalComanda > 5000
+								&& CreareComandaGed.tipClient.equals("PJ")) {
 							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
 							return;
 						}
@@ -1326,6 +1330,21 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		}
 
 		return comandaOk;
+	}
+
+	private boolean isComandaDifValorica() {
+
+		boolean isCmd = false;
+
+		if (listArticole.size() > 1)
+			return isCmd = false;
+
+		for (ArticolComanda articol : listArticole) {
+			if (articol.getNumeArticol().startsWith("Diferenta valorica"))
+				isCmd = true;
+		}
+
+		return isCmd;
 	}
 
 	private void displayArtComplDialog() {

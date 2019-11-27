@@ -11,7 +11,6 @@ import utils.UtilsGeneral;
 import utils.UtilsUser;
 
 import android.content.Context;
-import android.provider.SyncStateContract.Constants;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

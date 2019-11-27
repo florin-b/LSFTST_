@@ -15,7 +15,6 @@ import model.DateLivrare;
 import model.InfoStrings;
 import model.OperatiiClient;
 import model.UserInfo;
-import lite.sfa.test.R;
 import utils.UtilsGeneral;
 import utils.UtilsUser;
 import adapters.CautareClientiAdapter;
@@ -135,8 +134,8 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 		nf2.setMaximumFractionDigits(2);
 
 		spinnerAgenti = ((Spinner) findViewById(R.id.spinnerAgenti));
-		setSpinnerAgentiListener();		
-		
+		setSpinnerAgentiListener();
+
 		if (UtilsUser.isSuperAv() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD()) {
 			((LinearLayout) findViewById(R.id.layoutAgentClient)).setVisibility(View.VISIBLE);
 		}
@@ -302,18 +301,19 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 				if (codClientVar.length() == 0) {
 					Toast.makeText(getApplicationContext(), "Selectati un client!", Toast.LENGTH_SHORT).show();
 				} else {
-					
+
 					if (UtilsUser.isSuperAv() && spinnerAgenti.getSelectedItemPosition() == 0) {
 						Toast.makeText(getApplicationContext(), "Selectati un agent.", Toast.LENGTH_LONG).show();
 						return;
 					}
-					
-					
+
 					CreareComanda.codClientVar = codClientVar;
 					CreareComanda.numeClientVar = numeClientVar;
 					CreareComanda.tipClientVar = tipClientVar;
 
 					CreareComanda.cmdAngajament = false;
+
+					DateLivrare.getInstance().setRefClient(((EditText) findViewById(R.id.textRefClient)).getText().toString().trim());
 
 					if (CreareComanda.canalDistrib.equals("10")) {
 
@@ -365,7 +365,7 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 			params.put("unitLog", UserInfo.getInstance().getUnitLog());
 			params.put("codUser", UserInfo.getInstance().getCod());
 			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
-			
+
 			opClient.getListClienti(params);
 
 			InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
@@ -438,8 +438,7 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 			numeClientVar = numeClient;
 
 			dateLivrareInstance.setDateLivrare(InfoStrings.numeJudet(dateLivrareInstance.getCodJudet()) + " " + dateLivrareInstance.getOras() + " "
-					+ dateLivrareInstance.getStrada() + "#" + dateLivrareInstance.getPersContact() + "#" + dateLivrareInstance.getNrTel()
-					+ "#NU#E#TRAP#NU");
+					+ dateLivrareInstance.getStrada() + "#" + dateLivrareInstance.getPersContact() + "#" + dateLivrareInstance.getNrTel() + "#NU#E#TRAP#NU");
 
 			clientBlocatText.setVisibility(View.INVISIBLE);
 			clientBlocatText.setText("");
@@ -493,6 +492,7 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 		dateLivrareInstance.setPersContact("");
 		dateLivrareInstance.setNrTel("");
 		dateLivrareInstance.setDateLivrare("");
+		dateLivrareInstance.setRefClient("");
 
 		finish();
 		return;

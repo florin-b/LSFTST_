@@ -8,8 +8,6 @@ import lite.sfa.test.CreareComanda;
 import lite.sfa.test.ModificareComanda;
 import model.DateLivrare;
 import model.UserInfo;
-import android.content.Context;
-import android.widget.Toast;
 import beans.BeanAdresaLivrare;
 
 import com.google.android.gms.maps.model.LatLng;

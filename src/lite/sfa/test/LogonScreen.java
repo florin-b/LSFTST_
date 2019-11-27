@@ -123,8 +123,12 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		 * etUsername.setText("DLUP"); etPassword.setText("4tYhFQ");
 		 */
 
-		 etUsername.setText("SIONITA");
-		 etPassword.setText("mzYMVB");
+		// etUsername.setText("SIONITA");
+		// etPassword.setText("mzYMVB");
+		
+		 //etUsername.setText("ITURIAC");
+		 //etPassword.setText("E22xfM");		
+		
 
 		//etUsername.setText("ABEJINARIU"); // cons wood
 		//etPassword.setText("FbcgCv");
@@ -139,8 +143,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		// etUsername.setText("FROTARU"); // KA Gl
 		// etPassword.setText("89mLcn");		
 
-		// etUsername.setText("VURSACHE1"); // SDIP IS
-		// etPassword.setText("46DrX3");
+		//	 etUsername.setText("VURSACHE1"); // SDIP IS
+		//	 etPassword.setText("46DrX3");
 		 
 
 		// etUsername.setText("SSTEFAN3"); // AMOB
@@ -165,8 +169,11 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		//etUsername.setText("CGRIGORAS1"); //OIVPD
 		//etPassword.setText("267Jvj");			
 		
-		etUsername.setText("DAGAPE"); //INFO - CGED
-		etPassword.setText("ynP6kH");		 
+		//etUsername.setText("DAGAPE"); //INFO - CGED
+		//etPassword.setText("ynP6kH");		 
+		 
+		//etUsername.setText("pamorar"); //cvw
+		//etPassword.setText("1Pm2Rar");			 
 		 
 		 
 		checkBundleExtra();

@@ -459,7 +459,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 	private void CreateMenu(Menu menu) {
 
-		if (UtilsUser.isUserExceptieBV90Ged() || UtilsUser.isUserSite()) {
+		if (UtilsUser.isUserExceptieBV90Ged() || UtilsUser.isUserSite() || isWood()) {
 			MenuItem mnu1 = menu.add(0, 0, 0, "Filiala");
 			{
 				mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -486,7 +486,6 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 				artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
 				selectedUnitMas = artMap.get("rowText");
 
-				// if (!textCant.getText().toString().trim().equals(""))
 				getFactoriConversie();
 
 			}
@@ -555,7 +554,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	}
 
 	private void showFilialaDialogBox() {
-		if (UtilsUser.isUserExceptieBV90Ged()) {
+		if (UtilsUser.isUserExceptieBV90Ged() || isWood()) {
 			showFilialaDialogBV90();
 		} else if (UtilsUser.isUserSite()) {
 			showFilialaDialogUserSite();
@@ -745,8 +744,9 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 						varProc = -1;
 
 						textProcRed.setText(nf2.format(initPrice / globalCantArt * valMultiplu));
+
 						textProcRed.requestFocus();
-						textProcRed.selectAll();
+						textProcRed.setSelection(textProcRed.getText().length());
 
 						InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 						mgr.showSoftInput(textProcRed, InputMethodManager.SHOW_IMPLICIT);
@@ -765,9 +765,9 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 						varProc = 0;
 						textProcRed.setText("");
 
-						textProcRed.setSelection(textProcRed.getText().length());
 						textProcRed.requestFocus();
-						textProcRed.selectAll();
+						textProcRed.setSelection(textProcRed.getText().length());
+
 						InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 						mgr.showSoftInput(textProcRed, InputMethodManager.SHOW_IMPLICIT);
 
@@ -788,6 +788,19 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 	public void addListenerProcArt() {
 
+		final NumberFormat nf2 = NumberFormat.getInstance(new Locale("en", "US"));
+		if (CreareComandaGed.tipClient.equals("IP")) {
+			nf2.setMinimumFractionDigits(2);
+			nf2.setMaximumFractionDigits(2);
+		} else {
+			nf2.setMinimumFractionDigits(3);
+			nf2.setMaximumFractionDigits(3);
+		}
+
+		final NumberFormat nForm2 = NumberFormat.getInstance(new Locale("en", "US"));
+		nForm2.setMinimumFractionDigits(2);
+		nForm2.setMaximumFractionDigits(2);
+
 		textProcRed.setOnFocusChangeListener(new OnFocusChangeListener() {
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (textProcRed.hasFocus()) {
@@ -802,19 +815,6 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 			public void afterTextChanged(Editable s) {
 
 				try {
-
-					NumberFormat nf2 = NumberFormat.getInstance(new Locale("en", "US"));
-					if (CreareComandaGed.tipClient.equals("IP")) {
-						nf2.setMinimumFractionDigits(2);
-						nf2.setMaximumFractionDigits(2);
-					} else {
-						nf2.setMinimumFractionDigits(3);
-						nf2.setMaximumFractionDigits(3);
-					}
-
-					NumberFormat nForm2 = NumberFormat.getInstance(new Locale("en", "US"));
-					nForm2.setMinimumFractionDigits(2);
-					nForm2.setMaximumFractionDigits(2);
 
 					// verif. cantitate
 
@@ -872,6 +872,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 								textPretGEDFTva.setText("0");
 								textTransport.setText("0");
 								textPretGED.setText("0");
+								textProcRed.setFocusableInTouchMode(true);
 							}
 
 						}
@@ -1256,6 +1257,10 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 					}
 
 					// sf. verificare
+
+					// pt. unele articole care nu au pret (servicii)
+					if (pretVanzare == 0)
+						pretVanzare = finalPrice;
 
 					procentAprob = (1 - finalPrice / (pretVanzare / globalCantArt * valMultiplu)) * 100;
 

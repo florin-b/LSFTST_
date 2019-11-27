@@ -57,12 +57,12 @@ public class UtilsComenzi {
 
 	public static String[] tipPlataGed(boolean isRestrictie) {
 		if (isRestrictie)
-			return new String[] { "E - Plata in numerar", "BRD - Card BRD", "ING - Card ING", "UNI - Card Unicredit", "CBTR - Card Transilvania",
+			return new String[] { "E - Plata in numerar in filiala", "BRD - Card BRD", "ING - Card ING", "UNI - Card Unicredit", "CBTR - Card Transilvania",
 					"CGRB - Card Garanti Bonus", "CRFZ - Card Raiffeisen", "CCTL - Card Cetelem", "CAVJ - Card Avantaj","INS - Card online", "E1 - Numerar sofer"  };
 		else
-			return new String[] { "B - Bilet la ordin", "C - Cec", "E - Plata in numerar", "O - Ordin de plata", "BRD - Card BRD", "ING - Card ING",
+			return new String[] { "E1 - Numerar sofer" , "B - Bilet la ordin", "C - Cec", "E - Plata in numerar in filiala", "O - Ordin de plata", "BRD - Card BRD", "ING - Card ING",
 					"UNI - Card Unicredit", "CBTR - Card Transilvania", "CGRB - Card Garanti Bonus", "CRFZ - Card Raiffeisen", "CCTL - Card Cetelem",
-					"CAVJ - Card Avantaj", "INS - Card online", "E1 - Numerar sofer" };
+					"CAVJ - Card Avantaj", "INS - Card online" };
 
 	}
 

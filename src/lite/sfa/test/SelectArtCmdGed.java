@@ -1571,6 +1571,28 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 		}
 
+		String[] condPret = pretArticol.getConditiiPret().split(";");
+
+		int ii = 0;
+		String[] tokPret;
+		String stringCondPret = "";
+		Double valCondPret = 0.0;
+
+		// ZSTA taxa verde
+		for (ii = 0; ii < condPret.length; ii++) {
+			tokPret = condPret[ii].split(":");
+			valCondPret = Double.valueOf(tokPret[1].replace(',', '.').trim());
+			if (valCondPret != 0 && tokPret[0].equalsIgnoreCase("ZSTA")) {
+				stringCondPret += "Taxa verde" + addSpace(15 - "Taxa verde".length()) + ":" + addSpace(10 - String.valueOf(nf2.format(valCondPret)).length())
+						+ nf2.format(valCondPret) + System.getProperty("line.separator");
+
+			}
+
+		}
+
+		textCondPret.setVisibility(View.VISIBLE);
+		textCondPret.setText(stringCondPret);
+
 		finalPrice = initPrice;
 		textProcRed.setText("");
 
@@ -1718,6 +1740,15 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 			saveArtBtn.performClick();
 		}
 
+	}
+
+	private String addSpace(int nrCars) {
+		String retVal = "";
+
+		for (int i = 0; i < nrCars; i++)
+			retVal += " ";
+
+		return retVal;
 	}
 
 	private void afisIstoricPret(String infoIstoric) {

@@ -21,7 +21,6 @@ import model.ListaArticoleComanda;
 import model.OperatiiArticol;
 import model.OperatiiArticolFactory;
 import model.UserInfo;
-import lite.sfa.test.R;
 import utils.DepartamentAgent;
 import utils.UtilsFormatting;
 import utils.UtilsGeneral;
@@ -138,6 +137,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 	private EnumTipCautare tipCautareArticol = EnumTipCautare.NOMINAL;
 
 	private ArrayList<ArticolDB> listArticoleStatistic;
+	private ArrayList<ArticolDB> listArticoleCustodie;
 	private double discountASDL;
 
 	@Override
@@ -240,10 +240,15 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 		spinnerDepoz.setAdapter(adapterSpinnerDepozite);
 		spinnerDepoz.setOnItemSelectedListener(new OnSelectDepozit());
 
-		if (isLivrareCustodie())
+		if (isLivrareCustodie()) {
 			spinnerDepoz.setVisibility(View.INVISIBLE);
-		else
+			((LinearLayout) findViewById(R.id.layoutHeaderArt)).setVisibility(View.INVISIBLE);
+			getArticoleCustodie();
+
+		} else {
 			spinnerDepoz.setVisibility(View.VISIBLE);
+			((LinearLayout) findViewById(R.id.layoutHeaderArt)).setVisibility(View.VISIBLE);
+		}
 
 		spinnerUnitMas = (Spinner) findViewById(R.id.spinnerUnitMas);
 
@@ -277,6 +282,10 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 	}
 
 	private void addSpinnerDepartamente() {
+
+		if (isLivrareCustodie())
+			return;
+
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item,
 				DepartamentAgent.getDepartamenteAgent());
 
@@ -340,7 +349,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
 	private void CreateMenu(Menu menu) {
 
-		if (isUserExceptie() && DateLivrare.getInstance().getTipComandaDistrib() != TipCmdDistrib.COMANDA_LIVRARE) {
+		if (isUserExceptie() && DateLivrare.getInstance().getTipComandaDistrib() != TipCmdDistrib.COMANDA_LIVRARE && !isLivrareCustodie()) {
 			MenuItem mnu1 = menu.add(0, 0, 0, "Filiala");
 			{
 				mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -559,6 +568,16 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 		params.put("departament", selectedDepartamentAgent);
 
 		opArticol.getArticoleStatistic(params);
+	}
+
+	private void getArticoleCustodie() {
+
+		HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
+		params.put("codClient", CreareComanda.codClientVar);
+		params.put("filiala", UserInfo.getInstance().getUnitLog());
+		params.put("departament", selectedDepartamentAgent);
+
+		opArticol.getArticoleCustodie(params);
 	}
 
 	public void showSelectFilArtDialogBox() {
@@ -2048,6 +2067,18 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 			listArticoleStatistic = opArticol.deserializeArticoleVanzare((String) result);
 			populateListViewArticol(listArticoleStatistic);
 			break;
+
+		case GET_ARTICOLE_CUSTODIE:
+			((TextView) findViewById(R.id.textAfisStatistic)).setVisibility(View.VISIBLE);
+
+			TextView labelCustodie = ((TextView) findViewById(R.id.textAfisStatistic));
+			labelCustodie.setText("Articole custodie");
+			labelCustodie.setVisibility(View.VISIBLE);
+
+			listArticoleCustodie = opArticol.deserializeArticoleVanzare((String) result);
+			populateListViewArticol(listArticoleCustodie);
+			break;
+
 		case GET_ARTICOLE_FURNIZOR:
 			populateListViewArticol(opArticol.deserializeArticoleVanzare((String) result));
 			break;

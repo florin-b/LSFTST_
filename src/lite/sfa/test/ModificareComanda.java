@@ -86,15 +86,14 @@ import dialogs.AprobariDialog;
 import dialogs.CostMacaraDialog;
 import enums.EnumComenziDAO;
 
-public class ModificareComanda extends Activity implements AsyncTaskListener, ComenziDAOListener, ArticolModificareListener, Observer,
-		CostMacaraListener {
+public class ModificareComanda extends Activity implements AsyncTaskListener, ComenziDAOListener, ArticolModificareListener, Observer, CostMacaraListener {
 
 	Button quitBtn, stocBtn, clientBtn, articoleBtn, livrareBtn, salveazaComandaBtn, stergeComandaBtn, btnCommentariiCond, aprobareBtn;
 	String filiala = "", nume = "", cod = "", globalSubCmp = "0";
 	public static String unitLogComanda = "";
 	public static String numeDepart = "";
 	public static String codDepart = "";
-	
+
 	private int listViewSelPos = -1;
 
 	private Spinner spinnerComenzi;
@@ -300,8 +299,8 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 						valTransport = Double.parseDouble(textValTransp.getText().toString().trim());
 
 						if (valTransport < valTransportSAP) {
-							Toast.makeText(getApplicationContext(), "Valoarea transportului nu poate fi mai mica decat cea din SAP!",
-									Toast.LENGTH_SHORT).show();
+							Toast.makeText(getApplicationContext(), "Valoarea transportului nu poate fi mai mica decat cea din SAP!", Toast.LENGTH_SHORT)
+									.show();
 							valTransport = valTransportSAP;
 							textValTransp.setText(nf3.format(valTransport));
 						} else {
@@ -542,6 +541,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 		textPondereB.setText(String.format("%.02f", procentB) + "%");
 		textTotalCmd.setText(String.format("%.02f", localTotalComanda));
+		totalComanda = localTotalComanda;
 
 	}
 
@@ -615,8 +615,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 						prepareArtForDelivery();
 
 						if (dateLivrareInstance.getTipPlata().equals("E") && totalComanda > 5000 && tipClientVar.equals("PJ")) {
-							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT)
-									.show();
+							Toast.makeText(getApplicationContext(), "Pentru plata in numerar valoarea maxima este de 5000 RON!", Toast.LENGTH_SHORT).show();
 							return;
 						}
 
@@ -1099,7 +1098,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 			obj.put("filialaCLP", DateLivrare.getInstance().getCodFilialaCLP());
 			obj.put("numeDelegat", DateLivrare.getInstance().getDelegat().getNume());
 			obj.put("ciDelegat", DateLivrare.getInstance().getDelegat().getSerieNumarCI());
-			obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());	
+			obj.put("autoDelegat", DateLivrare.getInstance().getDelegat().getNrAuto());
 			obj.put("refClient", DateLivrare.getInstance().getRefClient());
 
 		} catch (Exception ex) {
@@ -1548,13 +1547,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 				listViewSelPos = position;
 
-				if ((listViewArticole.getFirstVisiblePosition() == listViewSelPos)
-						|| (listViewArticole.getFirstVisiblePosition() + 1 == listViewSelPos)) {
+				if ((listViewArticole.getFirstVisiblePosition() == listViewSelPos) || (listViewArticole.getFirstVisiblePosition() + 1 == listViewSelPos)) {
 					listViewArticole.smoothScrollToPositionFromTop(listViewSelPos - 1, 0);
 				}
 
-				if ((listViewArticole.getLastVisiblePosition() == listViewSelPos)
-						|| (listViewArticole.getLastVisiblePosition() - 1 == listViewSelPos)) {
+				if ((listViewArticole.getLastVisiblePosition() == listViewSelPos) || (listViewArticole.getLastVisiblePosition() - 1 == listViewSelPos)) {
 					listViewArticole.smoothScrollToPositionFromTop(listViewArticole.getFirstVisiblePosition() + 1, 0);
 				}
 

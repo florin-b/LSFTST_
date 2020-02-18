@@ -1409,7 +1409,6 @@ public class AprobareComanda extends Activity implements ComenziDAOListener, Den
 	}
 
 	private void setupContextLayout(BeanComandaCreata comanda) {
-
 		if (comanda.getCodStare().equals("21") || (!tipAgentComanda.equals("AV") && UtilsUser.isSD())) {
 			slidingDrawerAprob.setVisibility(View.GONE);
 			btnConditii.setVisibility(View.INVISIBLE);

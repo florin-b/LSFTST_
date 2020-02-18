@@ -1814,8 +1814,8 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	}
 
 	private boolean userCannotModifyPrice() {
-		return (UserInfo.getInstance().getTipUserSap().equals("CONS-GED") || UserInfo.getInstance().getTipUserSap().equals("CVR") || UtilsUser.isCGED())
-				&& !UtilsComenzi.isComandaInstPublica() || CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_AMOB;
+		return (UserInfo.getInstance().getTipUserSap().equals("CONS-GED") || UserInfo.getInstance().getTipUserSap().equals("CVR") || UtilsUser.isCGED() || UtilsUser
+				.isSSCM()) && !UtilsComenzi.isComandaInstPublica() || CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_AMOB;
 	}
 
 	private void afiseazaArticoleAmob() {

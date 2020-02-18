@@ -31,6 +31,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
+import android.telephony.TelephonyManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -114,9 +115,11 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		addListenerUserName();
 		addListenerPassword();
 
-		globalMyIP = getIPConnection();
+		//globalMyIP = getIPConnection();
+		
+		globalMyIP = getDeviceId();
 
-		//etUsername.setText("androag");
+		//etUsername.setText("androsd");
 		//etPassword.setText("112");
 
 		/*
@@ -175,7 +178,10 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		//etUsername.setText("pamorar"); //cvw
 		//etPassword.setText("1Pm2Rar");			 
 		 
-		 
+
+		//etUsername.setText("CBARLA"); //CVIP
+		//etPassword.setText("BJvtx3");			 		
+		
 		checkBundleExtra();
 
 	}
@@ -248,7 +254,7 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
 				myIP = android.text.format.Formatter.formatIpAddress(ipAddress);
 
-			} else if (mobile.isAvailable()) {
+			} if (mobile.isAvailable()) {
 
 				myIP = GetLocalIpAddress();
 			} else {
@@ -262,6 +268,12 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
 	}
 
+	private String getDeviceId() {
+		TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		return tm.getDeviceId();
+	}
+	
+	
 	private String GetLocalIpAddress() {
 		String retVal = "0.0.0.0";
 		try {

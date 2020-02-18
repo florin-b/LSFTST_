@@ -1604,6 +1604,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			obj.put("programLivrare", DateLivrare.getInstance().getProgramLivrare());
 			obj.put("livrareSambata", DateLivrare.getInstance().getLivrareSambata());
 			obj.put("filialaCLP", DateLivrare.getInstance().getCodFilialaCLP());
+			obj.put("refClient", DateLivrare.getInstance().getRefClient());
 
 		} catch (Exception ex) {
 			Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
@@ -1795,7 +1796,6 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		filialaAlternativa = UserInfo.getInstance().getUnitLog();
 		ListaArticoleComandaGed.getInstance().clearArticoleComanda();
 
-		UserInfo.getInstance().setCodSuperUser("");
 
 		initLocale();
 

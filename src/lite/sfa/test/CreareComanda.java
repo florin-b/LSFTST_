@@ -284,8 +284,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 	private void CreateMenu(Menu menu) {
 
-		if (!UserInfo.getInstance().getTipUserSap().equals("INFO") && !UtilsUser.isSMR() && !UtilsUser.isCVR() && !UtilsUser.isSSCM() && !UtilsUser.isCGED()
-				&& !UtilsUser.isOIVPD()) {
+		if (!UserInfo.getInstance().getTipUserSap().equals("INFO") && !UtilsUser.isSMR() && !UtilsUser.isCVR() && !UtilsUser.isSSCM()
+				&& !UtilsUser.isCGED() && !UtilsUser.isOIVPD())  {
 			MenuItem mnu0 = menu.add(0, 0, 0, "Tip");
 
 			mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -794,7 +794,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 										Toast.makeText(getApplicationContext(), "Limita de credit a fost depasita!", Toast.LENGTH_SHORT).show();
 
-										//test
+										// test
 										if (UserInfo.getInstance().getTipUserSap().equals(Constants.tipInfoAv) || UtilsUser.isSMR() || UtilsUser.isCVR()
 												|| UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD())
 											goSaveCmd = true;
@@ -1068,7 +1068,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComanda.getInstance().getListArticoleComanda());
 
 		if (DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
-			
+
 			List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(ListaArticoleComanda.getInstance().getListArticoleComanda());
 
 			String listArtSer = comandaDAO.serializeArtCalcMacara(artCalcul);
@@ -1980,7 +1980,6 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 			Toast.makeText(this, alertMsg, Toast.LENGTH_LONG).show();
 		else
 			performSaveCmd();
-			
 
 	}
 

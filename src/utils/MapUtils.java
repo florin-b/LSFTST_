@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.location.Geocoder;
+import android.widget.Toast;
 import beans.Address;
 import beans.GeocodeAddress;
 
@@ -39,7 +40,12 @@ public class MapUtils {
 		}
 
 		if (address.getCity() != null && !address.getCity().equals("")) {
-			strAddress.append(address.getCity());
+
+			if (address.getCity().contains("SECTOR") && address.getSector().equals("BUCURESTI"))
+				strAddress.append("BUCURESTI");
+			else
+				strAddress.append(address.getCity());
+
 			strAddress.append(",");
 		}
 

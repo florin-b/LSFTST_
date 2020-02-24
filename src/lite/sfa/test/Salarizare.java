@@ -42,6 +42,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import beans.BeanSalarizareAgent;
 import beans.BeanSalarizareAgentAfis;
 import beans.BeanSalarizareSD;
@@ -813,9 +814,16 @@ public class Salarizare extends Activity implements OperatiiSalarizareListener, 
 
 		switch (tipSituatie) {
 		case AGENTI:
+
+			if (!UserInfo.getInstance().getInitUnitLog().equals(UserInfo.getInstance().getUnitLog())) {
+				Toast.makeText(getApplicationContext(), "Acest raport este accesibil doar pentru filiala " + UserInfo.getInstance().getInitUnitLog() + ".",
+						Toast.LENGTH_LONG).show();
+				return;
+			}
+
 			if (UserInfo.getInstance().getTipUserSap().equals("SD"))
 				getSalarizareDepartament();
-			else if ((UserInfo.getInstance().getTipUserSap().equals("SDKA") || UtilsUser.isUserSK()))
+			else if (UserInfo.getInstance().getTipUserSap().equals("SDKA") || UtilsUser.isUserSK())
 				getSalarizareDepartamentKA();
 			break;
 		case SEF_DEP:

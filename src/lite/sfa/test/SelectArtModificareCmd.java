@@ -1500,7 +1500,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 		if (codArticol.length() == 8)
 			codArticol = "0000000000" + codArticol;
 
-		String localFiliala = "";
+		String localFiliala;
 
 		if (DateLivrare.getInstance().getCodFilialaCLP().length() == 4)
 			localFiliala = DateLivrare.getInstance().getCodFilialaCLP();

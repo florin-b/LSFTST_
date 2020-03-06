@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dip"
                 android:checked="true"
-                android:text="Dispozitie de livrare"
+                android:text="Dispozitie de livrare DL"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
                 android:typeface="sans" >
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dip"
                 android:checked="false"
-                android:text="Comanda de livrare"
+                android:text="Comanda de livrare CLP"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
                 android:typeface="sans" >

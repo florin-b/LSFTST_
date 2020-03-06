@@ -95,13 +95,18 @@ public class OperatiiClient implements AsyncTaskListener {
 		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
 		call.getCallResultsFromFragment();
 	}
-	
+
 	public void getAgentComanda(HashMap<String, String> params) {
 		numeComanda = EnumClienti.GET_AGENT_COMANDA;
 		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
 		call.getCallResultsFromFragment();
-	}	
-	
+	}
+
+	public void getTermenPlata(HashMap<String, String> params) {
+		numeComanda = EnumClienti.GET_TERMEN_PLATA;
+		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
+		call.getCallResultsFromFragment();
+	}
 
 	public ArrayList<BeanClient> deserializeListClienti(String serializedListClienti) {
 		BeanClient client = null;
@@ -212,6 +217,31 @@ public class OperatiiClient implements AsyncTaskListener {
 		}
 
 		return objectsList;
+	}
+
+	public List<String> deserializeTermenPlata(String termenPlata) {
+
+		ArrayList<String> listTermen = new ArrayList<String>();
+
+		JSONArray jsonObject = null;
+
+		try {
+			Object json = new JSONTokener(termenPlata).nextValue();
+
+			if (json instanceof JSONArray) {
+				jsonObject = new JSONArray(termenPlata);
+
+				for (int i = 0; i < jsonObject.length(); i++) {
+					listTermen.add(jsonObject.getString(i));
+
+				}
+			}
+
+		} catch (JSONException e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+		}
+
+		return listTermen;
 	}
 
 	public PlatitorTva deserializePlatitorTva(String result) {

@@ -234,7 +234,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		radioSelectAgent = (RadioGroup) findViewById(R.id.radio_select_agent);
 		setRadioSelectClientListener();
 
-		if (UserInfo.getInstance().getTipUserSap().equals("CGED") || UtilsUser.isSSCM()) {
+		if (isCasiera()) {
 			radioClPF.setVisibility(View.INVISIBLE);
 			radioClPJ.setChecked(true);
 
@@ -259,6 +259,10 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 		}
 
+	}
+
+	private boolean isCasiera() {
+		return UserInfo.getInstance().getTipUserSap().equals("CGED") || UtilsUser.isSSCM();
 	}
 
 	private void setRadioSelectClientListener() {
@@ -989,6 +993,13 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 				HashMap<String, String> artMap = (HashMap<String, String>) arg0.getSelectedItem();
 				UserInfo.getInstance().setCod(artMap.get("codAgent"));
 
+				if (!artMap.get("codAgent").isEmpty() && isCasiera()) {
+					HashMap<String, String> params = new HashMap<String, String>();
+					params.put("codAgent", artMap.get("codAgent"));
+					params.put("codClient", CreareComandaGed.codClientVar);
+					operatiiClient.getTermenPlata(params);
+				}
+
 			}
 
 			@Override
@@ -1089,6 +1100,9 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		case GET_AGENT_COMANDA:
 			afisAgentComanda((String) result);
 			break;
+		case GET_TERMEN_PLATA:
+			setTermenPlataClient((String) result);
+			break;
 		default:
 			break;
 		}
@@ -1117,7 +1131,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 			CreareComandaGed.tipClient = "PJ";
 			DateLivrare.getInstance().setTipPersClient("PJ");
-			
+
 			if (client.getTermenPlata() != null)
 				CreareComandaGed.listTermenPlata = client.getTermenPlata();
 
@@ -1146,6 +1160,12 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 	public void datePersSelected(Object result) {
 		populateDatePersonale((BeanDatePersonale) result);
 
+	}
+
+	private void setTermenPlataClient(String termenPlata) {
+		List<String> listTermen = operatiiClient.deserializeTermenPlata(termenPlata);
+		if (!listTermen.isEmpty())
+			CreareComandaGed.listTermenPlata = listTermen;
 	}
 
 }

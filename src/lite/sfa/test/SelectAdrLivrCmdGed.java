@@ -297,6 +297,11 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 			if (CreareComandaGed.listTermenPlata != null && CreareComandaGed.listTermenPlata.size() > 0) {
 				adapterTermenPlata.addAll(CreareComandaGed.listTermenPlata);
+
+				if (UserInfo.getInstance().getTipUserSap().equals("CGED") || UtilsUser.isSSCM()) {
+					spinnerTermenPlata.setSelection(CreareComandaGed.listTermenPlata.size() - 1);
+				}
+
 			} else {
 				adapterTermenPlata.add("C000");
 				if (DateLivrare.getInstance().getTermenPlata().trim().length() > 0) {
@@ -1907,7 +1912,7 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 				txtTel.setText(dateLivrareClient.getTelPersContact());
 			}
 
-			if ( (UtilsUser.isCGED() || UtilsUser.isSSCM()) && dateLivrareClient.getTermenPlata().trim().length() > 0) {
+			if ((UtilsUser.isCGED() || UtilsUser.isSSCM()) && dateLivrareClient.getTermenPlata().trim().length() > 0) {
 				String[] tokTermen = dateLivrareClient.getTermenPlata().split(";");
 				for (int nrLivr = 0; nrLivr < tokTermen.length; nrLivr++) {
 					if (!tokTermen[nrLivr].equals("C000") && !tokTermen[nrLivr].equals("null"))

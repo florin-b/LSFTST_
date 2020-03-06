@@ -1997,7 +1997,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 			if (codArticol.length() == 8)
 				codArticol = "0000000000" + codArticol;
 
-			String varLocalUnitLog = "";
+			String varLocalUnitLog;
 
 			if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE)
 				varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP();

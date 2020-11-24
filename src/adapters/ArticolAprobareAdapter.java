@@ -45,7 +45,7 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 	public static class ViewHolder {
 		TextView textNrCrt, textNumeArt, textCodArt, textCantArt, textUmArt, textPretArt, textMonedaArt, textDepozit, textStatusArt, textProcRed, textAddCond,
 				textCmp, textProcCmp, textDisClient, textProcAprob, textMultipAprob, textInfoArticol, textPretSpecial, textIstoricPret, textVechimeStoc,
-				textMarjaT1Proc, textMarjaT1Val, textPMD;
+				textMarjaT1Proc, textMarjaT1Val, textPMD, textMarjaT1Moneda;
 
 		LinearLayout layoutIstoricPret, layoutVechimeStoc, layoutMarjaT1, layoutPretMediuDistrib;
 	}
@@ -90,6 +90,7 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 			viewHolder.textMarjaT1Val = (TextView) convertView.findViewById(R.id.textMarjaT1Val);
 			viewHolder.layoutPretMediuDistrib = (LinearLayout) convertView.findViewById(R.id.layoutPretMediuDistrib);
 			viewHolder.textPMD = (TextView) convertView.findViewById(R.id.textPMD);
+			viewHolder.textMarjaT1Moneda = (TextView) convertView.findViewById(R.id.textMarjaT1Moneda);
 			convertView.setTag(viewHolder);
 
 		} else {
@@ -104,7 +105,7 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 		viewHolder.textCantArt.setText(nf3.format(articol.getCantitate()));
 
 		if (!articol.getUmb().equals(articol.getUm())) {
-			unitPret = "RON/" + System.getProperty("line.separator") + articol.getUmb();
+			unitPret = articol.getMoneda() + "/" + System.getProperty("line.separator") + articol.getUmb();
 		}
 
 		viewHolder.textUmArt.setText(articol.getUm());
@@ -132,6 +133,7 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 
 			viewHolder.layoutMarjaT1.setVisibility(View.VISIBLE);
 			viewHolder.textMarjaT1Val.setText(nf2.format(articol.getValT1()));
+			viewHolder.textMarjaT1Moneda.setText(articol.getMoneda());
 			viewHolder.textMarjaT1Proc.setText(nf2.format(articol.getProcT1()) + "%");
 
 			if (valoareCmp > 0) {
@@ -197,9 +199,13 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 
 		double marja = 0;
 		ValoriComanda valoriComanda = new ValoriComanda();
+		String moneda = "";
 
 		for (ArticolComanda art : articol) {
 
+			if (moneda.isEmpty())
+				moneda = art.getMoneda(); 
+				
 			if (art.getTipArt().equals("B")) {
 				valoriComanda.setPondereB(art.getPret() + valoriComanda.getPondereB());
 			}
@@ -212,6 +218,7 @@ public class ArticolAprobareAdapter extends BaseAdapter {
 			}
 		}
 
+		valoriComanda.setMoneda(moneda);
 		return valoriComanda;
 	}
 

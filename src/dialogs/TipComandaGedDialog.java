@@ -1,5 +1,6 @@
 package dialogs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,7 +17,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import beans.ComandaAmobAfis;
 import enums.EnumComenziDAO;
 import enums.TipCmdGed;
@@ -25,10 +29,18 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 	private TipCmdGedListener listener;
 	private Context context;
-	private TipCmdGed tipComanda = TipCmdGed.COMANDA_NOUA;
+	private TipCmdGed tipComanda = TipCmdGed.COMANDA_VANZARE;
 	private ComenziDAO comandaDAO;
 	private Spinner spinnerComenziAmob;
 	private String idComanda;
+	private String codFilialaDest = "";
+
+	private String[] numeFiliala = { "Bacau", "Baia Mare", "Brasov", "Buzau", "Brasov-central", "Buc. Andronache", "Buc. Militari", "Buc. Otopeni",
+			"Buc. Glina", "Constanta", "Cluj", "Craiova", "Focsani", "Galati", "Hunedoara", "Iasi", "Oradea", "Piatra Neamt", "Pitesti", "Ploiesti", "Sibiu",
+			"Timisoara", "Tg. Mures" };
+
+	private String[] codFiliala = { "BC10", "MM10", "BV10", "BZ10", "BV90", "BU13", "BU11", "BU12", "BU10", "CT10", "CJ10", "DJ10", "VN10", "GL10", "HD10",
+			"IS10", "BH10", "NT10", "AG10", "PH10", "SB10", "TM10", "MS10" };
 
 	public TipComandaGedDialog(Context context) {
 		super(context);
@@ -53,6 +65,17 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 		final RadioButton radioNoua = (RadioButton) findViewById(R.id.radioNoua);
 		final RadioButton radioAmob = (RadioButton) findViewById(R.id.radioAmob);
+		final RadioButton radioCLP = (RadioButton) findViewById(R.id.radioCLP);
+
+		final Spinner spinnerFilialeClp = (Spinner) findViewById(R.id.spinFilialaCLP);
+		final TextView textInfoClp = (TextView) findViewById (R.id.textInfoClp);
+
+		ArrayList<HashMap<String, String>> listFiliale = new ArrayList<HashMap<String, String>>();
+		final SimpleAdapter adapterFiliale = new SimpleAdapter(context, listFiliale, R.layout.rowlayoutjudete, new String[] { "numeJudet", "codJudet" },
+				new int[] { R.id.textNumeJudet, R.id.textCodJudet });
+
+		fillFiliale(listFiliale);
+		spinnerFilialeClp.setAdapter(adapterFiliale);
 
 		spinnerComenziAmob = (Spinner) findViewById(R.id.spinComenziAmob);
 		setSpinnerAmobListener();
@@ -63,16 +86,27 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 			public void onClick(View v) {
 
 				if (radioNoua.isChecked())
-					tipComanda = TipCmdGed.COMANDA_NOUA;
+					tipComanda = TipCmdGed.COMANDA_VANZARE;
 				else if (radioAmob.isChecked()) {
 					tipComanda = TipCmdGed.COMANDA_AMOB;
 					if (idComanda.equals("-1"))
 						return;
 
+				} else if (radioCLP.isChecked()) {
+					if (spinnerFilialeClp.getSelectedItemPosition() == 0) {
+						Toast.makeText(context, "Selectati filiala", Toast.LENGTH_LONG).show();
+						return;
+					}
+
+					@SuppressWarnings("unchecked")
+					HashMap<String, String> artMap = (HashMap<String, String>) adapterFiliale.getItem(spinnerFilialeClp.getSelectedItemPosition());
+					codFilialaDest = artMap.get("codJudet");
+					tipComanda = TipCmdGed.COMANDA_LIVRARE;
+
 				}
 
 				if (listener != null)
-					listener.tipComandaSelected(tipComanda, idComanda);
+					listener.tipComandaSelected(tipComanda, idComanda, codFilialaDest);
 
 				dismiss();
 
@@ -84,6 +118,19 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 			@Override
 			public void onClick(View v) {
 				spinnerComenziAmob.setVisibility(View.INVISIBLE);
+				spinnerFilialeClp.setVisibility(View.INVISIBLE);
+				textInfoClp.setVisibility(View.INVISIBLE);
+
+			}
+
+		});
+
+		radioCLP.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				spinnerFilialeClp.setVisibility(View.VISIBLE);
+				textInfoClp.setVisibility(View.VISIBLE);
 
 			}
 
@@ -144,6 +191,29 @@ public class TipComandaGedDialog extends Dialog implements ComenziDAOListener {
 
 		ComandaAMOBAdapter comenziAdapter = new ComandaAMOBAdapter(context, listComenzi);
 		spinnerComenziAmob.setAdapter(comenziAdapter);
+	}
+
+	private void fillFiliale(ArrayList<HashMap<String, String>> listFiliale) {
+
+		HashMap<String, String> temp;
+		int i = 0;
+
+		temp = new HashMap<String, String>();
+		temp.put("numeJudet", "Selectati filiala");
+		temp.put("codJudet", "");
+		listFiliale.add(temp);
+
+		for (i = 0; i < numeFiliala.length; i++) {
+
+			if (!codFiliala[i].equals(UserInfo.getInstance().getUnitLog())) {
+				temp = new HashMap<String, String>();
+				temp.put("numeJudet", numeFiliala[i]);
+				temp.put("codJudet", codFiliala[i]);
+				listFiliale.add(temp);
+			}
+
+		}
+
 	}
 
 	@Override

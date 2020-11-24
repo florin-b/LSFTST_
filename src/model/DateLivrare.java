@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import enums.EnumZona;
 import enums.TipCmdDistrib;
+import enums.TipCmdGed;
 
 public class DateLivrare {
 
@@ -83,6 +84,8 @@ public class DateLivrare {
 	private Delegat delegat;
 	private ObiectivConsilier obiectivConsilier;
 	private String refClient;
+	private TipCmdGed tipComandaGed = TipCmdGed.COMANDA_VANZARE;
+	private String filialeExtraMathaus = "";
 
 	private DateLivrareAfisare dateLivrareAfisare;
 
@@ -614,6 +617,22 @@ public class DateLivrare {
 		this.refClient = refClient;
 	}
 
+	public TipCmdGed getTipComandaGed() {
+		return tipComandaGed;
+	}
+
+	public void setTipComandaGed(TipCmdGed tipComandaGed) {
+		this.tipComandaGed = tipComandaGed;
+	}
+
+	public String getFilialeExtraMathaus() {
+		return filialeExtraMathaus;
+	}
+
+	public void setFilialeExtraMathaus(String filialeExtraMathaus) {
+		this.filialeExtraMathaus = filialeExtraMathaus;
+	}
+
 	public void resetAll() {
 		codJudet = "";
 		numeJudet = "";
@@ -666,6 +685,8 @@ public class DateLivrare {
 		delegat = new Delegat();
 		obiectivConsilier = null;
 		refClient = "";
+		tipComandaGed = TipCmdGed.COMANDA_VANZARE;
+		filialeExtraMathaus = "";
 
 	}
 

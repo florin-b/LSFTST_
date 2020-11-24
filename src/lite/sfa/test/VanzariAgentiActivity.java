@@ -16,6 +16,7 @@ import model.UserInfo;
 import model.VanzariAgenti;
 import lite.sfa.test.R;
 
+/*
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,6 +25,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+*/
 
 import adapters.DrawerMenuAdapter;
 import android.app.ActionBar;
@@ -182,7 +184,7 @@ public class VanzariAgentiActivity extends Activity {
 						if (AfisRaportVanzariAg.arrayListRapVanz.size() == 0) {
 							Toast.makeText(getApplicationContext(), "Nimic de expediat.", Toast.LENGTH_LONG).show();
 						} else {
-							startCreareXlsDocumentThread();
+							//startCreareXlsDocumentThread();
 						}
 					}
 
@@ -243,6 +245,8 @@ public class VanzariAgentiActivity extends Activity {
 
 	}
 
+	/*
+	
 	private void startCreareXlsDocumentThread() {
 		try {
 
@@ -306,7 +310,11 @@ public class VanzariAgentiActivity extends Activity {
 		}
 
 	}
-
+	
+	*/
+	
+	
+/*
 	private void performCreateXlsDocument() {
 
 		try {
@@ -412,6 +420,9 @@ public class VanzariAgentiActivity extends Activity {
 		}
 
 	}
+
+
+*/
 
 	private void showSendMailScreen() {
 		try {

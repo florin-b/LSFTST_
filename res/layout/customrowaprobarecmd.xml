@@ -235,6 +235,7 @@
             android:typeface="monospace" />
 
         <TextView
+            android:id="@+id/textMarjaT1Moneda"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_gravity="right"

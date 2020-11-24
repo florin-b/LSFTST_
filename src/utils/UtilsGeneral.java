@@ -14,6 +14,7 @@ import lite.sfa.test.R;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,12 +52,13 @@ public class UtilsGeneral {
 		if (UserInfo.getInstance().getCodDepart().equals("02") || UserInfo.getInstance().getDepartExtra().contains("02"))
 			listDepozite.add("92V1");
 
-		if (UserInfo.getInstance().getCodDepart().equals("05"))
+		if (UserInfo.getInstance().getCodDepart().equals("05") || UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserKA())
 			listDepozite.add("95V1");
 
 		listDepozite.add("DSCM");
 
-		listDepozite.add("MAV1");
+		if (DateLivrare.getInstance().getTipComandaDistrib() != TipCmdDistrib.COMANDA_LIVRARE)
+			listDepozite.add("MAV1");
 
 		if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.DISPOZITIE_LIVRARE)
 			listDepozite.remove("DESC");
@@ -84,6 +86,13 @@ public class UtilsGeneral {
 
 		return listDepozite.toArray(new String[listDepozite.size()]);
 
+	}
+	
+	public static void trateazaExceptieMAV_BU(ArrayAdapter<String> adapterSpinnerDepozite) {
+
+		//pentru filialele BU se elimina MAV2, conform solicitarii din 17.09.2020
+		if (UserInfo.getInstance().getUnitLog().startsWith("BU"))
+			adapterSpinnerDepozite.remove("MAV2");
 	}
 
 	public static String[] getDepoziteMav() {

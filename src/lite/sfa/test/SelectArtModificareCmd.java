@@ -21,6 +21,7 @@ import model.OperatiiArticol;
 import model.OperatiiArticolFactory;
 import model.UserInfo;
 import utils.DepartamentAgent;
+import utils.UtilsDates;
 import utils.UtilsFormatting;
 import utils.UtilsGeneral;
 import adapters.CautareArticoleAdapter;
@@ -114,6 +115,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 	private ArticolDB articolDBSelected;
 	private TextView txtImpachetare;
 	private String istoricPret;
+	private String dataExpPret;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -992,6 +994,7 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 						unArticol.setTipAlert(tipAlert);
 						unArticol.setStatus(" ");
 						unArticol.setDepartAprob(articolDBSelected.getDepartAprob());
+						unArticol.setDataExpPret(dataExpPret);
 
 						if (procRedFin > 0)
 							unArticol.setIstoricPret(istoricPret);
@@ -1199,15 +1202,11 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 				procDiscClient = 0;
 				minimKAPrice = 0;
 				if (UserInfo.getInstance().getTipAcces().equals("27")) {
-
-					minimKAPrice = initPrice / globalCantArt * valMultiplu;
+					
+					minimKAPrice = listPrice / globalCantArt * valMultiplu - (listPrice / globalCantArt * valMultiplu) * Double.valueOf(tokenPret[16]) / 100;
 
 					if (listPrice > 0)
 						procDiscClient = 100 - (initPrice / listPrice) * 100;
-
-					initPrice = listPrice - listPrice * (Double.valueOf(tokenPret[16]) / 100);
-
-					listPrice = initPrice;
 
 					layoutPretMaxKA.setVisibility(View.VISIBLE);
 					textPretMinKA.setText(String.valueOf(nf2.format(minimKAPrice)));
@@ -1247,6 +1246,9 @@ public class SelectArtModificareCmd extends ListActivity implements OperatiiArti
 
 				txtPretArt.setText(nf2.format(initPrice / globalCantArt * valMultiplu));
 				txtPretArt.setHint(nf2.format(initPrice / globalCantArt * valMultiplu));
+				
+				dataExpPret = tokenPret[23];
+				((TextView) findViewById(R.id.textDataExp)).setText(UtilsDates.formatDataExp(tokenPret[23]));
 
 				if (ModificareComanda.isComandaDistrib)
 					textPretTVA.setText(String.valueOf(nf2.format(initPrice / globalCantArt * valMultiplu * Constants.TVA)));

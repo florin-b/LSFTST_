@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Observable;
 
 
+import model.UserInfo;
+
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -83,6 +85,7 @@ public class SearchClientListener extends Observable {
 				request.addProperty("depart", depart);
 				request.addProperty("departAg", departAg);
 				request.addProperty("unitLog", unitLog);
+				request.addProperty("tipUserSap", UserInfo.getInstance().getTipUserSap());
 
 				SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
 						SoapEnvelope.VER11);

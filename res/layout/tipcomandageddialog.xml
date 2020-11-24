@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="3dip"
                 android:checked="true"
-                android:text="Comanda noua"
+                android:text="Comanda de vanzare"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
                 android:typeface="sans" >
@@ -41,9 +41,33 @@
                 android:text="Comanda AMOB"
                 android:textColor="@color/detColor1"
                 android:textSize="17sp"
+                android:typeface="sans"
+                android:visibility="invisible" >
+            </RadioButton>
+
+            <RadioButton
+                android:id="@+id/radioCLP"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dip"
+                android:checked="false"
+                android:text="Comanda de livrare CLP"
+                android:textColor="@color/detColor1"
+                android:textSize="17sp"
                 android:typeface="sans" >
             </RadioButton>
         </RadioGroup>
+
+        <Spinner
+            android:id="@+id/spinFilialaCLP"
+            android:layout_width="0dp"
+            android:layout_height="45dip"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="20dip"
+            android:layout_marginLeft="30dip"
+            android:layout_weight="0.2"
+            android:gravity="left"
+            android:visibility="invisible" />
 
         <Spinner
             android:id="@+id/spinComenziAmob"
@@ -56,6 +80,17 @@
             android:gravity="left"
             android:visibility="invisible" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textInfoClp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dip"
+        android:text="Comanda cu articole dintr-un singur departament si depozit."
+        android:textColor="@color/detColor1"
+        android:textSize="17sp"
+        android:typeface="sans"
+        android:visibility="invisible" />
 
     <LinearLayout
         android:layout_width="match_parent"

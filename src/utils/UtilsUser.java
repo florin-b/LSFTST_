@@ -130,6 +130,10 @@ public class UtilsUser {
 		return UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("SDIP");
 	}
 
+	public static boolean isUserIP() {
+		return UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("SDIP") || UserInfo.getInstance().getTipUserSap().equalsIgnoreCase("CVIP");
+	}
+
 	public static String getTipSMNou() {
 		String tipUser;
 

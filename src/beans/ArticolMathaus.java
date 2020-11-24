@@ -1,0 +1,70 @@
+package beans;
+
+public class ArticolMathaus extends ArticolDB {
+	private String cod;
+	private String nume;
+	private String adresaImg;
+	private String adresaImgMare;
+	private String descriere;
+	private String catMathaus;
+	private String pretUnitar;
+
+	public String getCod() {
+		return cod;
+	}
+
+	public void setCod(String cod) {
+		this.cod = cod;
+	}
+
+	public String getNume() {
+		return nume;
+	}
+
+	public void setNume(String nume) {
+		this.nume = nume;
+	}
+
+	public String getAdresaImg() {
+		return adresaImg;
+	}
+
+	public void setAdresaImg(String adresaImg) {
+		this.adresaImg = adresaImg;
+	}
+
+	public String getAdresaImgMare() {
+		return adresaImgMare;
+	}
+
+	public void setAdresaImgMare(String adresaImgMare) {
+		this.adresaImgMare = adresaImgMare;
+	}
+
+	public String getDescriere() {
+		return descriere;
+	}
+
+	public void setDescriere(String descriere) {
+		this.descriere = descriere;
+	}
+
+	public String getCatMathaus() {
+		return catMathaus;
+	}
+
+	public void setCatMathaus(String catMathaus) {
+		this.catMathaus = catMathaus;
+	}
+
+	public String getPretUnitar() {
+		return pretUnitar;
+	}
+
+	public void setPretUnitar(String pretUnitar) {
+		this.pretUnitar = pretUnitar;
+	}
+
+	
+	
+}

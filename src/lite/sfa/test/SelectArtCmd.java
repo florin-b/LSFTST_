@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import listeners.ArticolCantListener;
 import listeners.OperatiiArticolListener;
 import model.ArticolComanda;
 import model.Constants;
@@ -22,6 +23,8 @@ import model.OperatiiArticol;
 import model.OperatiiArticolFactory;
 import model.UserInfo;
 import utils.DepartamentAgent;
+import utils.UtilsArticole;
+import utils.UtilsDates;
 import utils.UtilsFormatting;
 import utils.UtilsGeneral;
 import utils.UtilsUser;
@@ -58,13 +61,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import beans.ArticolCant;
 import beans.ArticolDB;
+import dialogs.ArticoleCantDialog;
 import enums.EnumArticoleDAO;
 import enums.EnumDepartExtra;
+import enums.EnumFiliale;
 import enums.EnumTipComanda;
 import enums.TipCmdDistrib;
 
-public class SelectArtCmd extends ListActivity implements OperatiiArticolListener {
+public class SelectArtCmd extends ListActivity implements OperatiiArticolListener, ArticolCantListener {
 
 	Button articoleBtn, saveArtBtn, pretBtn;
 	String filiala = "", nume = "", cod = "", umStoc = "";
@@ -115,7 +121,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 	SimpleAdapter adapterUmVanz;
 	private double varProc = 0, valMultiplu = 0;
 
-	String tipAlert = "", codPromo = "", infoArticol = "", Umb = "", cantUmb = "", selectedUnitMas = "";
+	String tipAlert = "", codPromo = "", infoArticol = "", Umb = "", cantUmb = "", selectedUnitMas = "", selectedUnitMasPret = "";
 
 	private HashMap<String, String> artMap = null;
 	double procR = 0, globalCantArt = 0;
@@ -139,6 +145,9 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 	private ArrayList<ArticolDB> listArticoleStatistic;
 	private ArrayList<ArticolDB> listArticoleCustodie;
 	private double discountASDL;
+
+	private Spinner spinnerFilialeCustodie;
+	private String dataExpPret;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -243,6 +252,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 		if (isLivrareCustodie()) {
 			spinnerDepoz.setVisibility(View.INVISIBLE);
 			((LinearLayout) findViewById(R.id.layoutHeaderArt)).setVisibility(View.INVISIBLE);
+			addSpinnerFilialeCustodie();
 			getArticoleCustodie();
 
 		} else {
@@ -281,6 +291,43 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
 	}
 
+	private void addSpinnerFilialeCustodie() {
+
+		ArrayAdapter<EnumFiliale> adapterFil = new ArrayAdapter<EnumFiliale>(getBaseContext(), android.R.layout.simple_list_item_1, EnumFiliale.values());
+		LayoutInflater mInflater = LayoutInflater.from(this);
+		View mCustomView = mInflater.inflate(R.layout.spinner_layout, null);
+		spinnerFilialeCustodie = (Spinner) mCustomView.findViewById(R.id.spinnerDep);
+
+		spinnerFilialeCustodie.setAdapter(adapterFil);
+
+		for (int i = 0; i < spinnerFilialeCustodie.getAdapter().getCount(); i++) {
+			if (EnumFiliale.getCodFiliala(spinnerFilialeCustodie.getAdapter().getItem(i).toString()).equals(DateLivrare.getInstance().getUnitLog())) {
+				spinnerFilialeCustodie.setSelection(i);
+				break;
+			}
+
+		}
+
+		spinnerFilialeCustodie.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				CreareComanda.filialaCustodie = EnumFiliale.getCodFiliala(spinnerFilialeCustodie.getAdapter().getItem(position).toString());
+				getArticoleCustodie();
+
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+
+			}
+		});
+
+		getActionBar().setCustomView(mCustomView);
+		getActionBar().setDisplayShowCustomEnabled(true);
+
+	}
+
 	private void addSpinnerDepartamente() {
 
 		if (isLivrareCustodie())
@@ -305,6 +352,8 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 				if (selectedDepartamentAgent.equals("11") || selectedDepartamentAgent.equals("05")) {
 					adapterSpinnerDepozite.clear();
 					adapterSpinnerDepozite.addAll(UtilsGeneral.getDepoziteGed());
+
+					UtilsGeneral.trateazaExceptieMAV_BU(adapterSpinnerDepozite);
 
 					if (selectedDepartamentAgent.equals("11"))
 						spinnerDepoz.setSelection(adapterSpinnerDepozite.getPosition("MAV1"));
@@ -378,7 +427,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 				return true;
 			else if (UserInfo.getInstance().getCodDepart().equals("01") && UserInfo.getInstance().getDepartExtra().contains("02"))
 				return true;
-		} else if (UserInfo.getInstance().getTipUser().equals("KA"))
+		} else if (UserInfo.getInstance().getTipUser().equals("KA") || UtilsUser.isUserSDKA() || UtilsUser.isUserSK())
 			return true;
 
 		return false;
@@ -574,7 +623,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
 		HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
 		params.put("codClient", CreareComanda.codClientVar);
-		params.put("filiala", UserInfo.getInstance().getUnitLog());
+		params.put("filiala", EnumFiliale.getCodFiliala(spinnerFilialeCustodie.getSelectedItem().toString()));
 		params.put("departament", selectedDepartamentAgent);
 
 		opArticol.getArticoleCustodie(params);
@@ -855,9 +904,11 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 			selectedCant = Double.parseDouble(textCant.getText().toString().trim());
 
 			selectedUnitMas = "";
+			selectedUnitMasPret = "";
 			if (listUmVanz.size() > 1) {
 				artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
 				selectedUnitMas = artMap.get("rowText");
+				selectedUnitMasPret = artMap.get("rowText");
 			}
 
 			if (selectedCant > 0) {
@@ -920,6 +971,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 		params.put("codUser", UserInfo.getInstance().getCod());
 		params.put("canalDistrib", CreareComanda.canalDistrib);
 		params.put("filialaAlternativa", CreareComanda.filialaAlternativa);
+		params.put("filialaClp", DateLivrare.getInstance().getCodFilialaCLP());
 
 		opArticol.getPret(params);
 
@@ -969,6 +1021,22 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 		resultLayout.setVisibility(View.INVISIBLE);
 		CautareArticoleAdapter adapterArticole = new CautareArticoleAdapter(this, resultsList);
 		setListAdapter(adapterArticole);
+
+	}
+
+	private void showArticoleCantDialog(String listArticoleSer) {
+		List<ArticolCant> listArticole = opArticol.deserializeArticoleCant(listArticoleSer);
+
+		if (!listArticole.isEmpty()) {
+
+			int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.6);
+			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.5);
+
+			ArticoleCantDialog articoleCant = new ArticoleCantDialog(this, listArticole);
+			articoleCant.setArticoleCantListener(this);
+			articoleCant.getWindow().setLayout(width, height);
+			articoleCant.show();
+		}
 
 	}
 
@@ -1127,10 +1195,23 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 						altDepozit = true;
 					}
 
-					if (!unitLogUnic.equals(CreareComanda.filialaAlternativa)) {
+					if (!unitLogUnic.equals(CreareComanda.filialaAlternativa) && !isUserExceptieFiliale()) {
 						Toast.makeText(getApplicationContext(), "Selectati articole dintr-o singura filiala!", Toast.LENGTH_LONG).show();
-
 						return;
+					}
+
+					if (listUmVanz.size() > 1) {
+
+						artMap = (HashMap<String, String>) spinnerUnitMas.getSelectedItem();
+						String currentUnitMas = artMap.get("rowText");
+
+						if (!currentUnitMas.equals(selectedUnitMasPret)) {
+							Toast.makeText(getApplicationContext(), "Unitatea de masura nu corespunde celei pentru care a fost solicitat pretul.",
+									Toast.LENGTH_LONG).show();
+							return;
+
+						}
+
 					}
 
 					String cantArticol = textCant.getText().toString().trim();
@@ -1293,6 +1374,8 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 						unArticol.setCategorie(articolDBSelected.getCategorie());
 						unArticol.setLungime(articolDBSelected.getLungime());
 						unArticol.setCmp(cmpArt);
+						unArticol.setFilialaSite(CreareComanda.filialaAlternativa);
+						unArticol.setDataExpPret(dataExpPret);
 
 						if (procRedFin > 0)
 							unArticol.setIstoricPret(istoricPret);
@@ -1317,6 +1400,9 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 									.show();
 
 						}
+
+						if (UtilsArticole.isArticolPal(articolDBSelected.getSintetic()))
+							afiseazaArticoleCant(codArticol, CreareComanda.filialaAlternativa);
 
 						textNumeArticol.setText("");
 						textCodArticol.setText("");
@@ -1377,6 +1463,22 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 			}
 		});
 
+	}
+
+	private void afiseazaArticoleCant(String codArticol, String filiala) {
+
+		
+
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("unitLog", filiala);
+		params.put("codArtPal", codArticol);
+
+		opArticol.getArticoleCant(params);
+
+	}
+
+	private boolean isUserExceptieFiliale() {
+		return globalCodDepartSelectetItem.equals("01") || globalCodDepartSelectetItem.equals("02");
 	}
 
 	private void saveArticolCustodie() {
@@ -1591,6 +1693,9 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
 				procReducereCmp = Double.parseDouble(tokenPret[21]);
 				((TextView) findViewById(R.id.textPretGed)).setText(tokenPret[22]);
+
+				dataExpPret = tokenPret[23];
+				((TextView) findViewById(R.id.textDataExp)).setText(UtilsDates.formatDataExp(tokenPret[23]));
 
 				procDiscClient = 0;
 				minimKAPrice = 0;
@@ -1975,13 +2080,14 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 	}
 
 	private void performListArtStocCustodie() {
+
 		if (codArticol.length() == 8)
 			codArticol = "0000000000" + codArticol;
 
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("codArticol", codArticol);
 		params.put("codClient", CreareComanda.codClientVar);
-		params.put("filiala", CreareComanda.filialaAlternativa);
+		params.put("filiala", EnumFiliale.getCodFiliala(spinnerFilialeCustodie.getSelectedItem().toString()));
 
 		opArticol.getStocCustodie(params);
 	}
@@ -1999,9 +2105,13 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 
 			String varLocalUnitLog;
 
-			if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE)
-				varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP();
-			else {
+			if (DateLivrare.getInstance().getTipComandaDistrib() == TipCmdDistrib.COMANDA_LIVRARE) {
+				if (globalDepozSel.equals("MAV1"))
+					varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP().substring(0, 2) + "2"
+							+ DateLivrare.getInstance().getCodFilialaCLP().substring(3, 4);
+				else
+					varLocalUnitLog = DateLivrare.getInstance().getCodFilialaCLP();
+			} else {
 				if (globalDepozSel.equals("MAV1") || globalDepozSel.equals("DSCM")) {
 					if (CreareComanda.filialaAlternativa.equals("BV90"))
 						varLocalUnitLog = "BV92";
@@ -2059,9 +2169,6 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 			listArtPret((String) result);
 			break;
 
-		case GET_ARTICOLE_DISTRIBUTIE:
-			populateListViewArticol(opArticol.deserializeArticoleVanzare((String) result));
-			break;
 		case GET_ARTICOLE_STATISTIC:
 			((TextView) findViewById(R.id.textAfisStatistic)).setVisibility(View.VISIBLE);
 			listArticoleStatistic = opArticol.deserializeArticoleVanzare((String) result);
@@ -2079,6 +2186,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 			populateListViewArticol(listArticoleCustodie);
 			break;
 
+		case GET_ARTICOLE_DISTRIBUTIE:
 		case GET_ARTICOLE_FURNIZOR:
 			populateListViewArticol(opArticol.deserializeArticoleVanzare((String) result));
 			break;
@@ -2088,11 +2196,36 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 		case GET_FACTOR_CONVERSIE:
 			loadFactorConversie((String) result);
 			break;
-
+		case GET_ARTICOLE_CANT:
+			showArticoleCantDialog((String) result);
+			break;
 		default:
 			break;
 
 		}
+
+	}
+
+	@Override
+	public void articolCantSelected(ArticolCant articolCant) {
+
+		List<ArticolDB> listArticole = new ArrayList<ArticolDB>();
+		articolCant.setCod(articolCant.getCod().replaceFirst("^0*", ""));
+		listArticole.add(articolCant);
+
+		CreareComanda.filialaAlternativa = articolCant.getUlStoc();
+
+		if (articolCant.getDepozit().equals("92V1"))
+			spinnerDepoz.setSelection(adapterSpinnerDepozite.getPosition("92V1"));
+		else
+			spinnerDepoz.setSelection(0);
+
+		txtNumeArticol.setText("");
+		resultLayout.setVisibility(View.INVISIBLE);
+		CautareArticoleAdapter adapterArticole = new CautareArticoleAdapter(this, listArticole);
+		setListAdapter(adapterArticole);
+
+		this.getListView().performItemClick(this.getListView().getAdapter().getView(0, null, null), 0, this.getListView().getItemIdAtPosition(0));
 
 	}
 

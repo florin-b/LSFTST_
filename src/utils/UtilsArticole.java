@@ -17,8 +17,7 @@ public class UtilsArticole {
 		}
 
 	}
-	
-	
+
 	public static boolean isArticolPermitSubCmp(String codArticol) {
 
 		String articoleExceptie = "000000000010300576" + "000000000010300578" + "000000000010300582" + "000000000010300595" + "000000000010300598"
@@ -125,7 +124,12 @@ public class UtilsArticole {
 
 		return articoleExceptie.contains(codArticol);
 
-	}	
-	
-	
+	}
+
+	public static boolean isArticolPal(String codSintetic) {
+
+		return codSintetic.equals("100") || codSintetic.equals("101") || codSintetic.equals("102") || codSintetic.equals("103") || codSintetic.equals("104")
+				|| codSintetic.equals("105") || codSintetic.equals("106");
+
+	}
 }

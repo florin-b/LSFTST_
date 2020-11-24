@@ -89,7 +89,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 
 		initSelectionDepartament();
 
-		if (UtilsUser.isAV() || UtilsUser.isKA())
+		if (UtilsUser.isAV() || UtilsUser.isKA() || UtilsUser.isUserSK() || UtilsUser.isUserSDKA())
 			addSpinnerDepartamente();
 
 		ActionBar actionBar = getActionBar();
@@ -180,7 +180,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 		if (UtilsUser.isCV() || UtilsUser.isDVCV() || UtilsUser.isConsWood())
 			selectedDepartamentAgent = "";
 
-		if (UtilsUser.isKA())
+		if (UtilsUser.isKA() || UtilsUser.isUserSK() || UtilsUser.isUserSDKA())
 			selectedDepartamentAgent = "00";
 	}
 
@@ -404,6 +404,10 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 
 	}
 
+	boolean isWood() {
+		return UserInfo.getInstance().getTipUser().equals("WOOD");
+	}	
+	
 	protected void performGetPret() {
 
 		try {
@@ -416,9 +420,13 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 			HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
 
 			// consilieri sau sm
-			if (UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("18")) {
+			if (UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("18") || UtilsUser.isUserIP()) {
 
 				filialaPret = filialaPret.substring(0, 2) + "2" + filialaPret.substring(3, 4);
+				
+				if (isWood()) {
+					filialaPret = UserInfo.getInstance().getUnitLog().substring(0, 2) + "4" + UserInfo.getInstance().getUnitLog().substring(3, 4);
+				}
 
 				params.put("client", InfoStrings.getClientGenericGed(UserInfo.getInstance().getUnitLog(), "PF"));
 				params.put("articol", codArticol);
@@ -448,6 +456,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 			pret = Preturi.getInstance();
 			pret.setPreturiListener(this);
 			pret.getPret(params, methodName, this);
+			
 
 		} catch (Exception e) {
 			Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
@@ -488,7 +497,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 
 		TextView labelPTVA = new TextView(this);
 		// pentru consilieri nu se afiseaza pretul cu tva
-		if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18")) {
+		if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18") && !UtilsUser.isUserIP()) {
 
 			labelPTVA.setText("Pret + tva");
 			labelPTVA.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
@@ -506,7 +515,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 			labelPretGED.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
 			labelPretGED.setTextSize(16);
 			labelPretGED.setGravity(Gravity.LEFT);
-			labelPretGED.setTextColor(getResources().getColor(R.color.detColor4));
+			labelPretGED.setTextColor(getResources().getColor(R.color.detColor4)); 
 			labelPretGED.setLayoutParams(layoutParams);
 			rowLayout.addView(labelPretGED);
 		}
@@ -542,7 +551,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 				labelPret.setLayoutParams(layoutParams);
 				rowLayoutCh.addView(labelPret);
 
-				if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18")) {
+				if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18") && !UtilsUser.isUserIP()) {
 					labelPTVA = new TextView(this);
 					labelPTVA.setText("");
 					if (artTok[1] != null) {
@@ -641,7 +650,7 @@ public class PreturiActivity extends ListActivity implements PreturiListener, Op
 
 	public void taskComplete(String response) {
 		afisPretArt(response);
-		if (UtilsUser.isCV())
+		if (UtilsUser.isCV() || UtilsUser.isUserIP())
 			performGetCodBare();
 	}
 

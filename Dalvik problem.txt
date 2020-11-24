@@ -1,0 +1,3 @@
+dex loader unable to execute dex
+sunt mai mult de 65k metode in aplicatie. Trebuie portat proiectul pe Android Studio.
+se poate elimina libraria poi.jar (folosita la exportul in excel), in VanzariAgentiActivity

@@ -31,6 +31,7 @@ public class PretArticolGed {
 	private String errMsg;
 	private double procReducereCmp;
 	private double pretFaraTva;
+	private String dataExp;
 
 	public String getPret() {
 		return pret;
@@ -264,4 +265,13 @@ public class PretArticolGed {
 		this.pretFaraTva = pretFaraTva;
 	}
 
+	public String getDataExp() {
+		return dataExp;
+	}
+
+	public void setDataExp(String dataExp) {
+		this.dataExp = dataExp;
+	}
+
+	
 }

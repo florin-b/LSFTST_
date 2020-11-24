@@ -147,6 +147,8 @@ public class SelectAgentVanzariAg extends Fragment implements CustomSpinnerListe
 
 			params.put("filiala", VanzariAgenti.getInstance().selectedFiliala);
 			params.put("depart", localDepart);
+			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
+			params.put("codAgent", UserInfo.getInstance().getCod());
 
 			AsyncTaskListener contextListener = (AsyncTaskListener) SelectAgentVanzariAg.this;
 			AsyncTaskWSCall call = new AsyncTaskWSCall(getActivity(), contextListener, "getListAgenti", params);

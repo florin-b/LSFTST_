@@ -36,9 +36,5 @@ public class BeanClientBorderou {
 		this.pozitie = pozitie;
 	}
 
-	@Override
-	public String toString() {
-		return "BeanClientBorderou [codClient=" + codClient + ", pozitie=" + pozitie + ", stareLivrare=" + stareLivrare + "]";
-	}
 
 }

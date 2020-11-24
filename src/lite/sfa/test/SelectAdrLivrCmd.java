@@ -4,8 +4,6 @@
  */
 package lite.sfa.test;
 
-
-
 import helpers.HelperAdreseLivrare;
 
 import java.text.NumberFormat;
@@ -17,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import listeners.AsyncTaskListener;
 import listeners.AutocompleteDialogListener;
 import listeners.MapListener;
 import listeners.ObiectiveListener;
@@ -84,16 +83,20 @@ import com.google.android.gms.maps.model.LatLng;
 
 import dialogs.MapAddressDialog;
 import dialogs.SelectDateDialog;
+import enums.EnumJudete;
 import enums.EnumLocalitate;
 import enums.EnumOperatiiAdresa;
 import enums.EnumOperatiiObiective;
 import enums.EnumZona;
 
 public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnItemClickListener, OperatiiAdresaListener, ObiectiveListener, MapListener,
-		AutocompleteDialogListener {
+		AutocompleteDialogListener, AsyncTaskListener {
 
 	private Button saveAdrLivrBtn;
 	private EditText txtPers, txtTel, txtObservatii, txtValoareIncasare;
+
+	private static final String METHOD_NAME = "getClientJud";
+	int posJudetSel = 0;
 
 	String[] tipPlata = { "B - Bilet la ordin", "C - Cec", "E - Plata in numerar", "O - Ordin de plata" };
 
@@ -321,24 +324,16 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		HashMap<String, String> temp;
 		int i = 0;
 
-		for (i = 0; i < UtilsGeneral.numeJudete.length; i++) {
-			temp = new HashMap<String, String>(50, 0.75f);
-			temp.put("numeJudet", UtilsGeneral.numeJudete[i]);
-			temp.put("codJudet", UtilsGeneral.codJudete[i]);
-			listJudete.add(temp);
+		performGetJudete();
 
-			if (DateLivrare.getInstance().getCodJudet().equals(UtilsGeneral.codJudete[i])) {
-				numeJudSel = UtilsGeneral.numeJudete[i];
-			}
 
-		}
-
-		DateLivrare.getInstance().setNumeJudet(numeJudSel);
-		spinnerJudet.setAdapter(adapterJudete);
+			
 
 		// document insotitor
 		checkFactura = (CheckBox) findViewById(R.id.checkFactura);
+		setListenerCheckFactura();
 		checkAviz = (CheckBox) findViewById(R.id.checkAviz);
+		setListenerCheckAviz();
 
 		checkFactura.setChecked(false);
 		checkAviz.setChecked(false);
@@ -416,7 +411,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		if (UtilsUser.isAgentOrSD() && UserInfo.getInstance().getCodDepart().startsWith("04"))
 			layoutPrelucrare04.setVisibility(View.VISIBLE);
 
-		if (UtilsUser.isKA())
+		if (UtilsUser.isKA() || UtilsUser.isUserSDKA() || UtilsUser.isUserSK())
 			layoutPrelucrare04.setVisibility(View.VISIBLE);
 
 		radioLista = (RadioButton) findViewById(R.id.radioLista);
@@ -474,6 +469,55 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 		performGetAdreseLivrare();
 
+		if (isComandaBV() && DateLivrare.getInstance().getTipPlata().substring(0, 1).equals("E")) {
+			checkAviz.setChecked(false);
+			checkAviz.setEnabled(false);
+		}
+		
+		if (DateLivrare.getInstance().isAdrLivrNoua()) {
+			radioText.setChecked(true);
+
+			textLocalitate.setText(DateLivrare.getInstance().getOras());
+			textStrada.setText(DateLivrare.getInstance().getStrada());
+			
+		}
+
+	}
+
+	private boolean isComandaBV() {
+
+		boolean isBV90 = false;
+
+		for (ArticolComanda articol : ListaArticoleComanda.getInstance().getListArticoleComanda()) {
+			if (articol.getFilialaSite() != null && articol.getFilialaSite().equals("BV90")) {
+				isBV90 = true;
+				break;
+			}
+		}
+
+		return isBV90;
+	}
+
+	private void setListenerCheckFactura() {
+		checkFactura.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked)
+					checkAviz.setChecked(false);
+			}
+		});
+	}
+
+	private void setListenerCheckAviz() {
+		checkAviz.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked)
+					checkFactura.setChecked(false);
+			}
+		});
 	}
 
 	private void setLivrareCustodieLayout() {
@@ -810,11 +854,84 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	}
 
+	private void performGetJudete() {
+
+		if (isComandaClp()) {
+			fillJudeteClient(EnumJudete.getRegionCodes());
+
+		} else {
+			String unitLog = UserInfo.getInstance().getUnitLog();
+
+			if (unitLog.equals("NN10"))
+				unitLog = "AG10";
+
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("filiala", unitLog);
+
+			AsyncTaskWSCall call = new AsyncTaskWSCall(this, METHOD_NAME, params);
+			call.getCallResultsSyncActivity();
+		}
+
+	}
+
+	private boolean isComandaClp() {
+		return !DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty() && DateLivrare.getInstance().getCodFilialaCLP().trim().length() == 4;
+	}
+
+	private void fillJudeteClient(String arrayJudete) {
+
+		
+		if (listJudete != null)
+			listJudete.clear();
+		
+		HashMap<String, String> temp;
+		String numeJudSel = "";
+		int i;
+		temp = new HashMap<String, String>();
+		temp.put("numeJudet", "Selectati judetul");
+		temp.put("codJudet", "");
+		listJudete.add(temp);
+
+		int nrJud = 0;
+		for (i = 0; i < UtilsGeneral.numeJudete.length; i++) {
+
+			if (arrayJudete.contains(UtilsGeneral.codJudete[i])) {
+				temp = new HashMap<String, String>();
+				temp.put("numeJudet", UtilsGeneral.numeJudete[i]);
+				temp.put("codJudet", UtilsGeneral.codJudete[i]);
+				listJudete.add(temp);
+
+				nrJud++;
+
+				if (DateLivrare.getInstance().getCodJudet().equals(UtilsGeneral.codJudete[i])) {
+					posJudetSel = nrJud;
+					numeJudSel = UtilsGeneral.numeJudete[i];
+				}
+			}
+
+		}
+
+		spinnerJudet.setAdapter(adapterJudete);
+
+		if (posJudetSel > 0) {
+			DateLivrare.getInstance().setNumeJudet(numeJudSel);
+			spinnerJudet.setSelection(posJudetSel);
+		}
+
+	}
+
 	private void addListenerTipPlata() {
 		spinnerPlata.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
 
+				checkAviz.setEnabled(true);
+
 				if (spinnerPlata.getSelectedItem().toString().substring(0, 1).equals("E")) {
+
+					if (isComandaBV()) {
+						checkAviz.setEnabled(false);
+						checkAviz.setChecked(false);
+					}
 					spinnerResponsabil.setSelection(1);
 				}
 
@@ -1623,7 +1740,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		} else
 			dateLivrareInstance.setPrelucrare("-1");
 
-		if (dateLivrareInstance.getOras().equalsIgnoreCase("bucuresti")) {
+		if (dateLivrareInstance.getOras().equalsIgnoreCase("bucuresti") || dateLivrareInstance.getOras().toLowerCase().contains("sector")) {
 			beans.LatLng coordAdresa = new beans.LatLng(dateLivrareInstance.getCoordonateAdresa().latitude, dateLivrareInstance.getCoordonateAdresa().longitude);
 			EnumZona zona = ZoneBucuresti.getZonaBucuresti(coordAdresa);
 
@@ -1693,19 +1810,23 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	private boolean adresaNouaExista() {
 		int posAdresa = HelperAdreseLivrare.verificaDistantaAdresaNoua(adreseList, DateLivrare.getInstance().getCoordonateAdresa());
 
-		if (posAdresa != -1) {
+		int  adresaExista = HelperAdreseLivrare.adresaExista(adreseList);
 
+		if (adresaExista != -1) {
 			Toast.makeText(getApplicationContext(), "Aceasta adresa exista deja in lista de adrese.", Toast.LENGTH_LONG).show();
-
-			selectedAddrModifCmd = posAdresa;
+			selectedAddrModifCmd = posAdresa != -1 ? posAdresa : adresaExista;
 			radioLista.setChecked(true);
-			spinnerAdreseLivrare.setSelection(posAdresa);
-
+			spinnerAdreseLivrare.setSelection(posAdresa != -1 ? posAdresa : adresaExista);
 			return true;
+		} else if (posAdresa != -1) {
+			valideazaTonajAdresaNoua();
+			return false;
 		} else
 			return false;
 
 	}
+
+
 
 	private boolean isAdresaText() {
 		return radioText != null && radioText.isChecked();
@@ -1879,6 +2000,13 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	private void valideazaAdresaResponse(String result) {
 		valideazaDateLivrare();
+
+	}
+
+	public void onTaskComplete(String methodName, Object result) {
+		if (methodName.equals(METHOD_NAME)) {
+			fillJudeteClient((String) result);
+		}
 
 	}
 

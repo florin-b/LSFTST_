@@ -70,12 +70,13 @@
                         android:typeface="sans" />
 
                     <TextView
+                        android:id="@+id/textVenitRecurentGen"
                         android:layout_width="0dip"
                         android:layout_height="match_parent"
                         android:layout_weight="0.08"
                         android:gravity="center"
                         android:padding="3dip"
-                        android:text="Venit TCF"
+                        android:text="Venit recurent"
                         android:textColor="@color/salarizareHeaderTotal"
                         android:textSize="17sp"
                         android:typeface="sans" />
@@ -175,12 +176,13 @@
                                 android:typeface="sans" />
 
                             <TextView
+                                android:id="@+id/textVenitRecurentGen1"
                                 android:layout_width="0dip"
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.1"
                                 android:gravity="center"
                                 android:padding="3dip"
-                                android:text="Venit TCF"
+                                android:text="Venit recurent"
                                 android:textColor="@color/salarizareHeaderTotal"
                                 android:textSize="17sp"
                                 android:typeface="sans" />
@@ -573,13 +575,14 @@
                     android:visibility="gone" >
 
                     <TextView
+                        android:id="@+id/textDetRecurent"
                         android:layout_width="0dip"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="30dip"
                         android:layout_weight="0.6"
                         android:gravity="left"
-                        android:text="Detalii venit TCF"
+                        android:text="Detalii venit recurent"
                         android:textColor="@color/salarizareHeaderTotal"
                         android:textSize="17sp"
                         android:textStyle="bold"
@@ -646,12 +649,13 @@
                             android:typeface="sans" />
 
                         <TextView
+                            android:id="@+id/textClientiRec"
                             android:layout_width="0dip"
                             android:layout_height="match_parent"
                             android:layout_weight="0.07"
                             android:gravity="center"
                             android:padding="3dip"
-                            android:text="Clienti an curent"
+                            android:text="Clienti recurenti"
                             android:textColor="@color/salarizareHeaderTotal"
                             android:textSize="17sp"
                             android:typeface="sans" />
@@ -668,12 +672,13 @@
                             android:typeface="sans" />
 
                         <TextView
+                            android:id="@+id/textVenitRecDet"
                             android:layout_width="0dip"
                             android:layout_height="match_parent"
                             android:layout_weight="0.1"
                             android:gravity="center"
                             android:padding="3dip"
-                            android:text="Venit TCF"
+                            android:text="Venit recurent"
                             android:textColor="@color/salarizareHeaderTotal"
                             android:textSize="17sp"
                             android:typeface="sans" />

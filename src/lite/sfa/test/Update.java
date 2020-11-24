@@ -18,7 +18,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import model.UserInfo;
-import lite.sfa.test.R;
 
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
@@ -41,6 +40,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import dialogs.CategoriiMathausDialog;
 
 public class Update extends Activity {
 
@@ -119,6 +119,15 @@ public class Update extends Activity {
 		currVer.setText(version);
 		currVerCode.setText(buildVer);
 		installDate.setText(dateUpdate);
+		
+		/*
+		int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.95);
+		int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.95);
+		
+		CategoriiMathausDialog dialog = new CategoriiMathausDialog(Update.this);
+		dialog.getWindow().setLayout(width, height);
+		dialog.show();
+		*/
 
 	}
 

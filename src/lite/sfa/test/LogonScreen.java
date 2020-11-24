@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -65,6 +66,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 	private Timer myTimer;
 	private int progressVal = 0;
 	private Handler logonHandler = new Handler();
+	
+	
 
 	MySwitch slideToUnLock;
 
@@ -122,15 +125,19 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		//etUsername.setText("androsd");
 		//etPassword.setText("112");
 
-		/*
-		 * etUsername.setText("DLUP"); etPassword.setText("4tYhFQ");
-		 */
-
-		// etUsername.setText("SIONITA");
-		// etPassword.setText("mzYMVB");
 		
-		 //etUsername.setText("ITURIAC");
-		 //etPassword.setText("E22xfM");		
+		//etUsername.setText("CCOMAN1");
+		//etPassword.setText("6pwjtc");
+		
+		//  etUsername.setText("ITURIAC"); 
+		//  etPassword.setText("FmqZkw");
+		 
+
+		//etUsername.setText("SIONITA");
+		//etPassword.setText("mzYMVB");
+		
+		// etUsername.setText("DIVANOV1"); //SD 01 BV
+		// etPassword.setText("xzn6Dg");		
 		
 
 		//etUsername.setText("ABEJINARIU"); // cons wood
@@ -179,8 +186,14 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		//etPassword.setText("1Pm2Rar");			 
 		 
 
-		//etUsername.setText("CBARLA"); //CVIP
-		//etPassword.setText("BJvtx3");			 		
+		//etUsername.setText("ABOT"); //CVIP
+		//etPassword.setText("rMLKTX");	
+		
+		//etUsername.setText("GILINCA"); //CVIP
+		//etPassword.setText("HV3G4M");	
+		
+		//etUsername.setText("APONT"); 
+		//etPassword.setText("qgQPK7");			
 		
 		checkBundleExtra();
 

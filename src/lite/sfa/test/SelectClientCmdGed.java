@@ -49,6 +49,7 @@ import beans.PlatitorTva;
 import dialogs.CautaClientDialog;
 import dialogs.DatePersClientDialog;
 import enums.EnumClienti;
+import enums.TipCmdGed;
 
 public class SelectClientCmdGed extends Activity implements OperatiiClientListener, CautaClientDialogListener, DatePersListener {
 
@@ -93,6 +94,7 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 	private Spinner spinnerAgenti;
 	private RadioGroup radioSelectAgent;
 	private LinearLayout layoutLabelRefClient, layoutTextRefClient;
+	private String codCuiIp;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -214,6 +216,11 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		addListenerRadioCmdNormala();
 
 		radioCmdSimulata = (RadioButton) findViewById(R.id.radioCmdSimulata);
+		if (CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_LIVRARE)
+			radioCmdSimulata.setVisibility(View.INVISIBLE);
+		else
+			radioCmdSimulata.setVisibility(View.VISIBLE);
+
 		addListenerRadioCmdSimulata();
 
 		radioRezervStocDa = (RadioButton) findViewById(R.id.radioRezervStocDa);
@@ -310,11 +317,19 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 	}
 
 	private void performVerificareTVA() {
-		if (!txtCNPClient.getText().toString().isEmpty()) {
-			HashMap<String, String> params = new HashMap<String, String>();
-			params.put("cuiClient", txtCNPClient.getText().toString().trim());
-			operatiiClient.getStarePlatitorTva(params);
+
+		String strCui = "";
+
+		if (radioClientInstPub.isChecked()) {
+			strCui = codCuiIp;
+		} else if (!txtCNPClient.getText().toString().isEmpty()) {
+			strCui = txtCNPClient.getText().toString().trim();
 		}
+
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("cuiClient", strCui);
+		operatiiClient.getStarePlatitorTva(params);
+
 	}
 
 	private void setListenerFacturaPF() {
@@ -671,6 +686,8 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 				layoutTextJ.setVisibility(View.GONE);
 				checkPlatTva.setVisibility(View.INVISIBLE);
 
+				verificaTva.setVisibility(View.VISIBLE);
+
 				verificaID.setVisibility(View.GONE);
 				checkFacturaPF.setVisibility(View.GONE);
 				labelIDClient.setText("COD");
@@ -710,8 +727,21 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 	}
 
 	private void clearDateLivrare() {
+
+		String filialaClp = "";
+
+		if (DateLivrare.getInstance().getTipComandaGed() == TipCmdGed.COMANDA_LIVRARE) {
+			filialaClp = DateLivrare.getInstance().getCodFilialaCLP();
+		}
+
 		if (ListaArticoleComandaGed.getInstance().getListArticoleComanda().size() == 0)
 			DateLivrare.getInstance().resetAll();
+
+		if (!filialaClp.isEmpty()) {
+			DateLivrare.getInstance().setCodFilialaCLP(filialaClp);
+			DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
+		}
+
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -1121,6 +1151,11 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 			if (client.getTermenPlata() != null)
 				CreareComandaGed.listTermenPlata = client.getTermenPlata();
+
+			if (radioClientInstPub.isChecked()) {
+				labelIDClient.setText(labelIDClient.getText() + "\t\t\t\t\t CUI: " + client.getCodCUI());
+				codCuiIp = client.getCodCUI();
+			}
 		}
 		if (tipClient == EnumTipClient.DISTRIBUTIE) {
 			txtNumeClientGed.setText(client.getNumeClient());

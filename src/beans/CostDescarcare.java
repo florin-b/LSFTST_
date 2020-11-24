@@ -6,6 +6,7 @@ public class CostDescarcare {
 
 	private List<ArticolDescarcare> articoleDescarcare;
 	private boolean sePermite;
+	private List<ArticolPalet> articolePaleti;
 
 	public List<ArticolDescarcare> getArticoleDescarcare() {
 		return articoleDescarcare;
@@ -21,6 +22,14 @@ public class CostDescarcare {
 
 	public void setSePermite(boolean sePermite) {
 		this.sePermite = sePermite;
+	}
+
+	public List<ArticolPalet> getArticolePaleti() {
+		return articolePaleti;
+	}
+
+	public void setArticolePaleti(List<ArticolPalet> articolePaleti) {
+		this.articolePaleti = articolePaleti;
 	}
 
 	public double getValoareDescarcare() {

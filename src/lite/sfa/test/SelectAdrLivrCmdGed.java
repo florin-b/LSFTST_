@@ -95,6 +95,8 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 	String[] tipPlataOnline = { "E - Numerar la livrare", "INS - Card online", "O - Virament bancar" };
 
 	String[] tipTransport = { "TRAP - Transport Arabesque", "TCLI - Transport client" };
+	
+	String[] tipTransportIP = { "TRAP - Transport Arabesque", "TCLI - Transport client", "TERT - Transport tert" };
 
 	String[] tipTransportOnline = { "TRAP - Transport Arabesque", "TCLI - Transport client", "TERT - Transport tert" };
 
@@ -206,7 +208,9 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 			txtTel.setText(dateLivrareInstance.getNrTel());
 
 			checkFactura = (CheckBox) findViewById(R.id.checkFactura);
+			setListenerCheckFactura();
 			checkAviz = (CheckBox) findViewById(R.id.checkAviz);
+			setListenerCheckAviz();
 
 			checkObsSofer = (CheckBox) findViewById(R.id.chkObsSofer);
 			setListenerCheckObsSofer();
@@ -233,10 +237,12 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 			setTipTransportOptions();
 
-			if (UserInfo.getInstance().getUserSite().equals("X")) {
+			if (UserInfo.getInstance().getUserSite().equals("X") || UtilsUser.isConsWood() || isComandaClp()) {
 				adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransportOnline);
 
-			} else {
+			} else if (UtilsUser.isUserIP())
+				adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransportIP);
+			else {
 				adapterSpinnerTransp = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tipTransport);
 			}
 
@@ -442,6 +448,30 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 	}
 
+	
+	private void setListenerCheckFactura(){
+		checkFactura.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked)
+					checkAviz.setChecked(false);
+			}
+		});
+	}
+	
+	
+	private void setListenerCheckAviz(){
+		checkAviz.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked)
+					checkFactura.setChecked(false);
+			}
+		});
+	}		
+	
 	private void getDateLivrareClient() {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("codClient", CreareComandaGed.codClientVar);
@@ -834,7 +864,7 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 		spinnerJudetLivrare = (Spinner) findViewById(R.id.spinnerJudetLivrare);
 		spinnerJudetLivrare.setOnItemSelectedListener(new regionLivrareSelectedListener());
 
-		if (DateLivrare.getInstance().isAltaAdresa()) {
+		if (DateLivrare.getInstance().isAltaAdresa() || !DateLivrare.getInstance().getOrasD().trim().isEmpty()) {
 			radioAltaAdresa.setChecked(true);
 
 			textLocalitateLivrare.setText(DateLivrare.getInstance().getOrasD());
@@ -963,8 +993,7 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 	private void performGetJudete() {
 
-		if (UtilsUser.isUserSite() || CreareComandaGed.tipClient.equals("IP") || !DateLivrare.getInstance().getCodJudet().isEmpty()) {
-
+		if (UtilsUser.isUserSite() || CreareComandaGed.tipClient.equals("IP") || !DateLivrare.getInstance().getCodJudet().isEmpty() || isComandaClp() || UtilsUser.isUserIP()) {
 			fillJudeteClient(EnumJudete.getRegionCodes());
 
 		} else {
@@ -980,6 +1009,10 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 			call.getCallResultsSyncActivity();
 		}
 
+	}
+
+	private boolean isComandaClp() {
+		return DateLivrare.getInstance().getCodFilialaCLP() != null && DateLivrare.getInstance().getCodFilialaCLP().length() == 4;
 	}
 
 	private void fillJudeteClient(String arrayJudete) {
@@ -1073,6 +1106,9 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 					checkMacara.setVisibility(View.INVISIBLE);
 					spinnerTonaj.setVisibility(View.INVISIBLE);
 					spinnerTonaj.setSelection(0);
+
+					if (spinnerPlata.getSelectedItem().toString().contains("E1"))
+						spinnerPlata.setSelection(0);
 
 				}
 
@@ -1221,13 +1257,16 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 			numeJudet = tempMap.get("numeJudet");
 		}
 
-		for (String localitate : listLocalitati) {
-			if (localitate.trim().equalsIgnoreCase(localitateCurenta)) {
-				locExist = true;
-				break;
-			}
+		if (listLocalitati != null)
+			for (String localitate : listLocalitati) {
+				if (localitate.trim().equalsIgnoreCase(localitateCurenta)) {
+					locExist = true;
+					break;
+				}
 
-		}
+			}
+		else
+			locExist = true;
 
 		if (!locExist && !localitateCurenta.isEmpty()) {
 			String alert = "Localitatea " + localitateCurenta + " nu exista in judetul " + numeJudet + ". Completati alta localitate.";
@@ -1472,14 +1511,19 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 		} else {
 			if (pers.equals("")) {
-				Toast.makeText(getApplicationContext(), "Completati persoana de contact!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Completati persoana de contact.", Toast.LENGTH_SHORT).show();
 				return;
 			}
 
 			if (telefon.equals("")) {
-				Toast.makeText(getApplicationContext(), "Completati nr. de telefon!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "Completati nr. de telefon.", Toast.LENGTH_SHORT).show();
 				return;
 			}
+			if (telefon.length() != 10) {
+				Toast.makeText(getApplicationContext(), "Nr. de telefon invalid.", Toast.LENGTH_SHORT).show();
+				return;
+			}
+
 		}
 
 		if (DateLivrare.getInstance().getDataLivrare().isEmpty()) {
@@ -1526,8 +1570,19 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 		dateLivrareInstance.setRedSeparat(" ");
 
 		String rawTipPlataStr = spinnerPlata.getSelectedItem().toString();
+		
+		
+		if (rawTipPlataStr.startsWith("O") &&  (!strMailAddr.contains("@") || !strMailAddr.contains("."))){
+			Toast.makeText(getApplicationContext(), "Completati adresa de e-mail.", Toast.LENGTH_LONG).show();
+			return;
+		}
 
 		dateLivrareInstance.setTipPlata(rawTipPlataStr.substring(0, rawTipPlataStr.indexOf("-") - 1).trim());
+
+		if (dateLivrareInstance.getTransport().equals("TCLI") && dateLivrareInstance.getTipPlata().equals("E1")) {
+			Toast.makeText(getApplicationContext(), "Pentru transport TCLI nu puteti selecta metoda de plata Numerar sofer.", Toast.LENGTH_LONG).show();
+			return;
+		}
 
 		adresa = dateLivrareInstance.getNumeJudet() + " " + dateLivrareInstance.getOras() + " " + dateLivrareInstance.getStrada();
 

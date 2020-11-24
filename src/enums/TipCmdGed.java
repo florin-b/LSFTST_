@@ -1,5 +1,5 @@
 package enums;
 
 public enum TipCmdGed {
-	COMANDA_NOUA, COMANDA_AMOB;
+	COMANDA_VANZARE, COMANDA_AMOB, COMANDA_LIVRARE;
 }

@@ -29,6 +29,7 @@ import listeners.ComenziDAOListener;
 import listeners.CostMacaraListener;
 import listeners.OperatiiArticolListener;
 import listeners.PaletAlertListener;
+import listeners.PaletiListener;
 import listeners.TipCmdGedListener;
 import listeners.ValoareNegociataDialogListener;
 import model.AlgoritmComandaGed;
@@ -37,6 +38,7 @@ import model.Comanda;
 import model.ComenziDAO;
 import model.DateLivrare;
 import model.InfoStrings;
+import model.ListaArticoleComanda;
 import model.ListaArticoleComandaGed;
 import model.OperatiiArticol;
 import model.OperatiiArticolFactory;
@@ -50,6 +52,7 @@ import patterns.UlSiteComparator;
 import utils.UtilsComenzi;
 import utils.UtilsComenziGed;
 import utils.UtilsUser;
+import adapters.ArticoleCreareAdapter;
 import adapters.ArticoleGedAdapter;
 import adapters.ArticolePretTransport;
 import android.app.ActionBar;
@@ -84,22 +87,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 import beans.ArticolAmob;
 import beans.ArticolCalculDesc;
+import beans.ArticolPalet;
 import beans.BeanParametruPretGed;
 import beans.CostDescarcare;
 import beans.PretArticolGed;
 import dialogs.ArtComplDialog;
 import dialogs.CostMacaraDialog;
+import dialogs.CostPaletiDialog;
 import dialogs.PaletAlertDialog;
 import dialogs.TipComandaGedDialog;
 import dialogs.ValoareNegociataDialog;
 import enums.EnumArticoleDAO;
 import enums.EnumComenziDAO;
 import enums.EnumDaNuOpt;
-import enums.TipCmdDistrib;
+import enums.EnumPaleti;
 import enums.TipCmdGed;
 
 public class CreareComandaGed extends Activity implements AsyncTaskListener, ArtComplDialogListener, Observer, OperatiiArticolListener,
-		ValoareNegociataDialogListener, PaletAlertListener, ComenziDAOListener, CostMacaraListener, TipCmdGedListener {
+		ValoareNegociataDialogListener, PaletAlertListener, ComenziDAOListener, CostMacaraListener, TipCmdGedListener, PaletiListener {
 
 	Button stocBtn, clientBtn, articoleBtn, livrareBtn, saveCmdBtn, slideButtonCmd, valTranspBtn, debugBtn;
 	String filiala = "", nume = "", cod = "";
@@ -189,10 +194,12 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	private OperatiiArticol opArticol;
 	private ComenziDAO comandaDAO;
 	private CostDescarcare costDescarcare;
-	public static TipCmdGed tipComandaGed = TipCmdGed.COMANDA_NOUA;
+	public static TipCmdGed tipComandaGed = TipCmdGed.COMANDA_VANZARE;
 
 	public static List<ArticolAmob> listArticoleAMOB;
 	private static String idCmdAmob = "-1";
+	public static int selectedDepartIndexClp = -1, selectedDepozIndexClp = -1;
+	public static String selectedDepartCod = "-1";
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -315,10 +322,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	private void CreateMenu(Menu menu) {
 
-		if (UserInfo.getInstance().getTipUserSap().equals("WOOD")) {
-			MenuItem mnu0 = menu.add(0, 0, 0, "Tip");
-			mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-		}
+		MenuItem mnu0 = menu.add(0, 0, 0, "Tip");
+		mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
 		MenuItem mnu1 = menu.add(0, 1, 1, "Client");
 
 		mnu1.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
@@ -1188,9 +1194,48 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		}
 	}
 
-	private void valideazaFinal() {
+	private boolean isComandaBV() {
 
-		if (HelperCreareComanda.isConditiiAlertaIndoire(ListaArticoleComandaGed.getInstance().getListArticoleComanda())) {
+		boolean isBV90 = false;
+
+		for (ArticolComanda articol : ListaArticoleComandaGed.getInstance().getListArticoleComanda()) {
+			if (articol.getFilialaSite().equals("BV90")) {
+				isBV90 = true;
+				break;
+			}
+		}
+
+		return isBV90;
+	}
+
+	private boolean isConditiiTranspCmdIP_BV_02_05() {
+
+		boolean isBV90 = false;
+
+		for (ArticolComanda articol : ListaArticoleComandaGed.getInstance().getListArticoleComanda()) {
+			if (articol.getFilialaSite().equals("BV90") && (articol.getDepartSintetic().equals("02") || articol.getDepartSintetic().equals("05"))) {
+				isBV90 = true;
+				break;
+			}
+		}
+
+		if (isBV90 && !DateLivrare.getInstance().getTransport().equals("TCLI") && !DateLivrare.getInstance().getTransport().equals("TERT"))
+			return false;
+		else
+			return true;
+
+	}
+
+	private void valideazaFinal() {
+		if (isComandaBV()
+				&& (DateLivrare.getInstance().getTipDocInsotitor().equals("2") || DateLivrare.getInstance().getTipDocInsotitor().equals("3")
+						&& DateLivrare.getInstance().getTipPlata().substring(0, 1).equals("E"))) {
+			Toast.makeText(getApplicationContext(), "Pentru comenzi din BV90 nu puteti selecta optiunile 'Plata in numerar' si 'Aviz de expeditie'.",
+					Toast.LENGTH_LONG).show();
+			return;
+		} else if (UtilsUser.isUserIP() && !isConditiiTranspCmdIP_BV_02_05()) {
+			Toast.makeText(getApplicationContext(), "Pentru articole din BV90 selectati transport TCLI sau TERT.", Toast.LENGTH_LONG).show();
+		} else if (HelperCreareComanda.isConditiiAlertaIndoire(ListaArticoleComandaGed.getInstance().getListArticoleComanda())) {
 			HelperDialog.showInfoDialog(CreareComandaGed.this, "Atentie!", "Selectati tipul de prelucrare (indoire sau debitare).");
 		} else {
 			verificaPretMacara();
@@ -1202,7 +1247,12 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComandaGed.getInstance().getListArticoleComanda());
 
-		if (DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+		if (DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") && !UtilsUser.isUserIP()) {
+
+			String codFurnizor = " ";
+
+			if (tipComandaGed == TipCmdGed.COMANDA_LIVRARE)
+				codFurnizor = DateLivrare.getInstance().getCodFilialaCLP();
 
 			List<ArticolCalculDesc> artCalcul = HelperCostDescarcare.getDateCalculDescarcare(ListaArticoleComandaGed.getInstance().getListArticoleComanda());
 
@@ -1213,6 +1263,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			params.put("unitLog", DateLivrare.getInstance().getUnitLog());
 			params.put("codAgent", DateLivrare.getInstance().getCodAgent());
 			params.put("codClient", comandaFinala.getCodClient());
+			params.put("codFurnizor", codFurnizor);
 			params.put("listArt", listArtSer);
 
 			comandaDAO.getCostMacara(params);
@@ -1223,10 +1274,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	private void trateazaConditiiSuplimentare() {
 
-		if (comandaHasPalet())
-			displayAlertPalet();
-		else
-			displayArtComplDialog();
+		displayArtComplDialog();
 
 	}
 
@@ -1240,6 +1288,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 					.getUnitLog());
 
 			ListaArticoleComandaGed.getInstance().getListArticoleComanda().addAll(articoleDescarcare);
+			adapter.notifyDataSetChanged();
 
 			recalculTotal();
 
@@ -1257,7 +1306,19 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
 
-		if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0) {
+		verificaPaletiComanda(costDescarcare.getArticolePaleti());
+
+		if (!costDescarcare.getArticolePaleti().isEmpty()) {
+
+			int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
+			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
+
+			CostPaletiDialog costPaleti = new CostPaletiDialog(this, costDescarcare.getArticolePaleti(), DateLivrare.getInstance().getTransport());
+			costPaleti.setPaletiDialogListener(this);
+			costPaleti.getWindow().setLayout(width, height);
+			costPaleti.show();
+
+		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0) {
 
 			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, true);
 			macaraDialog.setCostMacaraListener(this);
@@ -1273,33 +1334,59 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	}
 
+	private void verificaPaletiComanda(List<ArticolPalet> listPaleti) {
+
+		Iterator<ArticolComanda> articolIterator = ListaArticoleComandaGed.getInstance().getListArticoleComanda().iterator();
+
+		boolean paletExista;
+
+		while (articolIterator.hasNext()) {
+			ArticolComanda articol = articolIterator.next();
+
+			paletExista = true;
+
+			if (articol.isUmPalet()) {
+				paletExista = false;
+			}
+
+			for (ArticolPalet palet : listPaleti) {
+
+				if (palet.getCodPalet().equals(articol.getCodArticol()) && (palet.getCantitate() == (int) articol.getCantitate())) {
+					paletExista = true;
+				}
+
+			}
+
+			if (!paletExista) {
+				articolIterator.remove();
+			}
+
+		}
+
+		Iterator<ArticolPalet> paletIterator = listPaleti.iterator();
+
+		for (ArticolComanda articol : ListaArticoleComandaGed.getInstance().getListArticoleComanda()) {
+
+			while (paletIterator.hasNext()) {
+				ArticolPalet palet = paletIterator.next();
+
+				if (palet.getCodPalet().equals(articol.getCodArticol()) && (palet.getCantitate() == (int) articol.getCantitate())) {
+					paletIterator.remove();
+				}
+
+			}
+
+			paletIterator = listPaleti.iterator();
+		}
+
+		adapter.notifyDataSetChanged();
+
+	}
+
 	private boolean isConditiiUserCmdRez() {
 		return UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("9")
 				|| UserInfo.getInstance().getTipAcces().equals("10") || UserInfo.getInstance().getTipAcces().equals("18")
 				|| UserInfo.getInstance().getTipAcces().equals("41") || UserInfo.getInstance().getTipAcces().equals("44");
-	}
-
-	private void displayAlertPalet() {
-
-		PaletAlertDialog infoDialog = new PaletAlertDialog(this);
-		infoDialog.setPaletAlertListener(this);
-		infoDialog.showAlertDialog();
-
-	}
-
-	private boolean comandaHasPalet() {
-
-		List<ArticolComanda> listaArticole = ListaArticoleComandaGed.getInstance().getListArticoleComanda();
-
-		Iterator<ArticolComanda> iterator = listaArticole.iterator();
-
-		while (iterator.hasNext()) {
-			if (iterator.next().isUmPalet())
-				return true;
-		}
-
-		return false;
-
 	}
 
 	private String serializeDateLivrareGed() {
@@ -1398,13 +1485,14 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		String filialaSite = "", depozitSite = " ";
 
-		if (UtilsUser.isUserSite() && !listArticole.isEmpty()) {
+		// mathaus
+		if ((UtilsUser.isUserSite() && !listArticole.isEmpty()) || (!listArticole.get(0).getFilialaSite().trim().isEmpty())) {
 			filialaSite = listArticole.get(0).getFilialaSite();
 			depozitSite = listArticole.get(0).getDepozit();
 		}
 
 		// adaugare material transport
-		if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
+		if ((DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) && !UtilsUser.isUserIP()) {
 
 			articol = new ArticolComanda();
 			articol.setCodArticol("000000000030101050");
@@ -1423,7 +1511,12 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			articol.setInfoArticol(" ");
 			articol.setCantUmb(1);
 			articol.setUmb("BUC");
-			articol.setPonderare(2);
+
+			if (isTotalNegociat)
+				articol.setPonderare(0);
+			else
+				articol.setPonderare(2);
+
 			articol.setFilialaSite(filialaSite);
 			tempListArticole.add(articol);
 
@@ -1461,10 +1554,11 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 				obj.put("cantUmb", listArticole.get(i).getCantUmb());
 				obj.put("Umb", listArticole.get(i).getUmb());
 				obj.put("ponderare", listArticole.get(i).getPonderare());
-				obj.put("filialaSite", listArticole.get(i).getFilialaSite());
+				obj.put("filialaSite", getFilialaDistrib(listArticole.get(i).getFilialaSite()));
 				obj.put("istoricPret", listArticole.get(i).getIstoricPret());
 				obj.put("valTransport", listArticole.get(i).getValTransport());
 				obj.put("procTransport", listArticole.get(i).getProcTransport());
+				obj.put("dataExp", listArticole.get(i).getDataExpPret());
 
 				myArray.put(obj);
 
@@ -1519,6 +1613,17 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		return myArray.toString();
 
+	}
+
+	private String getFilialaGed(String filiala) {
+		return filiala.substring(0, 2) + "2" + filiala.substring(3, 4);
+	}
+
+	private String getFilialaDistrib(String filiala) {
+		if (!filiala.equals("BV90"))
+			return filiala.substring(0, 2) + "1" + filiala.substring(3, 4);
+		else
+			return filiala;
 	}
 
 	private String serializeComanda(Comanda comanda) {
@@ -1749,7 +1854,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		listViewArticoleComanda.setEnabled(true);
 
-		tipComandaGed = TipCmdGed.COMANDA_NOUA;
+		tipComandaGed = TipCmdGed.COMANDA_VANZARE;
 		listArticoleAMOB = null;
 
 		// reset variabile
@@ -1789,13 +1894,16 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		isTotalNegociat = false;
 		idCmdAmob = "-1";
 		listTermenPlata = new ArrayList<String>();
-		tipComandaGed = TipCmdGed.COMANDA_NOUA;
+		tipComandaGed = TipCmdGed.COMANDA_VANZARE;
 
 		DateLivrare.getInstance().resetAll();
 
 		filialaAlternativa = UserInfo.getInstance().getUnitLog();
 		ListaArticoleComandaGed.getInstance().clearArticoleComanda();
 
+		selectedDepartIndexClp = -1;
+		selectedDepozIndexClp = -1;
+		selectedDepartCod = "-1";
 
 		initLocale();
 
@@ -2197,6 +2305,36 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		}
 	}
 
+	private void adaugaPalet(ArticolPalet articolPalet, EnumPaleti status) {
+
+		String depozitPalet = HelperCostDescarcare
+				.getDepozitPalet(ListaArticoleComandaGed.getInstance().getListArticoleComanda(), articolPalet.getCodArticol());
+
+		ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet);
+
+		ListaArticoleComandaGed.getInstance().addArticolComanda(articol);
+
+		adapter.notifyDataSetChanged();
+
+		prepareArtForDelivery();
+
+	}
+
+	private void respingePalet() {
+		if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0) {
+
+			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, false);
+			macaraDialog.setCostMacaraListener(this);
+			macaraDialog.show();
+
+		} else {
+			if (!costDescarcare.getSePermite())
+				DateLivrare.getInstance().setMasinaMacara(false);
+
+			trateazaConditiiSuplimentare();
+		}
+	}
+
 	private void displayArticoleComanda() {
 
 		setComandaHeaderVisibility(true);
@@ -2331,9 +2469,12 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	}
 
 	@Override
-	public void tipComandaSelected(TipCmdGed tipSelected, String idComanda) {
+	public void tipComandaSelected(TipCmdGed tipSelected, String idComanda, String codFilialaClp) {
 
 		tipComandaGed = tipSelected;
+		DateLivrare.getInstance().setTipComandaGed(tipSelected);
+		DateLivrare.getInstance().setCodFilialaCLP(codFilialaClp);
+
 		ActionBar actionBar = getActionBar();
 
 		if (tipSelected.equals(TipCmdGed.COMANDA_AMOB)) {
@@ -2341,10 +2482,32 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			idCmdAmob = idComanda;
 			getArticoleAmob(idComanda);
 
-		} else
+		} else if (tipSelected.equals(TipCmdGed.COMANDA_LIVRARE)) {
+			actionBar.setTitle("Comanda livrare" + " " + codFilialaClp);
+		} else {
 			actionBar.setTitle("Comanda GED");
+			selectedDepartIndexClp = -1;
+			selectedDepozIndexClp = -1;
+			selectedDepartCod = "-1";
+		}
 
 		invalidateOptionsMenu();
+
+	}
+
+	@Override
+	public void paletiStatus(EnumPaleti status, ArticolPalet palet) {
+		switch (status) {
+		case ACCEPTA:
+			adaugaPalet(palet, status);
+			break;
+		case RESPINGE:
+		case FINALIZEAZA:
+			respingePalet();
+			break;
+		default:
+			break;
+		}
 
 	}
 

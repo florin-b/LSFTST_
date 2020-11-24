@@ -90,7 +90,7 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 
 		initSelectionDepartament();
 
-		if (UtilsUser.isAV() || UtilsUser.isKA())
+		if (UtilsUser.isAV() || UtilsUser.isKA() || UtilsUser.isUserSK() || UtilsUser.isUserSDKA())
 			addSpinnerDepartamente();
 
 		opArticol = OperatiiArticolFactory.createObject("OperatiiArticolImpl", this);
@@ -216,7 +216,7 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 		if (UtilsUser.isCV() || UtilsUser.isDVCV() || UtilsUser.isConsWood())
 			selectedDepartamentAgent = "";
 
-		if (UtilsUser.isKA())
+		if (UtilsUser.isKA() || UtilsUser.isUserSK() || UtilsUser.isUserSDKA())
 			selectedDepartamentAgent = "00";
 	}
 
@@ -428,6 +428,10 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 
 	}
 
+	boolean isWood() {
+		return UserInfo.getInstance().getTipUser().equals("WOOD");
+	}
+	
 	protected void performGetPret() {
 
 		try {
@@ -440,9 +444,13 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 			HashMap<String, String> params = UtilsGeneral.newHashMapInstance();
 
 			// consilieri sau sm
-			if (UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("18")) {
+			if (UserInfo.getInstance().getTipAcces().equals("17") || UserInfo.getInstance().getTipAcces().equals("18") || UtilsUser.isUserIP()) {
 
 				String localFilialaStoc = filialaStoc.substring(0, 2) + "2" + filialaStoc.substring(3, 4);
+				
+				if (isWood()) {
+					localFilialaStoc = UserInfo.getInstance().getUnitLog().substring(0, 2) + "4" + UserInfo.getInstance().getUnitLog().substring(3, 4);
+				}
 
 				params.put("client", InfoStrings.getClientGenericGed(UserInfo.getInstance().getUnitLog(), "PF"));
 				params.put("articol", codArticol);
@@ -765,7 +773,7 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 
 		TextView labelPTVA = new TextView(this);
 		// pentru consilieri nu se afiseaza pretul cu tva
-		if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18")) {
+		if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18") && !UtilsUser.isUserIP()) {
 
 			labelPTVA.setText("Pret + tva");
 			labelPTVA.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
@@ -819,7 +827,7 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 				labelPret.setLayoutParams(layoutParams);
 				rowLayoutCh.addView(labelPret);
 
-				if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18")) {
+				if (!UserInfo.getInstance().getTipAcces().equals("17") && !UserInfo.getInstance().getTipAcces().equals("18") && !UtilsUser.isUserIP()) {
 					labelPTVA = new TextView(this);
 					labelPTVA.setText("");
 					if (artTok[1] != null) {
@@ -922,7 +930,7 @@ public class Stocuri extends ListActivity implements AsyncTaskListener, OnClickL
 
 	public void taskComplete(String response) {
 		afisPretArt(response);
-		if (UtilsUser.isCV())
+		if (UtilsUser.isCV() || UtilsUser.isUserIP())
 			performGetCodBare();
 	}
 

@@ -385,6 +385,7 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 			if (UserInfo.getInstance().getTipUserSap().equals("SDIP")) {
 				tipAgent = "SDIP";
+				selectedFiliala = UserInfo.getInstance().getInitUnitLog();
 			} else {
 
 				tipAgent = "SDCVA";
@@ -533,6 +534,7 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 			String fullCode = nf3.format(Integer.parseInt(selectedAgent)).toString();
 
 			String filCrnt = "", tipUser = "", paramDepart = UserInfo.getInstance().getCodDepart();
+			String codSD = "";
 
 			if (!selectedFiliala.equals("")) {
 				filCrnt = selectedFiliala;
@@ -589,6 +591,7 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 			{
 				tipUser = "SDCVA";
 				paramDepart = "11";
+				codSD = UserInfo.getInstance().getCod();
 			}
 
 			String paramInterval = intervalAfisare;
@@ -607,6 +610,7 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 			params.put("codClient", selectedClient);
 			params.put("tipUser", tipUser);
 			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
+			params.put("codSD", codSD);
 
 			comenzi.getListComenzi(params);
 
@@ -669,6 +673,13 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 		textPersContact.setText(dateLivrare.getPersContact());
 		textTelefon.setText(dateLivrare.getNrTel());
 		textObsLivrare.setText(dateLivrare.getObsLivrare());
+
+		if (!dateLivrare.getCodJudetD().trim().isEmpty()) {
+			((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.VISIBLE);
+			((TextView) findViewById(R.id.textAdrLivrare)).setText("jud. " + InfoStrings.numeJudet(dateLivrare.getCodJudetD()) + ", loc. "
+					+ dateLivrare.getOrasD() + ", " + dateLivrare.getAdresaD());
+		} else
+			((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.GONE);
 
 		ArticolAfisAdapter adapter = new ArticolAfisAdapter(this, listArticole);
 		listViewArticole.setAdapter(adapter);
@@ -802,6 +813,7 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 				textTransport.setText("");
 				textJudet.setText("");
 				textOras.setText("");
+				((LinearLayout) findViewById(R.id.layoutAdrLivrare)).setVisibility(View.GONE);
 
 				textPondereArtBAfis.setText("");
 				textValoareMarja.setText("");

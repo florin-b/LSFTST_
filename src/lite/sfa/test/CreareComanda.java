@@ -1044,7 +1044,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 			costPaleti.getWindow().setLayout(width, height);
 			costPaleti.show();
 
-		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0) {
+		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
 			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, false);
 			macaraDialog.setCostMacaraListener(this);
@@ -1143,7 +1143,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 
 		
 
-		if (DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+		if (DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI")) {
 			
 			String codFurnizor = " ";
 			
@@ -2093,7 +2093,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 	}
 
 	private void respingePalet() {
-		if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0) {
+		if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
 			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, false);
 			macaraDialog.setCostMacaraListener(this);

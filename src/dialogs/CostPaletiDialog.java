@@ -66,8 +66,9 @@ public class CostPaletiDialog extends Dialog {
 		addBtnAcceptaListener();
 
 		btnRenuntaPaleti = (Button) findViewById(R.id.btnCancelPalet);
-		if (!tipTransport.equals("TCLI"))
-			btnRenuntaPaleti.setVisibility(View.INVISIBLE);
+		
+		//if (!tipTransport.equals("TCLI"))
+		btnRenuntaPaleti.setVisibility(View.INVISIBLE);
 
 		addBtnRespingeListener();
 

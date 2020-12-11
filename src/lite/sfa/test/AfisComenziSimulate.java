@@ -9,7 +9,6 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -496,7 +495,7 @@ public class AfisComenziSimulate extends Activity implements AsyncTaskListener, 
 		try {
 			for (int i = 0; i < listArticole.size(); i++) {
 
-				// if (adapterSimulat.getListPozitiiConditii().contains(i))
+				
 				{
 					obj = new JSONObject();
 					obj.put("codArticol", listArticole.get(i).getCodArticol());

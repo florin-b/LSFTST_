@@ -1037,7 +1037,7 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		if (!costDescarcare.getArticolePaleti().isEmpty()) {
 
 			int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
-			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.6);
+			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
 
 			CostPaletiDialog costPaleti = new CostPaletiDialog(this, costDescarcare.getArticolePaleti(), DateLivrare.getInstance().getTransport());
 			costPaleti.setPaletiDialogListener(this);

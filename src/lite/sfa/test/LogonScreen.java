@@ -173,8 +173,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 		//etPassword.setText("46DrX3");		
 		
 		
-		//etUsername.setText("GCIOFOAIA"); //ASDL
-		//etPassword.setText("Zq7gKR");	
+		etUsername.setText("MDINICA"); 
+		etPassword.setText("rxtw93");	
 		
 		//etUsername.setText("CGRIGORAS1"); //OIVPD
 		//etPassword.setText("267Jvj");			

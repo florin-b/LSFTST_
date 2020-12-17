@@ -1031,10 +1031,10 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 	private void afiseazaPretMacaraDialog(String result) {
 
 		costDescarcare = HelperCostDescarcare.deserializeCostMacara(result);
-		
 		verificaPaletiComanda(costDescarcare.getArticolePaleti());
 
 		if (!costDescarcare.getArticolePaleti().isEmpty()) {
+			costDescarcare.getArticoleDescarcare().get(0).setCantitate(0);
 
 			int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
 			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
@@ -2080,6 +2080,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 		String depozitPalet = HelperCostDescarcare.getDepozitPalet(ListaArticoleComanda.getInstance().getListArticoleComanda(), articolPalet.getCodArticol());
 		ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet);
 		ListaArticoleComanda.getInstance().addArticolComanda(articol);
+		
+		costDescarcare.getArticoleDescarcare().get(0).setCantitate(costDescarcare.getArticoleDescarcare().get(0).getCantitate() + articol.getCantitate());
 		
 		ArticoleCreareAdapter adapterArticole = new ArticoleCreareAdapter(new ArrayList<ArticolComanda>(), this);
 		adapterArticole.setListArticole(ListaArticoleComanda.getInstance().getListArticoleComanda());

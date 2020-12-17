@@ -66,6 +66,8 @@ public class ComandaSimulataAdapter extends BaseAdapter {
 		viewHolder.textCmdSap.setText(comanda.getCmdSap().equals("-1") ? " " : comanda.getCmdSap());
 		viewHolder.textTipClient.setText(comanda.getTipClient());
 		comanda.setAprobata(isAprobata(comanda));
+		
+		viewHolder.textAprobata.setText("");
 
 		if (!comanda.getCodStare().equals(Constants.CMD_SIM_CONDITII)) {
 			if (comanda.isAprobata())

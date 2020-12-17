@@ -1309,6 +1309,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		verificaPaletiComanda(costDescarcare.getArticolePaleti());
 
 		if (!costDescarcare.getArticolePaleti().isEmpty()) {
+			costDescarcare.getArticoleDescarcare().get(0).setCantitate(0);
 
 			int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.65);
 			int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
@@ -2311,10 +2312,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 				.getDepozitPalet(ListaArticoleComandaGed.getInstance().getListArticoleComanda(), articolPalet.getCodArticol());
 
 		ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet);
-
 		ListaArticoleComandaGed.getInstance().addArticolComanda(articol);
-
 		adapter.notifyDataSetChanged();
+		
+		costDescarcare.getArticoleDescarcare().get(0).setCantitate(costDescarcare.getArticoleDescarcare().get(0).getCantitate() + articol.getCantitate());
 
 		prepareArtForDelivery();
 

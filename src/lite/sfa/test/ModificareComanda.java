@@ -704,7 +704,8 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 		HelperCostDescarcare.eliminaCostDescarcare(listArticoleComanda);
 
-		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI")) && !UtilsUser.isUserIP()) {
+		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
+				&& !UtilsUser.isUserIP() && !UtilsUser.isAV_SD_01() && !UtilsUser.isCVO()) {
 
 			String codFurnizor = " ";
 
@@ -749,7 +750,8 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 			costPaleti.getWindow().setLayout(width, height);
 			costPaleti.show();
 
-		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0
+				&& DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
 			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, isComandaGed());
 			macaraDialog.setCostMacaraListener(this);
@@ -773,7 +775,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 		while (articolIterator.hasNext()) {
 			ArticolComanda articol = articolIterator.next();
-			
+
 			paletExista = true;
 
 			if (articol.isUmPalet()) {
@@ -1943,15 +1945,15 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 	}
 
 	private void adaugaPalet(ArticolPalet articolPalet, EnumPaleti status) {
-		
+
 		String depozitPalet = HelperCostDescarcare.getDepozitPalet(listArticoleComanda, articolPalet.getCodArticol());
-		
+
 		ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet);
-		
+
 		listArticoleComanda.add(articol);
 		adapterArticole.setListArticole(listArticoleComanda);
 		adapterArticole.notifyDataSetChanged();
-		
+
 		costDescarcare.getArticoleDescarcare().get(0).setCantitate(costDescarcare.getArticoleDescarcare().get(0).getCantitate() + articol.getCantitate());
 
 	}

@@ -1247,7 +1247,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComandaGed.getInstance().getListArticoleComanda());
 
-		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI")) && !UtilsUser.isUserIP()) {
+		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
+				&& !UtilsUser.isUserIP() && !UtilsUser.isAV_SD_01() && !UtilsUser.isCVO()) {
 
 			String codFurnizor = " ";
 
@@ -1319,7 +1320,8 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			costPaleti.getWindow().setLayout(width, height);
 			costPaleti.show();
 
-		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0 && DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
+		} else if (costDescarcare.getSePermite() && costDescarcare.getValoareDescarcare() > 0
+				&& DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP")) {
 
 			CostMacaraDialog macaraDialog = new CostMacaraDialog(this, costDescarcare, true);
 			macaraDialog.setCostMacaraListener(this);
@@ -2314,7 +2316,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		ArticolComanda articol = HelperCostDescarcare.getArticolPalet(articolPalet, depozitPalet);
 		ListaArticoleComandaGed.getInstance().addArticolComanda(articol);
 		adapter.notifyDataSetChanged();
-		
+
 		costDescarcare.getArticoleDescarcare().get(0).setCantitate(costDescarcare.getArticoleDescarcare().get(0).getCantitate() + articol.getCantitate());
 
 		prepareArtForDelivery();

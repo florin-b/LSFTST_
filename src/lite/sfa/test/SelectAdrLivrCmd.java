@@ -326,9 +326,6 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 		performGetJudete();
 
-
-			
-
 		// document insotitor
 		checkFactura = (CheckBox) findViewById(R.id.checkFactura);
 		setListenerCheckFactura();
@@ -473,13 +470,13 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 			checkAviz.setChecked(false);
 			checkAviz.setEnabled(false);
 		}
-		
+
 		if (DateLivrare.getInstance().isAdrLivrNoua()) {
 			radioText.setChecked(true);
 
 			textLocalitate.setText(DateLivrare.getInstance().getOras());
 			textStrada.setText(DateLivrare.getInstance().getStrada());
-			
+
 		}
 
 	}
@@ -856,7 +853,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	private void performGetJudete() {
 
-		if (isComandaClp()) {
+		if (isComandaClp() || isComandaBV()) {
 			fillJudeteClient(EnumJudete.getRegionCodes());
 
 		} else {
@@ -880,10 +877,9 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	private void fillJudeteClient(String arrayJudete) {
 
-		
 		if (listJudete != null)
 			listJudete.clear();
-		
+
 		HashMap<String, String> temp;
 		String numeJudSel = "";
 		int i;
@@ -1810,7 +1806,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	private boolean adresaNouaExista() {
 		int posAdresa = HelperAdreseLivrare.verificaDistantaAdresaNoua(adreseList, DateLivrare.getInstance().getCoordonateAdresa());
 
-		int  adresaExista = HelperAdreseLivrare.adresaExista(adreseList);
+		int adresaExista = HelperAdreseLivrare.adresaExista(adreseList);
 
 		if (adresaExista != -1) {
 			Toast.makeText(getApplicationContext(), "Aceasta adresa exista deja in lista de adrese.", Toast.LENGTH_LONG).show();
@@ -1825,8 +1821,6 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 			return false;
 
 	}
-
-
 
 	private boolean isAdresaText() {
 		return radioText != null && radioText.isChecked();

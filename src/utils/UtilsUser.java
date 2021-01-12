@@ -153,6 +153,11 @@ public class UtilsUser {
 		return UserInfo.getInstance().getTipUserSap().equals("CVO");
 	}
 
+	public static boolean isSVO(){
+		return UserInfo.getInstance().getTipUserSap().equals("SVO");
+	}	
+	
+	
 	public static boolean isDV_WOOD() {
 		if (isANYDV()) {
 

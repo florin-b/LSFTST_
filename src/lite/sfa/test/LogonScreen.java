@@ -28,6 +28,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -117,6 +118,8 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 
 		addListenerUserName();
 		addListenerPassword();
+		
+		
 
 		//globalMyIP = getIPConnection();
 		
@@ -282,8 +285,14 @@ public class LogonScreen extends Activity implements AsyncTaskListener {
 	}
 
 	private String getDeviceId() {
+		
+		/*
 		TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		return tm.getDeviceId();
+		*/
+		
+		return Build.VERSION.RELEASE;
+		
 	}
 	
 	

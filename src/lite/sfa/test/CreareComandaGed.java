@@ -1413,7 +1413,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		double totalClientComanda = algoritm.getTotalPretClientComanda(listArticole);
 
 		boolean comandaOk = true;
-		if (totalClientComanda > totalGedComanda) {
+		if (totalClientComanda > totalGedComanda && !UtilsUser.isUserIP()) {
 			comandaOk = false;
 			double diferentaTotal = totalClientComanda - totalGedComanda;
 			showAlertPretMareDialog(diferentaTotal);

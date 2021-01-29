@@ -13,6 +13,7 @@ import listeners.CustomSpinnerListener;
 import model.UserInfo;
 import lite.sfa.test.R;
 import utils.UtilsGeneral;
+import utils.UtilsUser;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -149,6 +150,9 @@ public class SelectAgentNeincasate extends Fragment implements CustomSpinnerList
 			{
 				localDepart = "11";
 			}
+			
+			if (UserInfo.getInstance().getCod().equals("00010281") || UserInfo.getInstance().getCod().equals("00018768"))
+				localDepart = "11";
 			
 			String filialaNeincasate = Neincasate.selectedFiliala;
 

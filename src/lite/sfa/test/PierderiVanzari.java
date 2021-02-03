@@ -142,8 +142,14 @@ public class PierderiVanzari extends Activity implements OperatiiPierdVanzListen
 	}
 
 	private void getPierderiVanzariTotal() {
+		
+		String localCodDepart = UserInfo.getInstance().getCodDepart();
+		
+		if (localCodDepart.equals("00"))
+			localCodDepart = UserInfo.getInstance().getInitDivizie();
+		
 		HashMap<String, String> params = new HashMap<String, String>();
-		params.put("codDepart", UserInfo.getInstance().getCodDepart());
+		params.put("codDepart", localCodDepart);
 		opVanzari.getPierdereVanzTotal(params);
 	}
 

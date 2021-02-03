@@ -1,5 +1,7 @@
 package beans;
 
+import enums.EnumTipClientIP;
+
 public class BeanComandaCreata {
 
 	private String id;
@@ -38,6 +40,7 @@ public class BeanComandaCreata {
 	private String tipComanda;
 	private boolean isCmdInstPublica;
 	private double bazaSalariala;
+	private EnumTipClientIP tipClientInstPublica;
 
 	public BeanComandaCreata() {
 
@@ -331,6 +334,16 @@ public class BeanComandaCreata {
 
 	public void setBazaSalariala(double bazaSalariala) {
 		this.bazaSalariala = bazaSalariala;
+	}
+	
+	
+
+	public EnumTipClientIP getTipClientInstPublica() {
+		return tipClientInstPublica;
+	}
+
+	public void setTipClientInstPublica(EnumTipClientIP tipClientInstPublica) {
+		this.tipClientInstPublica = tipClientInstPublica;
 	}
 
 	@Override

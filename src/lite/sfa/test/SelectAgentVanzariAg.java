@@ -14,6 +14,7 @@ import model.UserInfo;
 import model.VanzariAgenti;
 import lite.sfa.test.R;
 import utils.UtilsGeneral;
+import utils.UtilsUser;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -144,8 +145,16 @@ public class SelectAgentVanzariAg extends Fragment implements CustomSpinnerListe
 			if (UserInfo.getInstance().getTipAcces().equals("18") || UserInfo.getInstance().getTipAcces().equals("39")) {
 				localDepart = "11";
 			}
+			
+			if (UtilsUser.isDV() && localDepart.equals("00"))
+				localDepart= UserInfo.getInstance().getInitDivizie();
+			
+			String filialaN = VanzariAgenti.getInstance().selectedFiliala;
+			
+			if (UserInfo.getInstance().getTipUserSap().equals("SDIP"))
+				filialaN = UserInfo.getInstance().getInitUnitLog();
 
-			params.put("filiala", VanzariAgenti.getInstance().selectedFiliala);
+			params.put("filiala", filialaN);
 			params.put("depart", localDepart);
 			params.put("tipUserSap", UserInfo.getInstance().getTipUserSap());
 			params.put("codAgent", UserInfo.getInstance().getCod());

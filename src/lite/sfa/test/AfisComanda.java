@@ -361,6 +361,8 @@ public class AfisComanda extends Activity implements CustomSpinnerListener, Oper
 
 		if (!isDirectorDistrib())
 			selectedCodDepart = UserInfo.getInstance().getCodDepart();
+		
+		
 
 		// dka
 		if (UserInfo.getInstance().getTipAcces().equals("35") || UserInfo.getInstance().getTipAcces().equals("32")) {

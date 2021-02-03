@@ -92,6 +92,7 @@ import dialogs.CostMacaraDialog;
 import dialogs.CostPaletiDialog;
 import enums.EnumComenziDAO;
 import enums.EnumPaleti;
+import enums.EnumTipClientIP;
 
 public class ModificareComanda extends Activity implements AsyncTaskListener, ComenziDAOListener, ArticolModificareListener, Observer, CostMacaraListener,
 		PaletiListener {
@@ -705,8 +706,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 		HelperCostDescarcare.eliminaCostDescarcare(listArticoleComanda);
 
 		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
-				&& !UtilsUser.isUserIP() && !UtilsUser.isAV_SD_01() && !UtilsUser.isCVO() && !UtilsUser.isSVO()) {
+				&& !isExceptieComandaIP() && !UtilsUser.isAV_SD_01() && !UtilsUser.isCVO() && !UtilsUser.isSVO()) {
 
+			
 			String codFurnizor = " ";
 
 			if (DateLivrare.getInstance().getFurnizorComanda() != null
@@ -731,6 +733,11 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 		} else
 			performSaveCmd();
 
+	}
+	
+	
+	private boolean isExceptieComandaIP() {
+		return UtilsUser.isUserIP() && comandaSelectata.getTipClientInstPublica() == EnumTipClientIP.CONSTR;
 	}
 
 	private void afiseazaPretMacaraDialog(String result) {
@@ -1031,8 +1038,9 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 		JSONArray myArray = new JSONArray();
 		TreeSet<String> aprobariCV = new TreeSet<String>();
 		JSONObject obj = null;
+		
 
-		if (!ModificareComanda.isComandaDistrib && !UtilsUser.isAgentOrSDorKA() && !UtilsUser.isUserIP() && valTransport > 0) {
+		if (!ModificareComanda.isComandaDistrib && !UtilsUser.isAgentOrSDorKA() && !isExceptieComandaIP() && valTransport > 0) {
 			UtilsComenziGed.setValoareArticolTransport(listArticoleComanda, valTransport);
 		}
 

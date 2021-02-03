@@ -8,6 +8,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import utils.UtilsUser;
+
 import beans.BeanAdresaLivrare;
 import beans.BeanClient;
 
@@ -65,15 +67,13 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 
 	private Dialog optionsInfoDialog;
 
-	String[] judete = { "ALBA", "ARAD", "ARGES", "BACAU", "BIHOR", "BISTRITA-NASAUD", "BOTOSANI", "BRAILA", "BRASOV",
-			"BUCURESTI", "BUZAU", "CALARASI", "CARAS-SEVERIN", "CLUJ", "CONSTANTA", "COVASNA", "DAMBOVITA", "DOLJ",
-			"GALATI", "GIURGIU", "GORJ", "HARGHITA", "HUNEDOARA", "IALOMITA", "IASI", "ILFOV", "MARAMURES",
-			"MEHEDINTI", "MURES", "NEAMT", "OLT", "PRAHOVA", "SALAJ", "SATU-MARE", "SIBIU", "SUCEAVA", "TELEORMAN",
-			"TIMIS", "TULCEA", "VALCEA", "VASLUI", "VRANCEA" };
+	String[] judete = { "ALBA", "ARAD", "ARGES", "BACAU", "BIHOR", "BISTRITA-NASAUD", "BOTOSANI", "BRAILA", "BRASOV", "BUCURESTI", "BUZAU", "CALARASI",
+			"CARAS-SEVERIN", "CLUJ", "CONSTANTA", "COVASNA", "DAMBOVITA", "DOLJ", "GALATI", "GIURGIU", "GORJ", "HARGHITA", "HUNEDOARA", "IALOMITA", "IASI",
+			"ILFOV", "MARAMURES", "MEHEDINTI", "MURES", "NEAMT", "OLT", "PRAHOVA", "SALAJ", "SATU-MARE", "SIBIU", "SUCEAVA", "TELEORMAN", "TIMIS", "TULCEA",
+			"VALCEA", "VASLUI", "VRANCEA" };
 
-	String[] codJudete = { "01", "02", "03", "04", "05", "06", "07", "09", "08", "40", "10", "51", "11", "12", "13",
-			"14", "15", "16", "17", "52", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "31",
-			"30", "32", "33", "34", "35", "36", "38", "37", "39" };
+	String[] codJudete = { "01", "02", "03", "04", "05", "06", "07", "09", "08", "40", "10", "51", "11", "12", "13", "14", "15", "16", "17", "52", "18", "19",
+			"20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "31", "30", "32", "33", "34", "35", "36", "38", "37", "39" };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -85,15 +85,13 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 
 		setContentView(R.layout.infoclient_container);
 
-		View vHeader = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.infoclient_cautaclient, null, false);
+		View vHeader = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.infoclient_cautaclient, null, false);
 		vHeader.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 		head_container = (LinearLayout) findViewById(R.id.headerContainer);
 		head_container.addView(vHeader);
 
-		View vLista = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-				R.layout.infoclient_listaclienti, null, false);
+		View vLista = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.infoclient_listaclienti, null, false);
 		vLista.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 		list_container = (LinearLayout) findViewById(R.id.detailsContainer);
@@ -123,8 +121,8 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 
 		listViewClienti = (ListView) findViewById(R.id.listVClienti);
 		listClienti = new ArrayList<HashMap<String, String>>();
-		adapterClienti = new SimpleAdapter(this, listClienti, R.layout.customrownumeclient, new String[] {
-				"numeClient", "codClient" }, new int[] { R.id.textNumeClient, R.id.textCodClient });
+		adapterClienti = new SimpleAdapter(this, listClienti, R.layout.customrownumeclient, new String[] { "numeClient", "codClient" }, new int[] {
+				R.id.textNumeClient, R.id.textCodClient });
 
 		listViewClienti.setAdapter(adapterClienti);
 		addListenerListClienti();
@@ -170,14 +168,12 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 			head_container.removeAllViews();
 			list_container.removeAllViews();
 
-			View vHeader = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-					R.layout.infoclient_cautaclient, null, false);
+			View vHeader = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.infoclient_cautaclient, null, false);
 			vHeader.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 			head_container.addView(vHeader);
 
-			View vLista = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-					R.layout.infoclient_listaclienti, null, false);
+			View vLista = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.infoclient_listaclienti, null, false);
 			vLista.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 			list_container.addView(vLista);
@@ -202,8 +198,8 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 			Spinner spinnerSelInfo = (Spinner) optionsInfoDialog.findViewById(R.id.spinnerOptionsInfo);
 
 			ArrayList<HashMap<String, String>> listInfo = new ArrayList<HashMap<String, String>>();
-			SimpleAdapter adapterOptions = new SimpleAdapter(this, listInfo, R.layout.customrowselinterval,
-					new String[] { "optInterval" }, new int[] { R.id.textTipInterval });
+			SimpleAdapter adapterOptions = new SimpleAdapter(this, listInfo, R.layout.customrowselinterval, new String[] { "optInterval" },
+					new int[] { R.id.textTipInterval });
 
 			HashMap<String, String> temp;
 
@@ -283,8 +279,7 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 
 		if (!clientInfo.trim().equals("")) {
 
-			View vLista = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-					R.layout.infoclient_list1, null, false);
+			View vLista = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.infoclient_list1, null, false);
 			vLista.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 			if (list_container.getChildCount() == 0) {
@@ -292,8 +287,8 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 				listViewInfo_1 = (ListView) findViewById(R.id.listInfoClient_1);
 
 				arrayInfo_1 = new ArrayList<HashMap<String, String>>();
-				adapterUserInfo_1 = new SimpleAdapter(this, arrayInfo_1, R.layout.infoclient_1_rowlayout, new String[] {
-						"textLinie1", "textLinie2" }, new int[] { R.id.textLinie1, R.id.textLinie2 });
+				adapterUserInfo_1 = new SimpleAdapter(this, arrayInfo_1, R.layout.infoclient_1_rowlayout, new String[] { "textLinie1", "textLinie2" },
+						new int[] { R.id.textLinie1, R.id.textLinie2 });
 				arrayInfo_1.clear();
 
 			}
@@ -360,8 +355,8 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 				String strAdresa = "";
 				for (int i = 0; i < adresaArray.size(); i++) {
 					temp = new HashMap<String, String>(10, 0.75f);
-					strAdresa = getNumeJudet(adresaArray.get(i).getCodJudet()) + "; " + adresaArray.get(i).getOras()
-							+ "; " + adresaArray.get(i).getStrada() + "; " + adresaArray.get(i).getNrStrada() + ";";
+					strAdresa = getNumeJudet(adresaArray.get(i).getCodJudet()) + "; " + adresaArray.get(i).getOras() + "; " + adresaArray.get(i).getStrada()
+							+ "; " + adresaArray.get(i).getNrStrada() + ";";
 
 					temp.put("textLinie1", "Adresa " + String.valueOf(i + 1) + ":");
 					temp.put("textLinie2", strAdresa);
@@ -371,26 +366,20 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 
 				listViewInfo_1.setAdapter(adapterUserInfo_1);
 				/*
-				// pers. contact
-				if (tokenLinie.length - 1 == i) {
-					oAdresa = tokenLinie[i];
-					tokenAdresa = oAdresa.split("#");
-
-					if (!tokenAdresa[0].trim().equals("")) {
-						strAdresa = tokenAdresa[0];
-
-						if (!tokenAdresa[1].trim().equals("")) {
-							strAdresa += ", tel: " + tokenAdresa[1];
-						}
-
-						temp = new HashMap<String, String>(1, 0.75f);
-						temp.put("textLinie1", "Pers. contact: ");
-						temp.put("textLinie2", strAdresa);
-						arrayInfo_1.add(temp);
-						listViewInfo_1.setAdapter(adapterUserInfo_1);
-					}
-				}
-				*/
+				 * // pers. contact if (tokenLinie.length - 1 == i) { oAdresa =
+				 * tokenLinie[i]; tokenAdresa = oAdresa.split("#");
+				 * 
+				 * if (!tokenAdresa[0].trim().equals("")) { strAdresa =
+				 * tokenAdresa[0];
+				 * 
+				 * if (!tokenAdresa[1].trim().equals("")) { strAdresa +=
+				 * ", tel: " + tokenAdresa[1]; }
+				 * 
+				 * temp = new HashMap<String, String>(1, 0.75f);
+				 * temp.put("textLinie1", "Pers. contact: ");
+				 * temp.put("textLinie2", strAdresa); arrayInfo_1.add(temp);
+				 * listViewInfo_1.setAdapter(adapterUserInfo_1); } }
+				 */
 
 			}// sf. adr. livrare
 
@@ -478,10 +467,8 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 				head_container.removeAllViews();
 				list_container.removeAllViews();
 
-				View vHeader = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
-						R.layout.infoclient_selectedclient, null, false);
-				vHeader.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-						LayoutParams.MATCH_PARENT));
+				View vHeader = ((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.infoclient_selectedclient, null, false);
+				vHeader.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
 				head_container.addView(vHeader);
 
@@ -543,10 +530,17 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 			if (CreareComanda.canalDistrib.equals("20"))
 				depSel = "11";
 
+			String tipUserSap = UserInfo.getInstance().getTipUserSap();
+
+			if (UtilsUser.isDV() && UserInfo.getInstance().getInitDivizie().equals("11"))
+				tipUserSap = "SDIP";
+
 			params.put("numeClient", numeClient);
 			params.put("depart", depSel);
 			params.put("departAg", UserInfo.getInstance().getCodDepart());
 			params.put("unitLog", UserInfo.getInstance().getUnitLog());
+			params.put("tipUserSap", tipUserSap);
+			
 
 			AsyncTaskWSCall call = new AsyncTaskWSCall(this, "cautaClientAndroid", params);
 			call.getCallResults();
@@ -585,11 +579,11 @@ public class InfoClient extends Activity implements AsyncTaskListener {
 
 	public void onTaskComplete(String methodName, Object result) {
 		if (methodName.equals("getClientInfo")) {
-			fillClientInfo((String)result);
+			fillClientInfo((String) result);
 		}
 
 		if (methodName.equals("cautaClientAndroid")) {
-			listClients((String)result);
+			listClients((String) result);
 		}
 
 	}

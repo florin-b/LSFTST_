@@ -699,8 +699,13 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 				setTextNumeClientEnabled(false);
 
 				tipClient = EnumTipClient.MESERIAS;
+
+				int width = (int) (getResources().getDisplayMetrics().widthPixels * 0.6);
+				int height = (int) (getResources().getDisplayMetrics().heightPixels * 0.55);
+
 				CautaClientDialog clientDialog = new CautaClientDialog(SelectClientCmdGed.this);
 				clientDialog.setInstitPublica(true);
+				clientDialog.getWindow().setLayout(width, height);
 				clientDialog.setClientSelectedListener(SelectClientCmdGed.this);
 				clientDialog.show();
 
@@ -1140,11 +1145,13 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 	}
 
 	public void clientSelected(BeanClient client) {
+
 		if (tipClient == EnumTipClient.MESERIAS) {
 			txtNumeClientGed.setText(client.getNumeClient());
 			txtCNPClient.setText(client.getCodClient());
 			CreareComandaGed.codClientVar = client.getCodClient();
 			CreareComandaGed.tipClient = client.getTipClient();
+			CreareComandaGed.tipClientIP = client.getTipClientIP();
 
 			layoutLabelRefClient.setVisibility(View.VISIBLE);
 			layoutTextRefClient.setVisibility(View.VISIBLE);

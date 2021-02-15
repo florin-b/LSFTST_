@@ -74,6 +74,7 @@ import android.widget.Toast;
 import beans.Address;
 import beans.BeanAdresaLivrare;
 import beans.BeanAdreseJudet;
+import beans.BeanLocalitate;
 import beans.BeanObiectivDepartament;
 import beans.Delegat;
 import beans.GeocodeAddress;
@@ -150,6 +151,8 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	private List<String> listLocalitatiLivrare;
 
 	private CheckBox checkFactura, checkAviz;
+	private BeanAdreseJudet listAdreseJudet;
+	private BeanAdresaLivrare adresaLivrareSelected;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -1402,10 +1405,12 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	private void populateListLocalitati(BeanAdreseJudet listAdrese) {
 
+		listAdreseJudet = listAdrese;
+
 		textLocalitate.setVisibility(View.VISIBLE);
 		textLocalitate.setText(DateLivrare.getInstance().getOras());
 
-		String[] arrayLocalitati = listAdrese.getListLocalitati().toArray(new String[listAdrese.getListLocalitati().size()]);
+		String[] arrayLocalitati = listAdrese.getListStringLocalitati().toArray(new String[listAdrese.getListStringLocalitati().size()]);
 		ArrayAdapter<String> adapterLoc = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, arrayLocalitati);
 
 		textLocalitate.setThreshold(0);
@@ -1417,7 +1422,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		textStrada.setThreshold(0);
 		textStrada.setAdapter(adapterStrazi);
 
-		listLocalitatiLivrare = listAdrese.getListLocalitati();
+		listLocalitatiLivrare = listAdrese.getListStringLocalitati();
 
 		setListenerTextLocalitate();
 
@@ -1786,7 +1791,9 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	private boolean isAdresaCorecta() {
-		if (DateLivrare.getInstance().getTransport().equals("TRAP") && isAdresaText())
+		// if (DateLivrare.getInstance().getTransport().equals("TRAP") &&
+		// isAdresaText())
+		if (DateLivrare.getInstance().getTransport().equals("TRAP"))
 			return isAdresaGoogleOk();
 		else
 			return true;
@@ -1848,10 +1855,44 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	private boolean isAdresaGoogleOk() {
 
-		GeocodeAddress geoAddress = MapUtils.geocodeAddress(getAddressFromForm(), getApplicationContext());
-		DateLivrare.getInstance().setCoordonateAdresa(geoAddress.getCoordinates());
+		/*
+		 * GeocodeAddress geoAddress =
+		 * MapUtils.geocodeAddress(getAddressFromForm(),
+		 * getApplicationContext());
+		 * DateLivrare.getInstance().setCoordonateAdresa
+		 * (geoAddress.getCoordinates());
+		 * 
+		 * LatLng addressCoordinates = geoAddress.getCoordinates();
+		 * 
+		 * boolean isAdresaOk = geoAddress.isAdresaValida();
+		 */
 
-		return geoAddress.isAdresaValida();
+		LatLng addressCoordinates = null;
+		boolean isAdresaOk = true;
+
+		BeanLocalitate beanLocalitate = new BeanLocalitate();
+
+		if (isAdresaText()) {
+			GeocodeAddress geoAddress = MapUtils.geocodeAddress(getAddressFromForm(), getApplicationContext());
+			DateLivrare.getInstance().setCoordonateAdresa(geoAddress.getCoordinates());
+			addressCoordinates = geoAddress.getCoordinates();
+			beanLocalitate = HelperAdreseLivrare.getDateLocalitate(listAdreseJudet.getListLocalitati(), DateLivrare.getInstance().getOras());
+			isAdresaOk = geoAddress.isAdresaValida();
+
+		} else {
+			beanLocalitate.setOras(adresaLivrareSelected.isOras());
+			beanLocalitate.setRazaKm(adresaLivrareSelected.getRazaKm());
+			beanLocalitate.setCoordonate(adresaLivrareSelected.getCoordsCentru());
+			
+			addressCoordinates = DateLivrare.getInstance().getCoordonateAdresa();
+		}
+
+		if (beanLocalitate.isOras()) {
+			isAdresaOk = HelperAdreseLivrare.isDistantaCentruOk(getApplicationContext(), beanLocalitate, addressCoordinates);
+
+		}
+
+		return isAdresaOk;
 
 	}
 
@@ -1866,6 +1907,8 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	private void setAdresaLivrareFromList(BeanAdresaLivrare adresaLivrare) {
+
+		adresaLivrareSelected = adresaLivrare;
 
 		DateLivrare.getInstance().setAddrNumber(adresaLivrare.getCodAdresa());
 		DateLivrare.getInstance().setNumeJudet(UtilsGeneral.getNumeJudet(adresaLivrare.getCodJudet()));

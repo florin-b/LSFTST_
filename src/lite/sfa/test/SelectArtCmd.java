@@ -1236,7 +1236,7 @@ public class SelectArtCmd extends ListActivity implements OperatiiArticolListene
 						return;
 					}
 
-					if (!isComandaDL()
+					if (!isComandaDL() && !CreareComanda.tipComanda.equals("S")
 							&& Double.parseDouble(textCant.getText().toString().trim()) * (valoareUmrez / valoareUmren) > Double.parseDouble(textStoc.getText()
 									.toString().replaceAll(",", ""))) {
 						Toast.makeText(getApplicationContext(), "Stoc insuficient!", Toast.LENGTH_LONG).show();

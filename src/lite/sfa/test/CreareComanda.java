@@ -170,6 +170,8 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 	private TextView textFurnizor;
 	private OperatiiArticol opArticol;
 	public static String filialaCustodie = "";
+	
+	public static String tipComanda = "N"; // N = normala, S = simulata
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -957,6 +959,9 @@ public class CreareComanda extends Activity implements AsyncTaskListener, Valoar
 							if (dateLivrareInstance.isAdrLivrNoua())
 								comandaBlocata = "1";
 						}
+						
+						if (CreareComanda.tipComanda.equals("S"))
+							comandaBlocata = "21";
 
 						String localRedSeparat = dateLivrareInstance.getRedSeparat();
 

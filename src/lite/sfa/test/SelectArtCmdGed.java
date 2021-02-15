@@ -78,7 +78,7 @@ import beans.ComandaExtraMathaus;
 import beans.DepoziteUl;
 import beans.PretArticolGed;
 import beans.StocMathaus;
-import dialogs.CategoriiMathausDialog;
+import dialogs.CategoriiMathausDialogNew;
 import enums.EnumArticoleDAO;
 import enums.EnumDepartExtra;
 import enums.EnumDepartamente;
@@ -177,7 +177,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	private int currentAmob = 0;
 	private Spinner spinnerDepart;
 
-	private CategoriiMathausDialog categoriiDialog;
+	private CategoriiMathausDialogNew categoriiDialog;
 	private Button btnCatMathaus;
 	private Button btnStocMathaus;
 	private ArticolMathaus articolMathaus;
@@ -558,7 +558,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 		if (categoriiDialog == null) {
 			int width = (int) (getResources().getDisplayMetrics().widthPixels);
 			int height = (int) (getResources().getDisplayMetrics().heightPixels);
-			categoriiDialog = new CategoriiMathausDialog(SelectArtCmdGed.this);
+			categoriiDialog = new CategoriiMathausDialogNew(SelectArtCmdGed.this);
 			categoriiDialog.setArticolMathausListener(this);
 			categoriiDialog.getWindow().setLayout(width, height);
 

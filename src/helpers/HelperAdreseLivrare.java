@@ -8,7 +8,10 @@ import lite.sfa.test.CreareComanda;
 import lite.sfa.test.ModificareComanda;
 import model.DateLivrare;
 import model.UserInfo;
+import android.content.Context;
+import android.widget.Toast;
 import beans.BeanAdresaLivrare;
+import beans.BeanLocalitate;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -127,26 +130,26 @@ public class HelperAdreseLivrare {
 
 		return selectedPos;
 	}
-	
-	
-	public static int adresaExista(List<BeanAdresaLivrare> listAdrese){
-		int adresaExista  = -1;
-		
-		for (BeanAdresaLivrare adresa : listAdrese){
-			if (adresa.getCodJudet().equals(DateLivrare.getInstance().getCodJudet()) && adresa.getOras().toLowerCase().equals(DateLivrare.getInstance().getOras().toLowerCase()) && adresa.getStrada().replace(" ", "").toLowerCase().equals(DateLivrare.getInstance().getStrada().replace(" ","").toLowerCase())) {
+
+	public static int adresaExista(List<BeanAdresaLivrare> listAdrese) {
+		int adresaExista = -1;
+
+		for (BeanAdresaLivrare adresa : listAdrese) {
+			if (adresa.getCodJudet().equals(DateLivrare.getInstance().getCodJudet())
+					&& adresa.getOras().toLowerCase().equals(DateLivrare.getInstance().getOras().toLowerCase())
+					&& adresa.getStrada().replace(" ", "").toLowerCase().equals(DateLivrare.getInstance().getStrada().replace(" ", "").toLowerCase())) {
 				adresaExista = listAdrese.indexOf(adresa);
 				break;
 			}
-			
+
 		}
-		
+
 		return adresaExista;
 	}
 
 	public static double distanceXtoY(double lat1, double lon1, double lat2, double lon2, String unit) {
 		double theta = lon1 - lon2;
-		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
-				* Math.cos(deg2rad(theta));
+		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
 		dist = Math.acos(dist);
 		dist = rad2deg(dist);
 		dist = dist * 60 * 1.1515;
@@ -164,6 +167,36 @@ public class HelperAdreseLivrare {
 
 	private static double rad2deg(double rad) {
 		return (rad * 180 / Math.PI);
+	}
+
+	public static boolean isDistantaCentruOk(Context context, BeanLocalitate localitate, LatLng coordAdresa) {
+
+		boolean distantaOk = true;
+
+		String[] arrayLoc = localitate.getCoordonate().split(",");
+		int distanta = (int) distanceXtoY(Double.parseDouble(arrayLoc[0]), Double.parseDouble(arrayLoc[1]), coordAdresa.latitude, coordAdresa.longitude, "K");
+
+		if (distanta > localitate.getRazaKm())
+			distantaOk = false;
+
+		return distantaOk;
+
+	}
+
+	public static BeanLocalitate getDateLocalitate(List<BeanLocalitate> listLocalitati, String localitate) {
+
+		BeanLocalitate beanLocalitate = null;
+
+		for (BeanLocalitate loc : listLocalitati) {
+
+			if (loc.getLocalitate().equalsIgnoreCase(localitate)) {
+				beanLocalitate = loc;
+				break;
+			}
+
+		}
+
+		return beanLocalitate;
 	}
 
 }

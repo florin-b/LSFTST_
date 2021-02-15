@@ -110,6 +110,10 @@ public class ComandaSimulataAdapter extends BaseAdapter {
 	}
 
 	private boolean isAprobata(BeanComandaSimulata comanda) {
+		
+		if (comanda.getCanalDistrib().equals("10"))
+			return comanda.isAprobDistrib();
+		
 		String[] aprobariNecesare = {};
 		String[] aprobariPrimite = {};
 

@@ -33,6 +33,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -71,6 +72,7 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 
 	OperatiiClient opClient;
 	private Spinner spinnerAgenti;
+	private RadioButton radioCmdFerma, radioCmdSimulata;
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -136,9 +138,13 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 		spinnerAgenti = ((Spinner) findViewById(R.id.spinnerAgenti));
 		setSpinnerAgentiListener();
 
-		if (UtilsUser.isSuperAv() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD() || UtilsUser.isASDL()) {
+		if (UtilsUser.isSuperAv() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD()
+				|| UtilsUser.isASDL()) {
 			((LinearLayout) findViewById(R.id.layoutAgentClient)).setVisibility(View.VISIBLE);
 		}
+
+		radioCmdFerma = (RadioButton) findViewById(R.id.radio_cmd_ferma);
+		radioCmdSimulata = (RadioButton) findViewById(R.id.radio_cmd_simulata);
 
 	}
 
@@ -224,7 +230,8 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 		codClient = client.getCodClient();
 		tipClientVar = client.getTipClient();
 
-		if (UtilsUser.isSuperAv() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD() || UtilsUser.isASDL()) {
+		if (UtilsUser.isSuperAv() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM() || UtilsUser.isCGED() || UtilsUser.isOIVPD()
+				|| UtilsUser.isASDL()) {
 
 			String[] tokAgenti = client.getAgenti().split("@");
 
@@ -319,6 +326,13 @@ public class SelectClientCmd extends ListActivity implements OperatiiClientListe
 
 						if (cmdAngaj.isChecked())
 							CreareComanda.cmdAngajament = true;
+					}
+
+					if (radioCmdFerma.isChecked()) {
+						CreareComanda.tipComanda = "N";
+					} else if (radioCmdSimulata.isChecked()) {
+						CreareComanda.cmdAngajament = false;
+						CreareComanda.tipComanda = "S";
 					}
 
 					finish();

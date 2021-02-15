@@ -587,6 +587,9 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 						else
 							comanda.setTipClientInstPublica(EnumTipClientIP.NONCONSTR);
 					}
+					
+					if (comandaObject.has("isAprobatDistrib"))
+						comanda.setAprobDistrib(Boolean.valueOf(comandaObject.getString("isAprobatDistrib")));
 
 					listComenzi.add(comanda);
 

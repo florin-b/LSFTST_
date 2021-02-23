@@ -159,11 +159,11 @@ public class MainMenu extends Activity {
 			R.drawable.simulate, R.drawable.clp, R.drawable.afis_clp, R.drawable.retur_marfa, R.drawable.vanzari, R.drawable.neincasate, R.drawable.stoc_icon,
 			R.drawable.dollar_icon, R.drawable.client_info, R.drawable.despre_icon, R.drawable.exit_icon, R.drawable.blank };
 
-	public String[] btnNamesWOOD = { "Utilizator", "Creare cmd GED", "Modificare comanda", "Afisare comanda", "Modificare data livrare", "Stocuri", "Preturi",
-			"Obiective", "Despre", "Iesire" };
+	public String[] btnNamesWOOD = { "Utilizator", "Creare cmd GED", "Modificare comanda", "Afisare comanda", "Comenzi simulate", "Modificare data livrare", "Stocuri", "Preturi",
+			"Stare comenzi","Obiective", "Despre", "Iesire" };
 
-	public int[] btnImageWOOD = new int[] { R.drawable.id_icon, R.drawable.blue_basket_icon, R.drawable.modif_icon, R.drawable.preview_icon,
-			R.drawable.data_icon, R.drawable.stoc_icon, R.drawable.dollar_icon, R.drawable.colosseum, R.drawable.despre_icon, R.drawable.exit_icon };
+	public int[] btnImageWOOD = new int[] { R.drawable.id_icon, R.drawable.blue_basket_icon, R.drawable.modif_icon, R.drawable.preview_icon,R.drawable.simulate,
+			R.drawable.data_icon, R.drawable.stoc_icon, R.drawable.dollar_icon,R.drawable.status, R.drawable.colosseum, R.drawable.despre_icon, R.drawable.exit_icon };
 
 	public String[] btnNamesINFO = { "Utilizator", "Creare cmd GED", "Afisare comanda", "Stocuri", "Preturi", "Despre", "Iesire" };
 

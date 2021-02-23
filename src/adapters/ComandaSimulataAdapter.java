@@ -7,6 +7,7 @@ import java.util.List;
 import lite.sfa.test.R;
 import model.Constants;
 import utils.UtilsFormatting;
+import utils.UtilsUser;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,7 +112,7 @@ public class ComandaSimulataAdapter extends BaseAdapter {
 
 	private boolean isAprobata(BeanComandaSimulata comanda) {
 		
-		if (comanda.getCanalDistrib().equals("10"))
+		if (comanda.getCanalDistrib().equals("10") || UtilsUser.isConsWood())
 			return comanda.isAprobDistrib();
 		
 		String[] aprobariNecesare = {};

@@ -1032,6 +1032,9 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		listArticole.get(selectedPos).setValTransport(
 				((listArticole.get(selectedPos).getPretUnitarClient() * listArticole.get(selectedPos).getCantUmb()) / listArticole.get(selectedPos)
 						.getMultiplu()) * (listArticole.get(selectedPos).getProcTransport() / 100));
+		
+		adapter.notifyDataSetChanged();
+		
 
 	}
 

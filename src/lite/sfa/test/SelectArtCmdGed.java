@@ -82,6 +82,7 @@ import dialogs.CategoriiMathausDialogNew;
 import enums.EnumArticoleDAO;
 import enums.EnumDepartExtra;
 import enums.EnumDepartamente;
+import enums.EnumTipClientIP;
 import enums.EnumTipComanda;
 import enums.TipCmdGed;
 import filters.DecimalDigitsInputFilter;
@@ -697,8 +698,8 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	boolean isWood() {
 		return UserInfo.getInstance().getTipUser().equals("WOOD");
 	}
-	
-	private boolean isUserCAG(){
+
+	private boolean isUserCAG() {
 		return UserInfo.getInstance().getTipUserSap().toUpperCase().startsWith("CAG");
 	}
 
@@ -2250,7 +2251,10 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 				String[] arrayPret = arrayIstoric[0].split("@");
 
-				valoarePret = Double.parseDouble(arrayPret[0]) * Constants.TVA;
+				if (isComandaIP())
+					valoarePret = Double.parseDouble(arrayPret[0]);
+				else
+					valoarePret = Double.parseDouble(arrayPret[0]) * Constants.TVA;
 
 				TextView textIstoric1 = (TextView) findViewById(R.id.txtIstoricPret1);
 				textIstoric1.setText(" " + df.format(valoarePret) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " " + arrayPret[2]
@@ -2264,7 +2268,10 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 				String[] arrayPret = arrayIstoric[1].split("@");
 
-				valoarePret = Double.parseDouble(arrayPret[0]) * Constants.TVA;
+				if (isComandaIP())
+					valoarePret = Double.parseDouble(arrayPret[0]);
+				else
+					valoarePret = Double.parseDouble(arrayPret[0]) * Constants.TVA;
 
 				TextView textIstoric2 = (TextView) findViewById(R.id.txtIstoricPret2);
 				textIstoric2.setText(df.format(valoarePret) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " " + arrayPret[2]
@@ -2278,7 +2285,10 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 				String[] arrayPret = arrayIstoric[2].split("@");
 
-				valoarePret = Double.parseDouble(arrayPret[0]) * Constants.TVA;
+				if (isComandaIP())
+					valoarePret = Double.parseDouble(arrayPret[0]);
+				else
+					valoarePret = Double.parseDouble(arrayPret[0]) * Constants.TVA;
 
 				TextView textIstoric3 = (TextView) findViewById(R.id.txtIstoricPret3);
 				textIstoric3.setText(df.format(valoarePret) + UtilsFormatting.addSpace(arrayPret[0].trim(), 6) + " /" + arrayPret[1] + " " + arrayPret[2]
@@ -2288,6 +2298,10 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 		}
 
+	}
+
+	private static boolean isComandaIP() {
+		return UtilsUser.isUserIP() && (CreareComandaGed.tipClientIP == EnumTipClientIP.CONSTR || CreareComandaGed.tipClientIP == EnumTipClientIP.NONCONSTR);
 	}
 
 	private boolean userCannotModifyPrice() {

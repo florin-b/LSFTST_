@@ -885,6 +885,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	private void fillJudeteClient(String arrayJudete) {
+		
 
 		if (listJudete != null)
 			listJudete.clear();

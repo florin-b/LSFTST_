@@ -23,6 +23,8 @@ import utils.UtilsUser;
 import adapters.CautareClientiAdapter;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +47,7 @@ import android.widget.Toast;
 import beans.BeanClient;
 import beans.BeanDatePersonale;
 import beans.DetaliiClient;
+import beans.InfoCredit;
 import beans.PlatitorTva;
 import dialogs.CautaClientDialog;
 import dialogs.DatePersClientDialog;
@@ -1114,6 +1117,38 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 
 	}
 
+	private void setInfoCreditClient(String result) {
+		InfoCredit infoCredit = operatiiClient.deserializeInfoCreditClient(result);
+
+		StringBuilder strInfo = new StringBuilder();
+		strInfo.append("\n");
+		strInfo.append("Limita credit: ");
+		strInfo.append(infoCredit.getLimitaCredit());
+		strInfo.append("\n");
+		strInfo.append("Rest credit: ");
+		strInfo.append(infoCredit.getRestCredit());
+
+		if (infoCredit.isBlocat()) {
+			strInfo.append("\n");
+			strInfo.append("Client blocat. ");
+			strInfo.append(infoCredit.getMotivBlocat());
+			strInfo.append(".");
+		}
+
+		strInfo.append("\n");
+
+		AlertDialog alertDialog = new AlertDialog.Builder(SelectClientCmdGed.this).create();
+		alertDialog.setTitle("Info credit " + txtNumeClientGed.getText().toString());
+		alertDialog.setMessage(strInfo);
+		alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		alertDialog.show();
+
+	}
+
 	public void onBackPressed() {
 		finish();
 		return;
@@ -1138,9 +1173,20 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 		case GET_TERMEN_PLATA:
 			setTermenPlataClient((String) result);
 			break;
+		case GET_INFO_CREDIT:
+			setInfoCreditClient((String) result);
+			break;
 		default:
 			break;
 		}
+
+	}
+
+	private void getInfoCreditClient(String codClient) {
+
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("codClient", codClient);
+		operatiiClient.getInfoCredit(params);
 
 	}
 
@@ -1162,7 +1208,9 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 			if (radioClientInstPub.isChecked()) {
 				labelIDClient.setText(labelIDClient.getText() + "\t\t\t\t\t CUI: " + client.getCodCUI());
 				codCuiIp = client.getCodCUI();
+				getInfoCreditClient(client.getCodClient());
 			}
+
 		}
 		if (tipClient == EnumTipClient.DISTRIBUTIE) {
 			txtNumeClientGed.setText(client.getNumeClient());

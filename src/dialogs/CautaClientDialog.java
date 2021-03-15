@@ -69,7 +69,7 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 		setListenerRadioClientIP();
 
 		textNumeClient = (EditText) findViewById(R.id.textNumeClient);
-		textNumeClient.setHint("Nume client");
+
 		listClientiObiective = (ListView) findViewById(R.id.listClientiObiective);
 		setListenerListClienti();
 
@@ -127,10 +127,10 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				BeanClient client = (BeanClient) listClientiObiective.getItemAtPosition(arg2);
-				
+
 				if (UtilsUser.isUserIP())
 					client.setTipClientIP(tipClientIP);
-				
+
 				if (listener != null) {
 					listener.clientSelected(client);
 					dismiss();
@@ -227,7 +227,10 @@ public class CautaClientDialog extends Dialog implements OperatiiClientListener 
 
 		if (isInstitPublica) {
 			radioClientIP.setVisibility(View.VISIBLE);
-		}
+			textNumeClient.setHint("Nume client sau CIF");
+		} else
+			textNumeClient.setHint("Nume client");
+
 	}
 
 	public String getNumeClient() {

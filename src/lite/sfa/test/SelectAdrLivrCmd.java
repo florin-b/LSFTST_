@@ -89,7 +89,7 @@ import enums.EnumLocalitate;
 import enums.EnumOperatiiAdresa;
 import enums.EnumOperatiiObiective;
 import enums.EnumZona;
-import enums.TipCmdDistrib;
+
 
 public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnItemClickListener, OperatiiAdresaListener, ObiectiveListener, MapListener,
 		AutocompleteDialogListener, AsyncTaskListener {
@@ -1118,9 +1118,15 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	protected void performGetAdreseLivrare() {
+		
+		String filiala = "";
+		
+		if (!isComandaClp() && !isComandaBV() && !isComandaDl() && !DateLivrare.getInstance().isClientFurnizor()) 
+			filiala = UserInfo.getInstance().getUnitLog();
 
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("codClient", globalCodClient);
+		params.put("filiala", filiala);
 
 		operatiiAdresa.getAdreseLivrareClient(params);
 

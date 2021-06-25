@@ -27,31 +27,84 @@
             android:layout_marginTop="5dp"
             android:orientation="vertical" >
         </LinearLayout>
+
+        
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="0dip"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="5dp"
         android:layout_weight="0.6"
         android:orientation="vertical" >
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="35dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/textCodArticol"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.25"
+                android:inputType="text" />
+
+            <RadioGroup
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/radio_cod"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Cod" />
+
+                <RadioButton
+                    android:id="@+id/radio_nume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nume" />
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/btnCauta"
+                style="@style/ok_button"
+                android:layout_width="0dip"
+                android:layout_height="40dip"
+                android:layout_weight="0.1"
+                android:layout_gravity="right"
+                android:layout_marginBottom="5dip"
+                android:layout_marginRight="5dip"
+                android:background="@drawable/ok_button_style"
+                android:paddingLeft="40dip"
+                android:paddingRight="40dip"
+                android:text="Cauta" />
+        </LinearLayout>
+
         <GridView
             android:id="@+id/gridItems"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dip"
             android:layout_marginBottom="5dip"
+            android:layout_weight="0.5"
             android:columnWidth="320dp"
             android:fadeScrollbars="false"
             android:gravity="center"
-            android:horizontalSpacing="10dp"
+            android:horizontalSpacing="5dp"
             android:numColumns="auto_fit"
             android:scrollbarFadeDuration="0"
             android:scrollbars="vertical"
             android:smoothScrollbar="true"
             android:stretchMode="spacingWidthUniform"
-            android:verticalSpacing="24dp" />
+            android:verticalSpacing="10dp" />
 
         <Button
             android:id="@+id/btnOk"

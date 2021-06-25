@@ -1208,6 +1208,19 @@ public class SelectClientCmdGed extends Activity implements OperatiiClientListen
 			if (radioClientInstPub.isChecked()) {
 				labelIDClient.setText(labelIDClient.getText() + "\t\t\t\t\t CUI: " + client.getCodCUI());
 				codCuiIp = client.getCodCUI();
+
+				if (!client.getFilialaClientIP().equals(UserInfo.getInstance().getUnitLog())) {
+					CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_LIVRARE;
+					DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
+					DateLivrare.getInstance().setCodFilialaCLP(UserInfo.getInstance().getUnitLog());
+					UserInfo.getInstance().setUnitLog(client.getFilialaClientIP());
+
+				} else {
+					CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_VANZARE;
+					DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_VANZARE);
+					DateLivrare.getInstance().setCodFilialaCLP("");
+				}
+
 				getInfoCreditClient(client.getCodClient());
 			}
 

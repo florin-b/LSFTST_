@@ -173,6 +173,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 
 	private double valTransport = 0;
 	private double valTransportSAP = 0;
+	public static boolean permitArticoleDistribIP = true;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -706,7 +707,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 		HelperCostDescarcare.eliminaCostDescarcare(listArticoleComanda);
 
 		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
-				&& !isExceptieComandaIP() && !UtilsUser.isAV_SD_01() && !UtilsUser.isCVO() && !UtilsUser.isSVO()) {
+				&& !isExceptieComandaIP() && !UtilsUser.isAV_SD_01()) {
 
 			
 			String codFurnizor = " ";
@@ -1372,6 +1373,7 @@ public class ModificareComanda extends Activity implements AsyncTaskListener, Co
 		selectedCmd = "";
 		totalComanda = 0;
 		codTipReducere = "-1";
+		permitArticoleDistribIP = true;
 
 		ListaArticoleComandaGed.getInstance().clearArticoleComanda();
 		ListaArticoleComandaGed.getInstance().deleteObserver(this);

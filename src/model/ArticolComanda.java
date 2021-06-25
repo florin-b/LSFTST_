@@ -7,6 +7,8 @@ package model;
 import java.util.Comparator;
 import java.util.Locale;
 
+import beans.ArticolMathaus;
+
 public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	protected int nrCrt;
@@ -86,6 +88,8 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 	private double procT1;
 	private double valT1;
 	private String dataExpPret;
+	private ArticolMathaus articolMathaus;
+	
 
 	private double pretFaraTva;
 
@@ -630,6 +634,16 @@ public class ArticolComanda implements Comparable<ArticolComanda> {
 
 	public void setDataExpPret(String dataExpPret) {
 		this.dataExpPret = dataExpPret;
+	}
+	
+	
+
+	public ArticolMathaus getArticolMathaus() {
+		return articolMathaus;
+	}
+
+	public void setArticolMathaus(ArticolMathaus articolMathaus) {
+		this.articolMathaus = articolMathaus;
 	}
 
 	@Override

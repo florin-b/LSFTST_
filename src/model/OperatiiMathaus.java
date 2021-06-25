@@ -41,6 +41,13 @@ public class OperatiiMathaus implements AsyncTaskListener {
 		call.getCallResultsFromFragment();
 	}
 
+	public void cautaArticole(HashMap<String, String> params) {
+		numeComanda = EnumOperatiiMathaus.CAUTA_ARTICOLE;
+		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getNumeComanda(), params, (AsyncTaskListener) this, context);
+		call.getCallResultsFromFragment();
+	}	
+	
+	
 	public List<CategorieMathaus> deserializeCategorii(String categorii) {
 		CategorieMathaus categorie = null;
 		ArrayList<CategorieMathaus> objectsList = new ArrayList<CategorieMathaus>();
@@ -110,6 +117,7 @@ public class OperatiiMathaus implements AsyncTaskListener {
 					articol.setLungime(Double.valueOf(catObject.getString("lungime")));
 					articol.setCatMathaus(catObject.getString("catMathaus"));
 					articol.setPretUnitar(catObject.getString("pretUnitar"));
+					articol.setLocal(Boolean.parseBoolean(catObject.getString("isLocal")));
 
 					objectsList.add(articol);
 

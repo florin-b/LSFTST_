@@ -87,10 +87,11 @@ public class UtilsGeneral {
 		return listDepozite.toArray(new String[listDepozite.size()]);
 
 	}
-	
+
 	public static void trateazaExceptieMAV_BU(ArrayAdapter<String> adapterSpinnerDepozite) {
 
-		//pentru filialele BU se elimina MAV2, conform solicitarii din 17.09.2020
+		// pentru filialele BU se elimina MAV2, conform solicitarii din
+		// 17.09.2020
 		if (UserInfo.getInstance().getUnitLog().startsWith("BU"))
 			adapterSpinnerDepozite.remove("MAV2");
 	}
@@ -587,6 +588,42 @@ public class UtilsGeneral {
 
 		return dpt;
 
+	}
+
+	public static boolean isFilialaMathaus(String filiala) {
+
+		String filialeMathaus = "CT10, BU10, AG10, DJ10, BH10, IS10, GL10";
+
+		return filialeMathaus.contains(filiala);
+
+	}
+
+	public static List<String> getFilialaMathaus() {
+		List<String> filialeMathaus = new ArrayList<String>();
+
+		filialeMathaus.add("CT10");
+		filialeMathaus.add("BU10");
+		filialeMathaus.add("AG10");
+		filialeMathaus.add("DJ10");
+		filialeMathaus.add("BH10");
+		filialeMathaus.add("IS10");
+		filialeMathaus.add("GL10");
+
+		return filialeMathaus;
+	}
+
+	public static boolean isMathausMare(String filiala) {
+
+		String MathausMare = "AG10, BU10, IS10";
+
+		return MathausMare.contains(filiala);
+	}
+
+	public static boolean isMathausMic(String filiala) {
+
+		String MathausMic = "GL10, CT10, DJ10, BH10";
+
+		return MathausMic.contains(filiala);
 	}
 
 }

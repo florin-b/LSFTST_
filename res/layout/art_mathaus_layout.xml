@@ -40,9 +40,9 @@
             android:layout_height="50dip"
             android:layout_weight="0.5"
             android:gravity="left|bottom"
-            android:textColor="@color/black"
             android:layout_marginLeft="5dip"
             android:layout_marginBottom="5dip"
+            android:textColor="@color/artRowColor1"
             android:textSize="17sp"
             android:typeface="sans" />
 

@@ -8,6 +8,7 @@ public class ArticolMathaus extends ArticolDB {
 	private String descriere;
 	private String catMathaus;
 	private String pretUnitar;
+	private boolean isLocal;
 
 	public String getCod() {
 		return cod;
@@ -63,6 +64,14 @@ public class ArticolMathaus extends ArticolDB {
 
 	public void setPretUnitar(String pretUnitar) {
 		this.pretUnitar = pretUnitar;
+	}
+
+	public boolean isLocal() {
+		return isLocal;
+	}
+
+	public void setLocal(boolean isLocal) {
+		this.isLocal = isLocal;
 	}
 
 	

@@ -11,6 +11,7 @@ import beans.BeanArticolSimulat;
 import beans.BeanArticolStoc;
 import beans.BeanGreutateArticol;
 import beans.BeanParametruPretGed;
+import beans.ComandaMathaus;
 import beans.PretArticolGed;
 
 public interface OperatiiArticol {
@@ -71,5 +72,11 @@ public interface OperatiiArticol {
 	public void getArticoleCant(HashMap<String, String> params);
 	
 	public ArrayList<ArticolCant> deserializeArticoleCant(String listArticole);
+	
+	public ComandaMathaus deserializeStocMathaus(String result);
+	
+	public String serializeComandaMathaus(ComandaMathaus comandaMathaus);
+	
+
 
 }

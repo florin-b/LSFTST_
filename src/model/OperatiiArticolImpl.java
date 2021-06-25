@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import utils.UtilsFormatting;
 import utils.UtilsGeneral;
 import android.content.Context;
 import android.widget.Toast;
@@ -22,7 +23,10 @@ import beans.ArticolDB;
 import beans.BeanArticolSimulat;
 import beans.BeanArticolStoc;
 import beans.BeanGreutateArticol;
+import beans.BeanLocalitate;
 import beans.BeanParametruPretGed;
+import beans.ComandaMathaus;
+import beans.DateArticolMathaus;
 import beans.PretArticolGed;
 import enums.EnumArticoleDAO;
 import enums.EnumUnitMas;
@@ -56,7 +60,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 		performOperation();
 
 	}
-	
+
 	public void getInfoPretMathaus(HashMap<String, String> params) {
 		numeComanda = EnumArticoleDAO.GET_INFOPRET_MATHAUS;
 		this.params = params;
@@ -132,21 +136,20 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 
 	}
 
-	
 	@Override
 	public void getArticoleCustodie(HashMap<String, String> params) {
 		numeComanda = EnumArticoleDAO.GET_ARTICOLE_CUSTODIE;
 		this.params = params;
 		performOperation();
 
-	}	
-	
+	}
+
 	public void getStocCustodie(HashMap<String, String> params) {
 		numeComanda = EnumArticoleDAO.GET_STOC_CUSTODIE;
 		this.params = params;
 		performOperation();
 	}
-	
+
 	public void getStocMathaus(HashMap<String, String> params) {
 		numeComanda = EnumArticoleDAO.GET_STOC_MATHAUS;
 		this.params = params;
@@ -174,9 +177,8 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 	private void performOperationSync() {
 		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
 		call.getCallResultsSync();
-	}	
-	
-	
+	}
+
 	private void performOperation() {
 		AsyncTaskWSCall call = new AsyncTaskWSCall(numeComanda.getComanda(), params, (AsyncTaskListener) this, context);
 		call.getCallResultsFromFragment();
@@ -346,7 +348,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 
 		return jsonArray.toString();
 	}
-	
+
 	@Override
 	public String serializeListArtSim(List<BeanArticolSimulat> listArticole) {
 
@@ -377,8 +379,6 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 
 		return jsonArray.toString();
 	}
-	
-	
 
 	public void deserializeListArtStoc(String listArticole) {
 		// Object json = new JSONTokener(serializedListArticole).nextValue();
@@ -410,10 +410,8 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 				pretArticol.setPretMediu(jsonObject.getString("pretMediu"));
 				pretArticol.setAdaosMediu(jsonObject.getString("adaosMediu"));
 				pretArticol.setUmPretMediu(jsonObject.getString("umPretMediu"));
-				pretArticol.setCoefCorectie(Double.valueOf(jsonObject.getString("coefCorectie") != "null" ? jsonObject.getString("coefCorectie")
-						: "0"));
-				pretArticol.setProcTransport(Double.valueOf(jsonObject.getString("procTransport") != "null" ? jsonObject.getString("procTransport")
-						: "0"));
+				pretArticol.setCoefCorectie(Double.valueOf(jsonObject.getString("coefCorectie") != "null" ? jsonObject.getString("coefCorectie") : "0"));
+				pretArticol.setProcTransport(Double.valueOf(jsonObject.getString("procTransport") != "null" ? jsonObject.getString("procTransport") : "0"));
 				pretArticol.setDiscMaxAV(Double.valueOf(jsonObject.getString("discMaxAV") != "null" ? jsonObject.getString("discMaxAV") : "0"));
 				pretArticol.setDiscMaxSD(Double.valueOf(jsonObject.getString("discMaxSD") != "null" ? jsonObject.getString("discMaxSD") : "0"));
 				pretArticol.setDiscMaxDV(Double.valueOf(jsonObject.getString("discMaxDV") != "null" ? jsonObject.getString("discMaxDV") : "0"));
@@ -502,8 +500,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 
 		return listArticole;
 	}
-	
-	
+
 	public ArrayList<ArticolCant> deserializeArticoleCant(String listArticoleSer) {
 		ArticolCant articol = null;
 		ArrayList<ArticolCant> listArticole = new ArrayList<ArticolCant>();
@@ -519,7 +516,7 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 					JSONObject articolObject = jsonArray.getJSONObject(i);
 
 					articol = new ArticolCant();
-					
+
 					articol.setCod(articolObject.getString("cod"));
 					articol.setNume(articolObject.getString("denumire"));
 					articol.setSintetic(articolObject.getString("sintetic"));
@@ -549,6 +546,68 @@ public class OperatiiArticolImpl implements OperatiiArticol, AsyncTaskListener {
 		}
 
 		return listArticole;
+
+	}
+
+	public ComandaMathaus deserializeStocMathaus(String result) {
+
+		ComandaMathaus comandaMathaus = new ComandaMathaus();
+		List<DateArticolMathaus> listArticole = new ArrayList<DateArticolMathaus>();
+
+		try {
+
+			JSONObject jsonObject = new JSONObject((String) result);
+			comandaMathaus.setSellingPlant(jsonObject.getString("sellingPlant"));
+
+			JSONArray jsonArrayLoc = new JSONArray(jsonObject.getString("deliveryEntryDataList"));
+
+			for (int i = 0; i < jsonArrayLoc.length(); i++) {
+
+				JSONObject articolObject = jsonArrayLoc.getJSONObject(i);
+
+				DateArticolMathaus articol = new DateArticolMathaus();
+				articol.setDeliveryWarehouse(articolObject.getString("deliveryWarehouse"));
+				articol.setProductCode(articolObject.getString("productCode"));
+				articol.setQuantity(Double.parseDouble(articolObject.getString("quantity")));
+				articol.setUnit(articolObject.getString("unit"));
+
+				listArticole.add(articol);
+			}
+
+			comandaMathaus.setDeliveryEntryDataList(listArticole);
+
+		} catch (JSONException e) {
+			Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+		}
+
+		return comandaMathaus;
+	}
+
+	public String serializeComandaMathaus(ComandaMathaus comandaMathaus) {
+
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObject = null;
+		JSONObject jsonComanda = new JSONObject();
+
+		try {
+
+			jsonComanda.put("sellingPlant", comandaMathaus.getSellingPlant());
+
+			for (DateArticolMathaus articol : comandaMathaus.getDeliveryEntryDataList()) {
+				jsonObject = new JSONObject();
+				jsonObject.put("productCode", articol.getProductCode());
+				jsonObject.put("quantity", articol.getQuantity());
+				jsonObject.put("unit", articol.getUnit());
+				jsonArray.put(jsonObject);
+			}
+
+			jsonComanda.put("deliveryEntryDataList", jsonArray);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		return jsonComanda.toString();
 
 	}
 

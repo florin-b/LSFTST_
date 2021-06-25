@@ -216,13 +216,15 @@ public class HelperTranspBuc {
 		String codDepart = "";
 		if (UtilsUser.isAgentOrSD())
 			codDepart = UserInfo.getInstance().getCodDepart();
+		else if (UtilsUser.isKA())
+			codDepart = "01"; //cand se solicita adresa inaintea articolelor nu mai stiu pe ce depart sa pun taxa.
 
 		if (UtilsUser.isUserKA() || UtilsUser.isUserSK() || UtilsUser.isInfoUser() || UtilsUser.isSMR() || UtilsUser.isCVR() || UtilsUser.isSSCM()
 				|| UtilsUser.isCGED() || UtilsUser.isOIVPD()) {
 
 			if (!ListaArticoleComanda.getInstance().getListArticoleComanda().isEmpty())
 				codDepart = ListaArticoleComanda.getInstance().getListArticoleComanda().get(0).getDepart();
-			else if (!ListaArticoleModificareComanda.getInstance().getListArticoleComanda().isEmpty())
+			else if (ListaArticoleModificareComanda.getInstance().getListArticoleComanda() != null && !ListaArticoleModificareComanda.getInstance().getListArticoleComanda().isEmpty())
 				codDepart = ListaArticoleModificareComanda.getInstance().getListArticoleComanda().get(0).getDepart();
 
 		}

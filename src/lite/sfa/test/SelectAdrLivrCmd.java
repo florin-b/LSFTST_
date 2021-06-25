@@ -90,7 +90,6 @@ import enums.EnumOperatiiAdresa;
 import enums.EnumOperatiiObiective;
 import enums.EnumZona;
 
-
 public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnItemClickListener, OperatiiAdresaListener, ObiectiveListener, MapListener,
 		AutocompleteDialogListener, AsyncTaskListener {
 
@@ -284,6 +283,8 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		spinnerJudet = (Spinner) findViewById(R.id.spinnerJudet);
 		spinnerJudet.setOnItemSelectedListener(new regionSelectedListener());
 
+		spinnerJudet.setOnTouchListener(new SpinnerTouchListener());
+
 		listJudete = new ArrayList<HashMap<String, String>>();
 		adapterJudete = new SimpleAdapter(this, listJudete, R.layout.rowlayoutjudete, new String[] { "numeJudet", "codJudet" }, new int[] { R.id.textNumeJudet,
 				R.id.textCodJudet });
@@ -294,6 +295,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		spinnerTermenPlata.setAdapter(adapterTermenPlata);
 
 		spinnerAdreseLivrare = (Spinner) findViewById(R.id.spinnerAdreseLivrare);
+		spinnerAdreseLivrare.setOnTouchListener(new SpinnerTouchListener());
 
 		setListenerSpinnerAdreseLivrare();
 
@@ -885,7 +887,6 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	private void fillJudeteClient(String arrayJudete) {
-		
 
 		if (listJudete != null)
 			listJudete.clear();
@@ -1031,6 +1032,16 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 	public void addListenerRadioLista() {
 
+		radioLista.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				if (existaArticole()) {
+					Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+				return false;
+			}
+		});
+
 		radioLista.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1062,6 +1073,16 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	public void addListenerRadioText() {
+
+		radioText.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				if (existaArticole()) {
+					Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+				return false;
+			}
+		});
 
 		radioText.setOnClickListener(new OnClickListener() {
 			@Override
@@ -1118,10 +1139,10 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	protected void performGetAdreseLivrare() {
-		
+
 		String filiala = "";
-		
-		if (!isComandaClp() && !isComandaBV() && !isComandaDl() && !DateLivrare.getInstance().isClientFurnizor()) 
+
+		if (!isComandaClp() && !isComandaBV() && !isComandaDl() && !DateLivrare.getInstance().isClientFurnizor())
 			filiala = UserInfo.getInstance().getUnitLog();
 
 		HashMap<String, String> params = new HashMap<String, String>();
@@ -1387,6 +1408,25 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		return false;
 	}
 
+	public class SpinnerTouchListener implements View.OnTouchListener {
+
+		public boolean onTouch(View v, MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				if (existaArticole()) {
+					Toast.makeText(getApplicationContext(), "Stergeti mai intai toate articolele.", Toast.LENGTH_SHORT).show();
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+	}
+
+	private boolean existaArticole() {
+		return ListaArticoleComanda.getInstance().getListArticoleComanda() != null && ListaArticoleComanda.getInstance().getListArticoleComanda().size() > 0;
+	}
+
 	public class regionSelectedListener implements OnItemSelectedListener {
 		@SuppressWarnings("unchecked")
 		public void onItemSelected(AdapterView<?> parent, View v, int pos, long id) {
@@ -1433,6 +1473,14 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 
 		setListenerTextLocalitate();
 
+		getFilialaLivrareMathaus();
+
+	}
+
+	private void getFilialaLivrareMathaus() {
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("codJudet", DateLivrare.getInstance().getCodJudet());
+		operatiiAdresa.getFilialaLivrareMathaus(params);
 	}
 
 	private void setListenerTextLocalitate() {
@@ -1798,8 +1846,6 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 	}
 
 	private boolean isAdresaCorecta() {
-		// if (DateLivrare.getInstance().getTransport().equals("TRAP") &&
-		// isAdresaText())
 		if (DateLivrare.getInstance().getTransport().equals("TRAP"))
 			return isAdresaGoogleOk();
 		else
@@ -1890,7 +1936,7 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 			beanLocalitate.setOras(adresaLivrareSelected.isOras());
 			beanLocalitate.setRazaKm(adresaLivrareSelected.getRazaKm());
 			beanLocalitate.setCoordonate(adresaLivrareSelected.getCoordsCentru());
-			
+
 			addressCoordinates = DateLivrare.getInstance().getCoordonateAdresa();
 		}
 
@@ -1941,6 +1987,8 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 		DateLivrare.getInstance().setCoordonateAdresa(new LatLng(Double.valueOf(tokenCoords[0]), Double.valueOf(tokenCoords[1])));
 
 		setSpinnerTonajValue(adresaLivrare.getTonaj());
+		
+		getFilialaLivrareMathaus();
 
 	}
 
@@ -2077,6 +2125,9 @@ public class SelectAdrLivrCmd extends Activity implements OnTouchListener, OnIte
 			break;
 		case GET_LOCALITATI_LIVRARE_RAPIDA:
 			HelperAdreseLivrare.setLocalitatiAcceptate((String) result);
+			break;
+		case GET_FILIALA_MATHAUS:
+			CreareComanda.filialaLivrareMathaus = (String)result;
 			break;
 		default:
 			break;

@@ -2,7 +2,7 @@ package enums;
 
 public enum EnumOperatiiMathaus {
 
-	GET_CATEGORII("getCategoriiMathaus"), GET_ARTICOLE("getArticoleCategorieMathaus");
+	GET_CATEGORII("getCategoriiMathaus"), GET_ARTICOLE("getArticoleCategorieMathaus"), CAUTA_ARTICOLE("cautaArticoleMathaus");
 	
 	private String numeComanda;
 

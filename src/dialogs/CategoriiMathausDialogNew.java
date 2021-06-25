@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import listeners.AdapterMathausListener;
 import listeners.ArticolMathausListener;
 import listeners.OperatiiMathausListener;
+import lite.sfa.test.CreareComanda;
 import lite.sfa.test.R;
 import model.OperatiiMathaus;
 import model.UserInfo;
@@ -19,8 +20,12 @@ import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import beans.ArticolMathaus;
 import beans.CategorieMathaus;
@@ -39,8 +44,10 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 	private CategorieMathaus selectedCat;
 	private ArticolMathausListener listener;
 	private LinearLayout layoutSubcategorii;
-	private int spinnerId = 1;
 	private TreeSet<String> setParinti;
+	private Button cautaArticoleBtn;
+	private RadioButton radioCod, radioNume;
+	private EditText textCodArticol;
 
 	public CategoriiMathausDialogNew(Context context) {
 		super(context);
@@ -72,6 +79,17 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 
 		okButton = (Button) findViewById(R.id.btnOk);
 		addOkButtonListener();
+
+		cautaArticoleBtn = (Button) findViewById(R.id.btnCauta);
+		addCautaBtnListener();
+
+		radioCod = (RadioButton) findViewById(R.id.radio_cod);
+		radioNume = (RadioButton) findViewById(R.id.radio_nume);
+
+		setListenerRadio(radioCod);
+		setListenerRadio(radioNume);
+		textCodArticol = (EditText) findViewById(R.id.textCodArticol);
+		textCodArticol.setHint("Introcuceti cod articol");
 	}
 
 	private void addOkButtonListener() {
@@ -81,6 +99,59 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 
 			}
 		});
+
+	}
+
+	private void setListenerRadio(final RadioButton radioButton) {
+		radioButton.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+
+					if (radioButton.getText().toString().equals("Cod"))
+						textCodArticol.setHint("Introduceti cod articol");
+					else
+						textCodArticol.setHint("Introduceti nume articol");
+
+					textCodArticol.setText("");
+					gridView.setAdapter(null);
+				}
+
+			}
+		});
+	}
+
+	private void addCautaBtnListener() {
+		cautaArticoleBtn.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				cautaArticoleMathaus();
+
+			}
+
+		});
+	}
+
+	private void cautaArticoleMathaus() {
+
+		spinnerCategorii.setSelection(0);
+		layoutSubcategorii.removeAllViews();
+		gridView.setAdapter(null);
+		String tipCautare;
+
+		if (radioCod.isChecked())
+			tipCautare = "c";
+		else
+			tipCautare = "n";
+
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("codArticol", textCodArticol.getText().toString().trim().toLowerCase());
+		params.put("tipCautare", tipCautare);
+		params.put("filiala", CreareComanda.filialaLivrareMathaus);
+		params.put("depart", UserInfo.getInstance().getCodDepart());
+
+		opMathaus.cautaArticole(params);
 
 	}
 
@@ -97,6 +168,7 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 				categ.setNume(cat.getNume());
 				categ.setCod(cat.getCod());
 				categ.setCodParinte(cat.getCodParinte());
+				categ.setCodHybris(cat.getCodHybris());
 				categNodes.add(categ);
 
 			}
@@ -162,10 +234,8 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 
 		List<CategorieMathaus> listCategorii = getListCategorii(categorie.getCod());
 
-		spinnerId = Integer.parseInt(categorie.getCod());
-
 		Spinner spinner = new Spinner(context);
-		spinner.setId(spinnerId);
+		spinner.setContentDescription(categorie.getCod());
 
 		AdapterCategoriiMathaus adapter = new AdapterCategoriiMathaus(context, listCategorii);
 		spinner.setAdapter(adapter);
@@ -173,7 +243,7 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 		if (categorie.getCodParinte().trim().isEmpty())
 			layoutSubcategorii.removeAllViews();
 
-		setParinti.add(String.valueOf(spinnerId));
+		setParinti.add(categorie.getCod());
 		getParinti(categorie);
 
 		int numChild = layoutSubcategorii.getChildCount();
@@ -186,7 +256,7 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 			boolean isParent = false;
 			for (String parent : setParinti) {
 
-				if (parent.equals(String.valueOf(childView.getId()))) {
+				if (parent.equals(childView.getContentDescription())) {
 					isParent = true;
 				}
 
@@ -233,6 +303,7 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put("codCategorie", codCategorie);
 		params.put("filiala", UserInfo.getInstance().getUnitLog());
+		params.put("depart", UserInfo.getInstance().getCodDepart());
 		opMathaus.getArticole(params);
 
 	}
@@ -256,6 +327,7 @@ public class CategoriiMathausDialogNew extends Dialog implements OperatiiMathaus
 			afisCategorii((String) result);
 			break;
 		case GET_ARTICOLE:
+		case CAUTA_ARTICOLE:
 			afisArticole((String) result);
 			break;
 		default:

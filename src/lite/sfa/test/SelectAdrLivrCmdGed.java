@@ -84,6 +84,7 @@ import enums.EnumClienti;
 import enums.EnumJudete;
 import enums.EnumLocalitate;
 import enums.EnumOperatiiAdresa;
+import enums.TipCmdGed;
 
 public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, OperatiiClientListener, OperatiiAdresaListener, MapListener,
 		CautaObiectivListener {
@@ -1880,6 +1881,10 @@ public class SelectAdrLivrCmdGed extends Activity implements AsyncTaskListener, 
 
 		if (radioAltaAdresa.isChecked()) {
 			localitate = DateLivrare.getInstance().getOrasD();
+
+			if (listAlteAdrese == null)
+				return isAdresaOk;
+
 			listLocalitati = listAlteAdrese.getListLocalitati();
 		}
 

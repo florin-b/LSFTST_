@@ -62,7 +62,7 @@ public class ArticolMathausAdapter extends BaseAdapter {
 		setListenerAdauga(butonAdauga, articol);
 
 		nameTextView.setText(articol.getNume());
-		//pretTextView.setText(articol.getPretUnitar());
+		pretTextView.setText(articol.getCod());
 
 		//if (imageView.getDrawable() == null)
 		//if (!hasImage(imageView))

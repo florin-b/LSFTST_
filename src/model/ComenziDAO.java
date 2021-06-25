@@ -33,6 +33,7 @@ import beans.FurnizorComanda;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import enums.EnumArticoleDAO;
 import enums.EnumComenziDAO;
 import enums.EnumTipClientIP;
 
@@ -189,6 +190,12 @@ public class ComenziDAO implements IComenziDAO, AsyncTaskListener {
 		performOperation(params);
 
 	}
+	
+	public void getLivrariMathaus(HashMap<String, String> params) {
+		numeComanda = EnumComenziDAO.GET_LIVRARI_MATHAUS;
+		performOperation(params);
+	}
+	
 
 	private void performOperation(HashMap<String, String> params) {
 		AsyncTaskListener contextListener = (AsyncTaskListener) ComenziDAO.this;

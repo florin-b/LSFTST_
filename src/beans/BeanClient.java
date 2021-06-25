@@ -2,6 +2,8 @@ package beans;
 
 import java.util.List;
 
+import model.UserInfo;
+
 import enums.EnumTipClientIP;
 
 public class BeanClient {
@@ -13,6 +15,7 @@ public class BeanClient {
 	private List<String> termenPlata;
 	private String codCUI;
 	private EnumTipClientIP tipClientIP = EnumTipClientIP.CONSTR;
+	private String filialaClientIP = UserInfo.getInstance().getFiliala();
 
 	public BeanClient() {
 
@@ -77,6 +80,14 @@ public class BeanClient {
 
 	public void setTipClientIP(EnumTipClientIP tipClientIP) {
 		this.tipClientIP = tipClientIP;
+	}
+
+	public String getFilialaClientIP() {
+		return filialaClientIP;
+	}
+
+	public void setFilialaClientIP(String filialaClientIP) {
+		this.filialaClientIP = filialaClientIP;
 	}
 
 	

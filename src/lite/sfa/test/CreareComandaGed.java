@@ -199,6 +199,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	public static int selectedDepartIndexClp = -1, selectedDepozIndexClp = -1;
 	public static String selectedDepartCod = "-1";
 	public static EnumTipClientIP tipClientIP = EnumTipClientIP.CONSTR;
+	public static boolean permitArticoleDistribIP = true;
 
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -321,8 +322,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	private void CreateMenu(Menu menu) {
 
-		MenuItem mnu0 = menu.add(0, 0, 0, "Tip");
-		mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		if (!UtilsUser.isUserIP()) {
+			MenuItem mnu0 = menu.add(0, 0, 0, "Tip");
+			mnu0.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		}
 
 		MenuItem mnu1 = menu.add(0, 1, 1, "Client");
 
@@ -484,7 +487,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			builder.setMessage("Datele se vor pierde. Continuati?").setCancelable(false).setPositiveButton("Da", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 
-					resetAllVars();
+					clearAllData();
 					UserInfo.getInstance().setParentScreen("");
 
 					backToMainMenu();
@@ -532,6 +535,13 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	public void onResume() {
 
 		try {
+
+			ActionBar actionBar = getActionBar();
+
+			if (tipComandaGed == TipCmdGed.COMANDA_LIVRARE)
+				actionBar.setTitle("Comanda livrare " + DateLivrare.getInstance().getCodFilialaCLP());
+			else
+				actionBar.setTitle("Comanda GED");
 
 			// !! Se modifica din 2 locuri, User si selectArtCmd
 			if (!filialaAlternativa.equals("BV90"))
@@ -667,7 +677,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 	private double getValoareTransportSap() {
 
-		if (UtilsComenzi.isComandaInstPublica()) {
+		if (isExceptieComandaIP()) {
 			valTransport = 0;
 			return 0.0;
 		}
@@ -1025,16 +1035,21 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 	}
 
 	private void updatePretClient(int selectedPos, double newPretClient) {
+
 		listArticole.get(selectedPos).setPretUnitarClient(newPretClient);
 		listArticole.get(selectedPos).setPretUnit(newPretClient);
 		listArticole.get(selectedPos).setPret(listArticole.get(selectedPos).getPretUnit() * listArticole.get(selectedPos).getCantUmb());
 
+		listArticole.get(selectedPos).setProcent(
+				(1 - listArticole.get(selectedPos).getPretUnit()
+						/ (listArticole.get(selectedPos).getPretUnitarGed() / listArticole.get(selectedPos).getCantitate() * listArticole.get(selectedPos)
+								.getMultiplu())) * 100);
+
 		listArticole.get(selectedPos).setValTransport(
 				((listArticole.get(selectedPos).getPretUnitarClient() * listArticole.get(selectedPos).getCantUmb()) / listArticole.get(selectedPos)
 						.getMultiplu()) * (listArticole.get(selectedPos).getProcTransport() / 100));
-		
+
 		adapter.notifyDataSetChanged();
-		
 
 	}
 
@@ -1250,7 +1265,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		HelperCostDescarcare.eliminaCostDescarcare(ListaArticoleComandaGed.getInstance().getListArticoleComanda());
 
 		if ((DateLivrare.getInstance().getTransport().equalsIgnoreCase("TRAP") || DateLivrare.getInstance().getTransport().equalsIgnoreCase("TCLI"))
-				&& !isExceptieComandaIP() && !UtilsUser.isAV_SD_01() && !UtilsUser.isCVO() && !UtilsUser.isSVO()) {
+				&& !isExceptieComandaIP() && !UtilsUser.isAV_SD_01() && !isComandaPaletiCVO()) {
 
 			String codFurnizor = " ";
 
@@ -1341,6 +1356,20 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		}
 
+	}
+
+	private boolean isComandaPaletiCVO() {
+
+		boolean isComandaPaleti = true;
+
+		for (ArticolComanda articol : ListaArticoleComandaGed.getInstance().getListArticoleComanda()) {
+			if (!articol.isUmPalet()) {
+				isComandaPaleti = false;
+				break;
+			}
+		}
+
+		return isComandaPaleti && (UtilsUser.isCVO() || UtilsUser.isSVO());
 	}
 
 	private void verificaPaletiComanda(List<ArticolPalet> listPaleti) {
@@ -1495,21 +1524,19 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		String filialaSite = "", depozitSite = " ";
 
 		// mathaus
-		if ((UtilsUser.isUserSite() && !listArticole.isEmpty()) || (!listArticole.get(0).getFilialaSite().trim().isEmpty())) {
+		if (((UtilsUser.isUserSite() || !isExceptieComandaIP()) && !listArticole.isEmpty()) || (!listArticole.get(0).getFilialaSite().trim().isEmpty())) {
 			filialaSite = listArticole.get(0).getFilialaSite();
 			depozitSite = listArticole.get(0).getDepozit();
 		}
 
 		// adaugare material transport
 		if ((DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) && !isExceptieComandaIP()) {
-			
-			
 
 			articol = new ArticolComanda();
 			articol.setCodArticol("000000000030101050");
 			articol.setCantitate(1.0);
 			articol.setDepozit(depozitSite);
-			articol.setDepart(" ");
+			articol.setDepart(listArticole.get(0).getDepart());
 			articol.setPretUnit(valTransport);
 			articol.setProcent(0);
 			articol.setUm("BUC");
@@ -1570,6 +1597,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 				obj.put("valTransport", listArticole.get(i).getValTransport());
 				obj.put("procTransport", listArticole.get(i).getProcTransport());
 				obj.put("dataExp", listArticole.get(i).getDataExpPret());
+				obj.put("depart", listArticole.get(i).getDepart());
 
 				myArray.put(obj);
 
@@ -1808,7 +1836,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 				// pentru transport ARBSQ se afiseaza valoarea transportului
 				if (DateLivrare.getInstance().getTransport().equals("TRAP") || DateLivrare.getInstance().getTransport().equals("TERT")) {
-					displayDlgPretTransp();
+					displayDlgPretTransp(saveResponse);
 				} else
 				// comanda ged fara transport client
 				{
@@ -1865,6 +1893,10 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 		listViewArticoleComanda.setEnabled(true);
 
+		if (tipComandaGed == TipCmdGed.COMANDA_LIVRARE && !DateLivrare.getInstance().getCodFilialaCLP().isEmpty() && UtilsUser.isUserIP()) {
+			UserInfo.getInstance().setUnitLog(DateLivrare.getInstance().getCodFilialaCLP());
+		}
+
 		tipComandaGed = TipCmdGed.COMANDA_VANZARE;
 		listArticoleAMOB = null;
 
@@ -1915,12 +1947,13 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 		selectedDepartIndexClp = -1;
 		selectedDepozIndexClp = -1;
 		selectedDepartCod = "-1";
+		permitArticoleDistribIP = true;
 
 		initLocale();
 
 	}
 
-	private void displayDlgPretTransp() {
+	private void displayDlgPretTransp(String response) {
 		try {
 			dlgTransp = new Dialog(CreareComandaGed.this);
 			dlgTransp.setContentView(R.layout.valtranspdlgbox);
@@ -1930,13 +1963,22 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 			nf2.setMinimumFractionDigits(2);
 			nf2.setMaximumFractionDigits(2);
 
+			double valTranspExtra = 0;
+
+			if (response.contains("#")) {
+				String[] tokResponse = response.split("#");
+				valTranspExtra = Double.parseDouble(tokResponse[1]);
+			}
+
+			final double valTranspExtraFinal = valTranspExtra;
+
 			TextView textValCmd = (TextView) dlgTransp.findViewById(R.id.textValCmd);
 			textValCmd.setText(nf2.format(CreareComandaGed.totalComanda));
 
 			TextView textValTransp = (TextView) dlgTransp.findViewById(R.id.textValTransp);
-			textValTransp.setText(nf2.format(valTransport));
+			textValTransp.setText(nf2.format(valTransport + valTranspExtra));
 
-			double totCmd = valTransport + CreareComandaGed.totalComanda;
+			double totCmd = valTransport + CreareComandaGed.totalComanda + valTranspExtra;
 
 			TextView textTotCmd = (TextView) dlgTransp.findViewById(R.id.textTotCmd);
 			textTotCmd.setText(nf2.format(totCmd));
@@ -1946,6 +1988,7 @@ public class CreareComandaGed extends Activity implements AsyncTaskListener, Art
 
 				public void onClick(View v) {
 					dlgTransp.dismiss();
+					valTransport += valTranspExtraFinal;
 
 					if (CreareComandaGed.tipComanda.equals("N")) // comanda
 																	// ferma

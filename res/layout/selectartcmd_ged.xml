@@ -485,6 +485,16 @@
                     android:textSize="17sp"
                     android:typeface="monospace" />
 
+                <TextView
+                    android:id="@+id/txtPretUmAlt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right|center"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@color/editTextColor1"
+                    android:textSize="17sp"
+                    android:typeface="monospace" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -711,8 +721,8 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.4" />
                         </LinearLayout>
-                        
-                       <LinearLayout
+
+                        <LinearLayout
                             android:id="@+id/layoutDataExp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -747,7 +757,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="0.4" />
-                        </LinearLayout>                        
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"

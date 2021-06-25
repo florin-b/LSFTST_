@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 
 import listeners.ArticolMathausListener;
+import listeners.MagazinMathausListener;
 import listeners.OperatiiArticolListener;
 import model.ArticolComanda;
 import model.ArticolComandaGed;
@@ -79,15 +80,15 @@ import beans.DepoziteUl;
 import beans.PretArticolGed;
 import beans.StocMathaus;
 import dialogs.CategoriiMathausDialogNew;
+import dialogs.SelectMagazinMathausDialog;
 import enums.EnumArticoleDAO;
 import enums.EnumDepartExtra;
-import enums.EnumDepartamente;
 import enums.EnumTipClientIP;
 import enums.EnumTipComanda;
 import enums.TipCmdGed;
 import filters.DecimalDigitsInputFilter;
 
-public class SelectArtCmdGed extends ListActivity implements OperatiiArticolListener, ArticolMathausListener {
+public class SelectArtCmdGed extends ListActivity implements OperatiiArticolListener, ArticolMathausListener, MagazinMathausListener {
 
 	Button articoleBtn, saveArtBtn, pretBtn;
 	String filiala = "", nume = "", cod = "", umStoc = "";
@@ -165,7 +166,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	private ArticolDB articolDBSelected;
 	private TextView txtImpachetare;
 
-	private String unitLogUnic = "";
+	private static String unitLogUnic = "";
 	private boolean isFilialaMavSite = false;
 
 	private enum EnumDepoz {
@@ -1124,6 +1125,8 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 						}
 
+						afisPretUmAlternativa();
+
 					}// sf. verif. cantitate
 
 				} catch (Exception ex) {
@@ -1432,6 +1435,11 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 						return;
 					}
 
+					if (!unitLogUnic.equals(CreareComandaGed.filialaAlternativa) && UtilsUser.isUserIP()) {
+						Toast.makeText(getApplicationContext(), "Selectati articole dintr-o singura filiala!", Toast.LENGTH_LONG).show();
+						return;
+					}
+
 					if (UtilsUser.isUserIP() && !conditiiCmdIP()) {
 						return;
 					}
@@ -1612,7 +1620,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 						articol.setUmb(Umb);
 						articol.setCantUmb(Double.valueOf(cantUmb));
 						articol.setAlteValori(alteValori);
-						articol.setDepart(globalCodDepartSelectetItem.substring(0, 2));
+						articol.setDepart(globalCodDepartSelectetItem);
 						articol.setDepartSintetic(articol.getDepart());
 						articol.setCmp(cmpArt);
 						articol.setCoefCorectie(coefCorectie);
@@ -1651,7 +1659,7 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 						if (isConditieMathaus())
 							addFilialaMathaus(CreareComandaGed.filialaAlternativa, getBaseContext());
 
-						if (CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_LIVRARE) {
+						if (CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_LIVRARE && !UtilsUser.isUserIP()) {
 							blocheazaDepartDepoz();
 						}
 
@@ -1746,13 +1754,18 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 		if (CreareComandaGed.filialaAlternativa.equals("BV90")) {
 
-			if (!globalCodDepartSelectetItem.equals("02") && !globalCodDepartSelectetItem.equals("05")) {
-				Toast.makeText(getApplicationContext(), "Din BV90 adaugati doar articole din departamentele 02 sau 05.", Toast.LENGTH_LONG).show();
+			if (!globalCodDepartSelectetItem.equals("01") && !globalCodDepartSelectetItem.equals("02") && !globalCodDepartSelectetItem.equals("05")) {
+				Toast.makeText(getApplicationContext(), "Din BV90 adaugati doar articole din departamentele 01, 02 sau 05.", Toast.LENGTH_LONG).show();
 				return false;
 			}
 
 			if (!DateLivrare.getInstance().getTransport().equals("TCLI") && !DateLivrare.getInstance().getTransport().equals("TERT")) {
 				Toast.makeText(getApplicationContext(), "Din BV90 selectati doar transport TCLI sau TERT.", Toast.LENGTH_LONG).show();
+				return false;
+			}
+
+			if (!globalDepozSel.equals("02V1") && !globalDepozSel.equals("05V1") && !globalDepozSel.equals("92V1") && !globalDepozSel.equals("95V1")) {
+				Toast.makeText(getApplicationContext(), "Din BV90 adaugati doar articole din depozitele  02V1, 05V1, 92V1, 95V1.", Toast.LENGTH_LONG).show();
 				return false;
 			}
 
@@ -2092,6 +2105,9 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 		textPretGED.setText(nf2.format((initPrice / globalCantArt) * valMultiplu));
 		infoArticol = pretArticol.getConditiiPret().replace(',', '.');
 
+		// afisare pret in um alternativa
+		afisPretUmAlternativa();
+
 		procDisc.setText(nf2.format(procDiscClient));
 
 		discMaxAV = pretArticol.getDiscMaxAV();
@@ -2217,6 +2233,35 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 		if (CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_AMOB && importAllAmob) {
 			saveArtBtn.performClick();
 		}
+
+	}
+
+	private void afisPretUmAlternativa() {
+
+		if (valoareUmrez / valoareUmren != 1) {
+
+			double pretUmAlt;
+
+			if (pretMod) {
+
+				if (textProcRed.getText().toString().trim().isEmpty())
+					return;
+
+				pretUmAlt = Double.parseDouble(textProcRed.getText().toString()) * valoareUmrez / valoareUmren;
+			} else {
+
+				if (txtPretArt.getText().toString().trim().isEmpty())
+					return;
+
+				pretUmAlt = Double.parseDouble(txtPretArt.getText().toString()) * valoareUmrez / valoareUmren;
+			}
+
+			NumberFormat nf = NumberFormat.getInstance();
+			nf.setMinimumFractionDigits(2);
+			nf.setMaximumFractionDigits(2);
+			((TextView) findViewById(R.id.txtPretUmAlt)).setText("1 " + selectedUnitMas + " = " + nf.format(pretUmAlt) + " RON");
+		} else
+			((TextView) findViewById(R.id.txtPretUmAlt)).setText("");
 
 	}
 
@@ -2407,6 +2452,9 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 		textStoc.setText("");
 		textCant.setText("");
 
+		valoareUmrez = 1;
+		valoareUmren = 1;
+
 		listUmVanz.clear();
 		spinnerUnitMas.setVisibility(View.GONE);
 		HashMap<String, String> tempUmVanz;
@@ -2452,6 +2500,27 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 	}
 
+
+
+	private String getFilialaLivrareCVIP() {
+
+		String filialaLivrare;
+
+		if (!isComandaClp())
+			filialaLivrare = UserInfo.getInstance().getUnitLog();
+		else
+			filialaLivrare = DateLivrare.getInstance().getCodFilialaCLP();
+
+		return filialaLivrare;
+
+	}
+
+	private boolean isComandaClp() {
+		return !DateLivrare.getInstance().getCodFilialaCLP().trim().isEmpty() && DateLivrare.getInstance().getCodFilialaCLP().trim().length() == 4;
+	}
+
+
+
 	private void performListArtStoc() {
 
 		HashMap<String, String> params = new HashMap<String, String>();
@@ -2491,6 +2560,11 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 
 		if (CreareComandaGed.tipComandaGed == TipCmdGed.COMANDA_AMOB) {
 			((TextView) findViewById(R.id.articolAmobDetalii)).setText("Ul: " + varLocalUnitLog + " , depozit: " + globalDepozSel);
+		}
+
+		if (articolDBSelected.getDepart().equals("11") && globalDepozSel.startsWith("11")) {
+			Toast.makeText(getApplicationContext(), "Pentru articole din divizia 11 selectati un depozit aferent.", Toast.LENGTH_LONG).show();
+			return;
 		}
 
 		params.put("codArt", codArticol);
@@ -2547,6 +2621,26 @@ public class SelectArtCmdGed extends ListActivity implements OperatiiArticolList
 	@Override
 	public void articolMathausSelected(ArticolMathaus articol) {
 		afisArticolMathaus(articol);
+
+	}
+
+	@Override
+	public void magazinMathausSelected(String filialaMathaus) {
+
+		String filialaLivrare = getFilialaLivrareCVIP();
+
+		if (!filialaLivrare.equals(filialaMathaus)) {
+			CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_LIVRARE;
+			DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_LIVRARE);
+			DateLivrare.getInstance().setCodFilialaCLP(filialaMathaus);
+		} else {
+			CreareComandaGed.tipComandaGed = TipCmdGed.COMANDA_VANZARE;
+			DateLivrare.getInstance().setTipComandaGed(TipCmdGed.COMANDA_VANZARE);
+			DateLivrare.getInstance().setCodFilialaCLP("");
+		}
+
+		CreareComandaGed.permitArticoleDistribIP = false;
+		ModificareComanda.permitArticoleDistribIP = false;
 
 	}
 
